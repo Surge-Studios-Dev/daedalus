@@ -1,0 +1,4 @@
+# Registers the brick for local use: `mason get` then `mason make daedalus`.
+bricks:
+  daedalus:
+    path: bricks/daedalus

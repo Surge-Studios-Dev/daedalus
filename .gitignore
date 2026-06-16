@@ -1,0 +1,13 @@
+# Dart / Flutter / Mason
+.dart_tool/
+.mason/
+.packages
+build/
+*.iml
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+# Secrets - never commit
+.env
+*.env

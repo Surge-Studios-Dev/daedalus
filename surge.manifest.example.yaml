@@ -1,0 +1,70 @@
+# surge.manifest.yaml - single source of truth for one Surge app.
+schema: 1
+
+identity:
+  slug: tally
+  name: Tally
+  tagline: Count anything, see the streak.
+  bundle_id_ios: com.surgestudios.tally
+  package_android: com.surgestudios.tally
+
+studio:
+  name: Surge Studios
+  support_email: support@surgestudios.dev
+  marketing_site: https://surgestudios.dev
+
+brand:
+  palette:
+    accent: "#75D8FF"
+    accent_soft: "#2B89D8"
+    panel: "#0E1B27"
+  logo_mode: wordmark
+  fonts:
+    display: Inter
+    text: Inter
+
+navigation:
+  tabs:
+    - { id: counters, label: Counters, icon: hash, type: feature }
+    - { id: insights, label: Insights, icon: bar-chart, type: feature }
+    - { id: you, label: You, icon: user, type: builtin }
+  primary_action: { id: add, label: New, icon: plus }
+
+auth:
+  providers: [email, apple, google]
+  guest_mode: true
+
+monetization:
+  entitlement: pro
+  model: subscription
+  trial: { type: store_intro_offer, duration_days: 7 }
+  products:
+    - { id: pro_annual, type: auto_renew_subscription, period: P1Y, reference_price: 19.99, default: true }
+    - { id: pro_monthly, type: auto_renew_subscription, period: P1M, reference_price: 2.99 }
+  gates: [unlimited_counters, export, themes]
+
+features:
+  remote_config: true
+  notifications: true
+  cross_promo: true
+
+legal:
+  privacy_url: https://surgestudios.dev/tally/privacy
+  terms_url: https://surgestudios.dev/tally/terms
+  data_practices:
+    collects_email: true
+    analytics: true
+    crash_reporting: true
+    tracking: false
+
+store:
+  category: Productivity
+  age_rating: "4+"
+  keywords: [counter, habit, streak, tracker]
+  short_description: Count anything, see the streak.
+  full_description: |
+    Make a counter for anything you want to track and watch the streak build.
+
+integrations:
+  firebase_project: tally-prod
+  revenuecat_api_key: ${REVENUECAT_KEY}

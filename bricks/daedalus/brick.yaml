@@ -1,0 +1,45 @@
+name: daedalus
+description: >-
+  Launch-ready Flutter app stamped from a surge.manifest.yaml. Universal
+  infrastructure (auth, nav, settings, paywall, telemetry, cross-promo) is
+  filled in; domain screens are wired stubs. Run from a directory containing
+  surge.manifest.yaml; the pre_gen hook reads it and populates every var.
+version: 0.1.0
+environment:
+  mason: ">=0.1.0 <0.2.0"
+vars:
+  manifest:
+    type: string
+    description: Path to the source manifest, read by the pre_gen hook.
+    default: surge.manifest.yaml
+    prompt: Path to surge.manifest.yaml?
+  slug: { type: string, default: my_app }
+  name: { type: string, default: My App }
+  tagline: { type: string, default: "" }
+  bundle_id_ios: { type: string, default: com.surgestudios.myapp }
+  package_android: { type: string, default: com.surgestudios.myapp }
+  accent_hex: { type: string, default: "0xFF75D8FF" }
+  accent_soft_hex: { type: string, default: "0xFF2B89D8" }
+  panel_hex: { type: string, default: "0xFF0E1B27" }
+  font_display: { type: string, default: Inter }
+  font_text: { type: string, default: Inter }
+  auth_email: { type: boolean, default: true }
+  auth_apple: { type: boolean, default: true }
+  auth_google: { type: boolean, default: true }
+  guest_mode: { type: boolean, default: true }
+  entitlement: { type: string, default: pro }
+  mon_model: { type: string, default: subscription }
+  trial_type: { type: string, default: store_intro_offer }
+  trial_days: { type: number, default: 7 }
+  remote_config: { type: boolean, default: true }
+  notifications: { type: boolean, default: false }
+  cross_promo: { type: boolean, default: true }
+  support_email: { type: string, default: support@surgestudios.dev }
+  tabs:
+    type: array
+    description: Filled by pre_gen from navigation.tabs.
+    default: []
+  gates:
+    type: array
+    description: Filled by pre_gen from monetization.gates.
+    default: []

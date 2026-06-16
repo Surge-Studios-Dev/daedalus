@@ -1,0 +1,46 @@
+name: {{slug}}
+description: "{{name}} - {{tagline}}"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.0
+
+# NOTE: versions mirror Ladle's working set. Pin to the exact versions you have
+# installed and run `flutter pub get` to verify before relying on this.
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  url_launcher: ^6.3.0
+  lucide_icons: ^0.257.0
+  go_router: ^17.3.0
+  flutter_riverpod: ^3.3.0
+  riverpod_annotation: ^3.0.0
+  shared_preferences: ^2.5.0
+  firebase_core: ^4.0.0
+  firebase_auth: ^6.0.0
+  cloud_firestore: ^6.0.0
+  cloud_functions: ^6.0.0
+  firebase_crashlytics: ^5.0.0
+  firebase_analytics: ^12.0.0{{#remote_config}}
+  firebase_remote_config: ^6.0.0{{/remote_config}}
+  purchases_flutter: ^8.0.0{{#auth_apple}}
+  sign_in_with_apple: ^7.0.0{{/auth_apple}}{{#auth_google}}
+  google_sign_in: ^7.0.0{{/auth_google}}
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.0
+  freezed: ^3.0.0
+  json_serializable: ^6.8.0
+  riverpod_generator: ^3.0.0
+  flutter_launcher_icons: ^0.14.0
+  flutter_native_splash: ^2.4.0
+
+flutter:
+  uses-material-design: true
