@@ -5,6 +5,15 @@ Stamped from the Surge app factory (Daedalus). Universal infrastructure lives in
 from `surge.manifest.yaml` — regenerate rather than hand-editing generated
 wiring.
 
+## Source of truth (in priority order)
+1. `design/spec.md` — the product spec. Every screen has an ID (see its §3.2
+   inventory); if a screen is not listed there, it does not exist. Spec §8 edge
+   cases are acceptance criteria: each one becomes a test. Wins on product
+   intent.
+2. `surge.manifest.yaml` — config (tabs, gates, monetization, brand). Wins on
+   wiring; regenerate rather than hand-editing generated files.
+3. Still ambiguous → ask, don't invent.
+
 ## Stack (decided; do not relitigate)
 Flutter stable, Dart 3.x. **Riverpod** (`flutter_riverpod`, no codegen yet).
 **go_router**. UI from the shared **surge_ui** package (tokens + components).
@@ -33,7 +42,11 @@ today. Wire them by replacing the seam bodies and uncommenting the deps in
 - Use the standard `Ev` telemetry events; add domain events on top, never rename
   the base set.
 - Copy: sentence case; no dark patterns; no em dashes in user-facing copy.
-- snake_case filenames. Every screen carries its id in a doc comment.
+- snake_case filenames. Every screen widget carries its spec ID in a doc
+  comment (`/// COU-01 · Counters home`) and commits carry it too
+  (`feat(COU-01): counters home`).
+- Work spec-first: before building a screen, its §6 block must exist; before
+  calling it done, its §8 edge cases must be tests.
 
 ## Commands
 ```

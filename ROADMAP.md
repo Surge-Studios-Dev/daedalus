@@ -26,6 +26,8 @@ a deliberately broken manifest is rejected with precise errors before stamping.
 | `tools/manifest_validator` | factory | Canonical schema rules + CLI | 6 |
 | `tools/legal_gen` | factory | Privacy + ToS (md + JSON), Apple `PrivacyInfo.xcprivacy`, store privacy-label checklist — from `data_practices` | 8 |
 | `tools/portfolio_gen` | factory | Manifest → portfolio-entry seed (narrative left as TODOs) | 1 |
+| `tools/spec_gen` | factory | Manifest → `design/spec.md` skeleton (IDs, gates, monetization; template-parity-tested) | 5 |
+| `INTAKE.md` + `templates/spec.template.md` | front door | Idea → manifest + spec pipeline with a definition of "fleshed out" | (via spec_gen) |
 | `scripts/forge.sh` | factory | Provisioning: platform folders, flutterfire, icons, legal_gen, seam-flip + site-registration checklist | (syntax-checked) |
 | `scripts/check_brick_sync.dart` | factory | Enforces the foundation <-> `__brick__` sync contract (divergent-file allowlist + signatures, root lint parity) in CI | (stamp + negative-tested) |
 | `.github/workflows/ci.yml` | factory | All packages + catalog freshness + validator + legal_gen + hooks | — |
@@ -57,7 +59,7 @@ unexplained difference, clobbered template, or missing mirror file.
 | One manifest drives the website | **Partial** (legal fully automated; portfolio semi-automated; no per-app marketing page template) |
 | Store approval workflow | **Partial** (compliance assets yes; upload/signing/readiness-lint no) |
 | Backend (rules/functions) | **Missing** (client-side surge_crud only) |
-| Idea → spec front door | **Missing** (the biggest gap to the 1-week goal) |
+| Idea → spec front door | **Done** (INTAKE → manifest → spec_gen skeleton → written spec; Phase 1) |
 | Live validation on device/Firebase/RevenueCat | **Deferred** (user-gated; all code paths ready) |
 
 ## 3. Debt register
@@ -101,18 +103,25 @@ unexplained difference, clobbered template, or missing mirror file.
     path-vs-git-deps note now renders correctly.
   - CI tooling job now also covers `portfolio_gen` (was missing).
 
-### Phase 1 — The front door: idea → spec · the highest-leverage unbuilt piece
-The 1-week clock starts "after the idea is fleshed out" — and fleshing out is
-where the human week actually goes today. Make it repeatable:
-- `templates/spec.template.md` modeled on Ladle's `original-spec.md`: screens
-  with IDs, edge cases as acceptance criteria, P0/P1/P2 scoping, copy rules.
-- `INTAKE.md`: the question set that turns an idea into a manifest + spec
-  skeleton (core loop, tabs, gates, model, data practices, domain disclaimer).
-- `tools/spec_gen`: scaffolds the spec skeleton from a filled manifest
-  (sections + screen IDs per tab, gate list, compliance checklist) so humans
-  write product intent, not structure.
-- Per-app CLAUDE.md template updated to the spec workflow (IDs in commits,
-  edge cases as tests).
+### Phase 1 — The front door: idea → spec · ✅ done 2026-07-01
+The 1-week clock starts "after the idea is fleshed out" — fleshing out is now
+a repeatable pipeline (idea → INTAKE → manifest → spec skeleton → written
+spec → stamp):
+- `templates/spec.template.md`: the structure Ladle shipped from — screen IDs,
+  positioning rule / core loop / quality bar up front, gating table, edge
+  cases as acceptance criteria (§8), P0/P1/P2 phases, out-of-scope list.
+- `INTAKE.md`: six-pass question set (idea, shape, money, data & risk, brand,
+  ops), every answer mapped to a manifest field or spec section, with the
+  "fleshed out" definition of done.
+- `tools/spec_gen` (5 tests): manifest → `design/spec.md` skeleton. Fills tab
+  map, screen inventory with stable IDs (reserved factory prefixes + derived
+  per-tab prefixes, collision-safe), gating table wired to `?src={gateId}`,
+  monetization mechanics incl. trial contract, deep links, brand — humans
+  write intent at `**TODO**` markers. Section headers are parity-tested
+  against the template so the two can't drift. Refuses to overwrite a written
+  spec without `--force`.
+- Per-app CLAUDE.md template: spec is source-of-truth #1, screen IDs in doc
+  comments and commits, §8 edge cases become tests, spec-first working rule.
 
 ### Phase 2 — Backend safety rail · every app needs it; absent today
 - Brick gains a `backend/` template: `firebase.json`, `.firebaserc`
@@ -145,9 +154,10 @@ enforcement (D5); cross-promo (D6); sunset playbook.
 ## 5. Sequencing rationale
 
 0 → 1 → 2 → 3, with 4 whenever accounts/device are available (nothing blocks
-on it, and nothing in 1–3 requires it). Phase 0 (done) de-risked everything
-after it. Phase 1 attacks the actual bottleneck of the 1-week goal.
-Phase 2 is the safety-critical layer no app should ship without. Phase 3
-converts the remaining manual toil. The first real app should be built *during*
-phases 2–4, using the factory in anger — that exercise, not more scaffolding,
-is what will surface the next round of truth.
+on it, and nothing in 1–3 requires it). Phases 0 and 1 are done: the factory
+is protected and the front door exists. Next is Phase 2, the safety-critical
+backend layer no app should ship without; then Phase 3 converts the remaining
+manual toil. The first real app should be built *during* phases 2–4, using
+the factory in anger — run INTAKE.md on the next idea and build it through
+the pipeline; that exercise, not more scaffolding, is what will surface the
+next round of truth.

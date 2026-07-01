@@ -67,6 +67,12 @@ jobs:
           dart pub get
           dart analyze
           dart test
+      - name: spec_gen
+        working-directory: tools/spec_gen
+        run: |
+          dart pub get
+          dart analyze
+          dart test
       - name: portfolio_gen
         working-directory: tools/portfolio_gen
         run: |
