@@ -1,0 +1,144 @@
+{
+  "slug": "ladle",
+  "appName": "Ladle",
+  "privacy": {
+    "title": "Privacy policy",
+    "eyebrow": "Last updated: 2026-07-01",
+    "intro": "Ladle is a Surge Studios LLC product. This notice describes how Ladle handles your data. It is supplemented by the full Surge Studios LLC privacy policy at https://www.surgestudios.dev/privacy.",
+    "sections": [
+      {
+        "heading": "What we collect",
+        "body": [
+          "Account details when you sign in (email, and optionally your name).",
+          "The content you create: recipes, collections, meal plans, pantry items, and grocery lists, stored under your authenticated account.",
+          "Subscription and purchase information.",
+          "Device diagnostics, crash reports, and anonymous usage analytics."
+        ]
+      },
+      {
+        "heading": "How we use it",
+        "body": [
+          "We use your information to provide and sync the app across your devices, to operate features you use, to manage any subscription, to keep the service reliable and prevent abuse, and to improve the experience."
+        ]
+      },
+      {
+        "heading": "Service providers",
+        "body": [
+          "Ladle runs on trusted infrastructure: Google Firebase (authentication, Cloud Firestore, Storage, Crashlytics), Firebase Analytics (product analytics), RevenueCat (subscriptions and purchases), Google Gemini (recipe import and remix extraction), and PostHog (product analytics)."
+        ]
+      },
+      {
+        "heading": "What we do not do",
+        "body": [
+          "We do not sell your personal information.",
+          "We do not run third-party ads or share your content with other users.",
+          "We do not track you across other companies' apps and websites."
+        ]
+      },
+      {
+        "heading": "Data sharing",
+        "body": [
+          "We share data only with the service providers above, to comply with the law, to protect rights and safety, or in connection with a business transaction. "
+        ]
+      },
+      {
+        "heading": "Retention and deletion",
+        "body": [
+          "We keep your data while your account is active. Use Delete account in the app to permanently remove your account and everything in it. This is irreversible."
+        ]
+      },
+      {
+        "heading": "Security",
+        "body": [
+          "We use reasonable administrative, technical, and organizational safeguards, with encrypted transmission where appropriate. No method of storage or transmission is completely secure."
+        ]
+      },
+      {
+        "heading": "Children",
+        "body": [
+          "Ladle is intended for users 18 and older. We do not knowingly collect data from children."
+        ]
+      },
+      {
+        "heading": "Your rights",
+        "body": [
+          "Depending on where you live, you may have rights to access, correct, delete, or restrict use of your personal information."
+        ]
+      },
+      {
+        "heading": "Contact",
+        "body": [
+          "Surge Studios LLC. For privacy questions, email support@ladle.kitchen or visit https://www.surgestudios.dev/contact. The full policy lives at https://www.surgestudios.dev/privacy."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms of service",
+    "eyebrow": "Last updated: 2026-07-01",
+    "intro": "Ladle is a Surge Studios LLC product. These terms summarize the agreement for using Ladle and are supplemented by the full Surge Studios LLC Terms of Service at https://www.surgestudios.dev/terms.",
+    "sections": [
+      {
+        "heading": "Acceptance and eligibility",
+        "body": [
+          "By using Ladle you agree to these terms. You must be able to enter a binding agreement and be at least 18 years old."
+        ]
+      },
+      {
+        "heading": "Accounts",
+        "body": [
+          "Keep your account information accurate and your credentials secure; you are responsible for activity on your account. We may suspend or terminate accounts that violate these terms or create security risks."
+        ]
+      },
+      {
+        "heading": "Your content",
+        "body": [
+          "You own recipes, collections, meal plans, pantry items, and grocery lists that you create. You grant us a limited, non-exclusive license to process it so we can provide and sync the app for you."
+        ]
+      },
+      {
+        "heading": "Subscription and billing",
+        "body": [
+          "Paid features are offered as a subscription billed through the App Store or Google Play. Pricing, billing cycle, renewal, and included features are shown at the time of purchase.",
+          "A free trial converts to a paid subscription unless cancelled at least 24 hours before it ends. Manage or cancel from your store account settings. Purchases are final except where the platform or applicable law requires otherwise."
+        ]
+      },
+      {
+        "heading": "Acceptable use",
+        "body": [
+          "Do not break the law, attempt unauthorized access, interfere with the service, upload malicious content, or reverse engineer the app."
+        ]
+      },
+      {
+        "heading": "Disclaimer",
+        "body": [
+          "Ladle provides general information, not professional, nutritional, or medical advice. Recipe imports, macro estimates, and remixes are produced by AI models and may contain errors. Cook with judgment, especially around food safety, allergens, and substitutions for medical diets."
+        ]
+      },
+      {
+        "heading": "Disclaimers and liability",
+        "body": [
+          "The service is provided \"as is\" and \"as available\" without warranties of any kind. To the extent permitted by law, the studio is not liable for indirect damages or data loss, and total liability is limited to the amount you paid in the preceding 12 months."
+        ]
+      },
+      {
+        "heading": "Termination",
+        "body": [
+          "You can delete your account at any time from within the app. We may suspend accounts that abuse the service."
+        ]
+      },
+      {
+        "heading": "Governing law",
+        "body": [
+          "These terms are governed by the laws of the State of Alabama, except where conflicting requirements apply."
+        ]
+      },
+      {
+        "heading": "Contact",
+        "body": [
+          "Surge Studios LLC. Questions: support@ladle.kitchen or https://www.surgestudios.dev/contact. The full terms live at https://www.surgestudios.dev/terms."
+        ]
+      }
+    ]
+  }
+}

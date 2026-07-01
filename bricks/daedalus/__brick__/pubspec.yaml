@@ -4,43 +4,65 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.0
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
 
-# NOTE: versions mirror Ladle's working set. Pin to the exact versions you have
-# installed and run `flutter pub get` to verify before relying on this.
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  url_launcher: ^6.3.0
-  lucide_icons: ^0.257.0
-  go_router: ^17.3.0
-  flutter_riverpod: ^3.3.0
-  riverpod_annotation: ^3.0.0
-  shared_preferences: ^2.5.0
-  firebase_core: ^4.0.0
-  firebase_auth: ^6.0.0
-  cloud_firestore: ^6.0.0
-  cloud_functions: ^6.0.0
-  firebase_crashlytics: ^5.0.0
-  firebase_analytics: ^12.0.0{{#remote_config}}
-  firebase_remote_config: ^6.0.0{{/remote_config}}
-  purchases_flutter: ^8.0.0{{#auth_apple}}
-  sign_in_with_apple: ^7.0.0{{/auth_apple}}{{#auth_google}}
-  google_sign_in: ^7.0.0{{/auth_google}}
-  freezed_annotation: ^3.0.0
-  json_annotation: ^4.9.0
+  flutter_riverpod: ^2.5.1
+  go_router: ^14.2.0
+  # The shared Surge toolbox (Tier 2) and onboarding System (Tier 3). Two
+  # modes, chosen at stamp time (use_git_deps): path for workspace dev where
+  # apps sit as siblings of the Daedalus checkout, git for standalone repos /
+  # CI, pinned to a ref. Drop other surge_* Systems in the same way.
+{{#use_git_deps}}
+  surge_ui:
+    git:
+      url: {{{surge_git_url}}}
+      ref: {{{surge_git_ref}}}
+      path: packages/surge_ui
+  surge_onboarding:
+    git:
+      url: {{{surge_git_url}}}
+      ref: {{{surge_git_ref}}}
+      path: packages/surge_onboarding
+{{/use_git_deps}}
+{{^use_git_deps}}
+  surge_ui:
+    path: {{{surge_ui_path}}}
+  surge_onboarding:
+    path: {{{surge_onboarding_path}}}
+{{/use_git_deps}}
+  # Auth backend. The app depends on modules/auth/AuthService; these power the
+  # FirebaseAuthService binding, selected in bootstrap once `flutterfire
+  # configure` has run and useFirebase is flipped on. Apple/Google are always
+  # present (the service imports them); the buttons are shown per auth.providers.
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  firebase_analytics: ^11.3.3
+  firebase_crashlytics: ^4.1.4
+  google_sign_in: ^6.2.1
+  sign_in_with_apple: ^6.1.3
+  # Purchases backend. The app depends on modules/paywall/PurchaseService; this
+  # powers the RevenueCatPurchaseService binding, selected in bootstrap once the
+  # RevenueCat app/entitlement/products exist and useRevenueCat is flipped on.
+  purchases_flutter: ^8.1.0
+  # Local persistence for settings + the onboarding flag (always on).
+  shared_preferences: ^2.3.2
+
+  # SEAM: uncomment as you wire each further integration (see bootstrap.dart and
+  # the SEAM: markers). surge_crud uses cloud_firestore.
+  # cloud_firestore: ^5.4.4{{#remote_config}}
+  # firebase_remote_config: ^5.1.3{{/remote_config}}
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
-  build_runner: ^2.4.0
-  freezed: ^3.0.0
-  json_serializable: ^6.8.0
-  riverpod_generator: ^3.0.0
-  flutter_launcher_icons: ^0.14.0
-  flutter_native_splash: ^2.4.0
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
 
 flutter:
   uses-material-design: true

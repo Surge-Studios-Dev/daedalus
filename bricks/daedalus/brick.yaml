@@ -31,10 +31,34 @@ vars:
   mon_model: { type: string, default: subscription }
   trial_type: { type: string, default: store_intro_offer }
   trial_days: { type: number, default: 7 }
+  has_trial: { type: boolean, default: true }
   remote_config: { type: boolean, default: true }
   notifications: { type: boolean, default: false }
   cross_promo: { type: boolean, default: true }
   support_email: { type: string, default: support@surgestudios.dev }
+  # -- surge_* dependency mode -------------------------------------------
+  # path (default): workspace dev, apps sit as siblings of the Daedalus
+  # checkout. git: standalone app repos / CI, pinned to a ref. Requires the
+  # packages to actually exist at that ref on the remote.
+  use_git_deps: { type: boolean, default: false }
+  surge_git_url:
+    type: string
+    description: Git URL of the Daedalus repo (used when use_git_deps is true).
+    default: https://github.com/Surge-Studios-Dev/Daedalus.git
+  surge_git_ref:
+    type: string
+    description: Ref (branch/tag/sha) to pin surge_* packages to in git mode.
+    default: main
+  surge_ui_path:
+    type: string
+    description: >-
+      Path (relative to the stamped app root) to the surge_ui package. Defaults
+      to the standard Surge workspace layout where apps are siblings of Daedalus.
+    default: ../Daedalus/packages/surge_ui
+  surge_onboarding_path:
+    type: string
+    description: Path to the surge_onboarding System package (see surge_ui_path).
+    default: ../Daedalus/packages/surge_onboarding
   tabs:
     type: array
     description: Filled by pre_gen from navigation.tabs.

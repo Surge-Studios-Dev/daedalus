@@ -1,4 +1,9 @@
 # surge.manifest.yaml - single source of truth for one Surge app.
+#
+# "Tally" is a FICTIONAL example app (a counter/streak tracker) used to
+# exercise every schema field - it is not a Surge Studios product and must
+# never be registered on the marketing site. For a real, shipping manifest see
+# examples/ladle.manifest.yaml.
 schema: 1
 
 identity:

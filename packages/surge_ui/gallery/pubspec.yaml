@@ -1,0 +1,20 @@
+name: surge_ui_gallery
+description: Visual catalog for surge_ui — every component in light and dark. Run with `flutter run` from this folder.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  surge_ui:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

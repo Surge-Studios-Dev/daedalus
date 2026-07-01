@@ -2,6 +2,17 @@
 
 The launch-ready Flutter starter every Surge app is stamped from. Universal infrastructure (auth, nav, settings, paywall, telemetry, cross-promo) ships filled-in and working. Domain screens ship as wired stubs. One `surge.manifest.yaml` drives the app, its marketing page, and its store metadata. See `surge.manifest.schema.md` for that file.
 
+> **Implementation status (current).** This document is the design contract; some
+> of it is now built and some is still aspirational. What exists and is verified:
+> the shared UI toolbox lives in the external **`packages/surge_ui`** package
+> (Tier 2), not in-app `modules/ui`; the blank canvas is **`foundation/`** (Tier 1);
+> the **`bricks/daedalus`** brick stamps the canvas + consumes `surge_ui` from the
+> manifest (a stamped app analyzes clean). Deltas from the text below: the base
+> ships **Riverpod without codegen**; **Firebase and RevenueCat are working mocks**
+> marked `SEAM:` (uncomment the deps to wire them), not yet live; gating is
+> **`ref.gate(context, gateId, onSuccess)`**. See `FRAMEWORK.md` for the tier
+> model, token contract, and component-library conventions.
+
 ## What "launchable" means
 
 - A freshly stamped app **runs on a simulator immediately**, with working auth, navigation, theming, the full settings stack, and a functioning paywall.
@@ -66,7 +77,7 @@ The split is the whole point. `modules/` is universal and quarantined; `features
 - **Monetization** (`modules/paywall`): paywall, RevenueCat wiring, the `gate()` helper, restore purchases. Model-agnostic (see below).
 - **Telemetry** (`modules/telemetry`): Crashlytics + Analytics with the standard event taxonomy.
 - **Cross-promo** (`modules/crosspromo`): a house-ads slot, wired from app #1 so the portfolio becomes its own acquisition channel.
-- **UI** (`modules/ui`): the token mechanism plus the generic component library (buttons, chips, inputs, rows, sheets, toasts, banners, stepper, segmented, toggle, progress, spinner) and loading/empty/error states.
+- **UI** (external `packages/surge_ui`): the token contract plus the generic component library (buttons, chips, inputs, rows, sheets, toasts, banners, stepper, segmented, toggle, progress, spinner) and loading/empty/error states. Apps depend on it; see `FRAMEWORK.md` and `packages/surge_ui/CATALOG.md`.
 - **App identity**: launcher icon and splash generated from the `brand` block.
 
 ## Stubbed (per app)
@@ -79,7 +90,7 @@ The contract: a stamped app analyzes clean and runs. It simply does nothing usef
 
 ## Monetization model (all apps monetized; structure varies)
 
-Every app gates paid value behind a **single RevenueCat entitlement** (default id `pro`). `gate(context, GateId, onSuccess)` checks that entitlement and behaves identically whether it was granted by a subscription or a one-time unlock. `monetization.model` selects the shape:
+Every app gates paid value behind a **single RevenueCat entitlement** (default id `pro`). `ref.gate(context, gateId, onSuccess)` checks that entitlement and behaves identically whether it was granted by a subscription or a one-time unlock. `monetization.model` selects the shape:
 
 - **subscription**: auto-renewing products. Free trial is the store intro offer (`trial.type: store_intro_offer`; `duration_days` maps to the intro period).
 - **one_time**: a non-consumable unlock. The "trial" is enforced in-app as a usage/time window (`trial.type: app_gated`; `duration_days` counted from first launch, stored locally and mirrored to Remote Config so it is tunable after launch without a release).
@@ -112,7 +123,7 @@ Manual (the script prints this checklist): create App Store Connect and Play Con
 
 ## Definition of done
 
-- **Template**: a freshly stamped app analyzes clean, runs on iOS and Android, signs a user in three ways, shows a paywall that completes a sandbox purchase and a restore, deletes an account, and reports the standard events. A hidden `/gallery` route renders every UI component in light and dark.
+- **Template**: a freshly stamped app analyzes clean, runs on iOS and Android, signs a user in three ways, shows a paywall that completes a sandbox purchase and a restore, deletes an account, and reports the standard events. The `packages/surge_ui/gallery` app renders every UI component in light and dark.
 - **App from template**: stubs replaced with real functionality, manifest filled, init run, compliance checklist green.
 
 ## Out of scope (wire the seam, do not build it here)

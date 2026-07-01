@@ -1,0 +1,98 @@
+import 'package:flutter/material.dart';
+
+import '../tokens/surge_text.dart';
+import '../tokens/surge_tokens.dart';
+import 'surge_button.dart';
+
+/// Catalog:
+/// name: SurgeEmptyState
+/// category: feedback
+/// summary: A centered icon circle, title, subtitle, and optional primary/ghost actions.
+/// whenToUse: Empty lists, zero-results, or a first-run screen body. Also fits error states with a retry action.
+/// tags: empty, state, placeholder, zero, error, retry
+class SurgeEmptyState extends StatelessWidget {
+  const SurgeEmptyState({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.sub,
+    this.primaryLabel,
+    this.onPrimary,
+    this.ghostLabel,
+    this.onGhost,
+    this.extra,
+  });
+
+  final IconData icon;
+  final String title;
+  final String? sub;
+  final String? primaryLabel;
+  final VoidCallback? onPrimary;
+  final String? ghostLabel;
+  final VoidCallback? onGhost;
+
+  /// Optional widget rendered centered below the action stack.
+  final Widget? extra;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 96,
+            height: 96,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: t.accentTint,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 40, color: t.accentBase),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: SurgeText.title2.copyWith(color: t.inkPrimary),
+          ),
+          if (sub != null) ...[
+            const SizedBox(height: 8),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 280),
+              child: Text(
+                sub!,
+                textAlign: TextAlign.center,
+                style: SurgeText.subhead.copyWith(color: t.inkSecondary),
+              ),
+            ),
+          ],
+          if (primaryLabel != null || ghostLabel != null || extra != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (primaryLabel != null)
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(minWidth: 200),
+                      child: SurgeButton.primary(
+                        primaryLabel!,
+                        onPressed: onPrimary,
+                      ),
+                    ),
+                  if (ghostLabel != null) ...[
+                    const SizedBox(height: 6),
+                    SurgeButton.ghost(ghostLabel!, onPressed: onGhost),
+                  ],
+                  if (extra != null) ...[const SizedBox(height: 12), extra!],
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,0 +1,82 @@
+# Ladle — the flagship worked example. Real data practices, so legal_gen
+# reproduces Ladle's canonical published legal text.
+schema: 1
+
+identity:
+  slug: ladle
+  name: Ladle
+  tagline: Any recipe, one plan.
+  bundle_id_ios: com.surgestudios.ladle
+  package_android: com.surgestudios.ladle
+
+studio:
+  name: Surge Studios LLC
+  support_email: support@ladle.kitchen
+  marketing_site: https://www.surgestudios.dev
+
+brand:
+  palette:
+    accent: "#1F4D3B"       # forest green
+    accent_soft: "#2E7D5F"
+    panel: "#0E1B27"
+  logo_mode: wordmark
+  fonts:
+    display: Fraunces
+    text: Inter
+
+navigation:
+  tabs:
+    - { id: library, label: Library, icon: book-open, type: feature }
+    - { id: plan, label: Plan, icon: calendar, type: feature }
+    - { id: groceries, label: Groceries, icon: cart, type: feature }
+    - { id: you, label: You, icon: user, type: builtin }
+
+auth:
+  providers: [email, apple, google]
+  guest_mode: true
+
+monetization:
+  entitlement: plus
+  model: subscription
+  trial: { type: store_intro_offer, duration_days: 7 }
+  products:
+    - { id: plus_annual, type: auto_renew_subscription, period: P1Y, reference_price: 39.99, default: true }
+    - { id: plus_monthly, type: auto_renew_subscription, period: P1M, reference_price: 5.99 }
+  gates: [import, export, collections, macros]
+
+features:
+  remote_config: true
+  notifications: true
+  cross_promo: true
+
+legal:
+  privacy_url: https://www.surgestudios.dev/ladle/privacy
+  terms_url: https://www.surgestudios.dev/ladle/terms
+  governing_law: the State of Alabama
+  content_summary: recipes, collections, meal plans, pantry items, and grocery lists
+  domain_disclaimer: >-
+    Ladle provides general information, not professional, nutritional, or medical
+    advice. Recipe imports, macro estimates, and remixes are produced by AI models
+    and may contain errors. Cook with judgment, especially around food safety,
+    allergens, and substitutions for medical diets.
+  extra_providers:
+    - Google Gemini (recipe import and remix extraction)
+    - PostHog (product analytics)
+  data_practices:
+    collects_email: true
+    analytics: true
+    crash_reporting: true
+    tracking: false
+
+store:
+  category: Food & Drink
+  age_rating: "4+"
+  keywords: [recipes, meal plan, grocery list]
+  short_description: Any recipe, one plan.
+  full_description: |
+    Save recipes from anywhere and turn them into a weekly plan,
+    with a grocery list that stays in sync.
+
+integrations:
+  firebase_project: ladle-prod
+  revenuecat_api_key: ${REVENUECAT_KEY}

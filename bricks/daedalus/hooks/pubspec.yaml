@@ -4,3 +4,8 @@ environment:
 dependencies:
   mason: ^0.1.0
   yaml: ^3.1.2
+  # The canonical manifest schema rules (single source; it has the tests).
+  # Path resolves because this brick is used via `mason add --path` from the
+  # Daedalus checkout, so hooks always sit inside the repo.
+  manifest_validator:
+    path: ../../../tools/manifest_validator

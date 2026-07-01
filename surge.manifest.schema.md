@@ -88,6 +88,12 @@ features:
 legal:
   privacy_url: https://surgestudios.dev/ladle/privacy
   terms_url: https://surgestudios.dev/ladle/terms
+  governing_law: the State of Alabama      # optional; ToS governing-law clause
+  content_summary: recipes and meal plans  # optional; the app's user content, mid-sentence
+  domain_disclaimer: >-                     # optional; extra ToS disclaimer (e.g. health, finance)
+    Ladle provides general information, not professional or medical advice.
+  extra_providers:                          # optional; extra data processors, "Name (purpose)"
+    - Google Gemini (recipe import)
   data_practices:                   # drives the privacy policy + store data labels
     collects_email: true
     analytics: true
@@ -149,7 +155,7 @@ The `gate()` helper and entitlement check are the same in both cases. Only the t
 
 **features** - module toggles. `remote_config` enables the per-app kill-switch and the tunable trial window. `cross_promo` enables the house-ads slot.
 
-**legal** - URLs back the in-app Privacy/Terms screens and the store listing. `data_practices` drives both the generated privacy policy and the store data-disclosure labels; setting `tracking: true` wires the ATT prompt.
+**legal** - URLs back the in-app Privacy/Terms screens and the store listing. `data_practices` drives the generated Privacy Policy, Terms of Service, Apple privacy manifest, and the store data-disclosure labels (via `tools/legal_gen`); setting `tracking: true` wires the ATT prompt. The optional `governing_law`, `content_summary`, `domain_disclaimer`, and `extra_providers` tailor the generated copy to the app; omit them for correct-but-generic text. Generated per-app policies are hosted on the marketing site at `/<slug>/privacy` and `/<slug>/terms`, which is what `privacy_url` / `terms_url` should point to.
 
 **store** - listing metadata consumed by the store-metadata generator. `full_description` supports multi-line block scalars.
 

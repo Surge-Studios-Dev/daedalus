@@ -1,0 +1,34 @@
+name: surge_foundation
+description: The blank Surge canvas (Tier 1) — a runnable app with auth, nav shell, settings, and paywall wired to surge_ui, ready to fill with features.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  go_router: ^14.2.0
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  firebase_analytics: ^11.3.3
+  firebase_crashlytics: ^4.1.4
+  google_sign_in: ^6.2.1
+  sign_in_with_apple: ^6.1.3
+  purchases_flutter: ^8.1.0
+  shared_preferences: ^2.3.2
+  surge_ui:
+    path: ../packages/surge_ui
+  surge_onboarding:
+    path: ../packages/surge_onboarding
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

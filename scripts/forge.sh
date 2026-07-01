@@ -55,6 +55,19 @@ TRIAL_DAYS=$(m '.monetization.trial.duration_days')
 TRACKING=$(m '.legal.data_practices.tracking')
 ok "$NAME ($SLUG) - $MODEL / $TRIAL_TYPE ${TRIAL_DAYS}d"
 
+# ---------- 0. packages + platform folders ----------
+# The app depends on the shared surge_ui / surge_onboarding / surge_crud packages
+# (default: siblings of Daedalus in the workspace). A lean stamp ships lib/ only,
+# so add the native android/ios folders before any build. No codegen step: the
+# base uses Riverpod without build_runner.
+step "0. Packages + platform folders"
+soft "flutter pub get" flutter pub get
+if [ -d android ] && [ -d ios ]; then
+  ok "android/ios present"
+else
+  soft "scaffold platform folders" flutter create --platforms=ios,android .
+fi
+
 # ---------- 1. identifiers ----------
 step "1. Bundle id / package name"
 if command -v rename >/dev/null || dart pub global list 2>/dev/null | grep -q '^rename '; then
@@ -86,40 +99,32 @@ soft "generate launcher icons"  dart run flutter_launcher_icons
 soft "generate splash"          dart run flutter_native_splash:create
 note "both read config from pubspec.yaml; point them at assets/brand/ before running for real"
 
-# ---------- 4. legal drafts ----------
-step "4. Legal drafts"
+# ---------- 4. legal + compliance ----------
+# Generates Privacy Policy + Terms of Service (markdown + legal.json), the Apple
+# privacy manifest (PrivacyInfo.xcprivacy), and the store privacy-label
+# checklist from data_practices, via tools/legal_gen. Drafts to review, not
+# legal advice.
+step "4. Legal + compliance"
 mkdir -p legal
-gen_legal() {
-  local kind="$1" out="legal/$1.md"
-  {
-    echo "# ${NAME} - ${kind^} (DRAFT)"
-    echo
-    echo "Last updated: $(date +%Y-%m-%d). Contact: ${SUPPORT}."
-    echo
-    echo "> DRAFT generated from surge.manifest.yaml data_practices. This is a"
-    echo "> starting point, not legal advice. Have it reviewed before publishing."
-    echo
-    if [ "$kind" = "privacy" ]; then
-      echo "## Data we handle"
-      [ "$(m '.legal.data_practices.collects_email')" = "true" ]   && echo "- Account email, to sign you in and contact you about the service."
-      [ "$(m '.legal.data_practices.analytics')" = "true" ]        && echo "- Usage analytics (aggregate), to understand and improve the app."
-      [ "$(m '.legal.data_practices.crash_reporting')" = "true" ]  && echo "- Crash diagnostics, to find and fix defects."
-      [ "$TRACKING" = "true" ]                                      && echo "- Cross-app tracking identifiers (with your permission via the system prompt)."
-      echo
-      echo "## Your choices"
-      echo "- You can delete your account and associated data in-app under Account."
-      echo "- You can request export or deletion by emailing ${SUPPORT}."
-    else
-      echo "## Terms"
-      echo "- ${NAME} is provided as-is. Subscriptions and purchases are billed"
-      echo "  through the App Store or Google Play and managed there."
-      echo "- The current monetization model is: ${MODEL}."
-    fi
-  } > "$out"
-  ok "wrote $out"
-}
-gen_legal privacy
-gen_legal terms
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+LEGAL_TOOL="$SCRIPT_DIR/../tools/legal_gen"
+MANIFEST_ABS="$(cd "$(dirname "$MANIFEST")" && pwd)/$(basename "$MANIFEST")"
+LEGAL_OUT="$(pwd)/legal"
+if command -v dart >/dev/null && [ -d "$LEGAL_TOOL" ]; then
+  ( cd "$LEGAL_TOOL" && dart pub get >/dev/null 2>&1 \
+      && dart run bin/legal_gen.dart "$MANIFEST_ABS" "$LEGAL_OUT" ) \
+    && ok "wrote legal/{privacy.md,terms.md,legal.json,PrivacyInfo.xcprivacy,store-privacy-labels.md}" \
+    || note "legal_gen failed; run it manually from $LEGAL_TOOL"
+  # Apple wants the privacy manifest inside the iOS Runner.
+  if [ -d ios/Runner ] && [ -f legal/PrivacyInfo.xcprivacy ]; then
+    cp legal/PrivacyInfo.xcprivacy ios/Runner/PrivacyInfo.xcprivacy
+    ok "copied PrivacyInfo.xcprivacy into ios/Runner (add it to the Xcode target)"
+  fi
+  note "register on the marketing site: copy legal/legal.json -> Surge-Studios-Site/src/content/legal/$SLUG.json, then 'npm run build:legal'. It appears at /$SLUG/privacy, /$SLUG/terms and on the master policy's covered-products list."
+  note "add to the portfolio: 'dart run portfolio_gen $MANIFEST_ABS' from tools/portfolio_gen, paste the entry into Surge-Studios-Site/src/content/portfolio.ts, then fill the TODO narrative."
+else
+  note "dart or tools/legal_gen missing; generate legal assets manually"
+fi
 
 # ---------- 5. secrets ----------
 step "5. Secrets"
@@ -138,6 +143,8 @@ echo
 bold "RevenueCat"
 echo "  - Create the app, an entitlement '$ENTITLEMENT', and these products:"
 yq -r '.monetization.products[] | "      - " + .id + " (" + .type + ", ref " + (.reference_price|tostring) + ")"' "$MANIFEST"
+echo "  - Then set useRevenueCat=true in lib/app/bootstrap.dart and pass the key:"
+echo "      flutter run --dart-define=REVENUECAT_KEY=<public sdk key>"
 if [ "$MODEL" = "subscription" ] || [ "$MODEL" = "hybrid" ]; then
   echo "  - Configure a ${TRIAL_DAYS}-day introductory free trial on the subscription products."
 fi
@@ -149,6 +156,11 @@ echo
 bold "Signing"
 echo "  - iOS: set up Fastlane match or Codemagic signing."
 echo "  - Android: generate the upload keystore and wire it into the release build."
+echo
+bold "Flip the seams to live (they ship as working mocks)"
+echo "  - Auth: after flutterfire configure, set useFirebase=true in lib/app/bootstrap.dart"
+echo "    and enable Email/Password (and Apple/Google) in the Firebase console."
+echo "  - Purchases: set useRevenueCat=true (see the RevenueCat step above)."
 echo
 bold "Before submission"
 echo "  - Replace every lib/features/* stub with real functionality (stub-only fails Apple 4.3)."

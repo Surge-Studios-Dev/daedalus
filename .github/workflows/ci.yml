@@ -1,0 +1,82 @@
+name: CI
+
+# Analyzes + tests the whole framework: the shared packages, the Tier-3
+# systems, the blank foundation, the brick hooks, the manifest validator, and
+# the catalog index. Runs on every push / PR.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  packages:
+    name: ${{ matrix.pkg }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg:
+          - packages/surge_ui
+          - packages/surge_onboarding
+          - packages/surge_crud
+          - packages/surge_rating
+          - foundation
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+        working-directory: ${{ matrix.pkg }}
+      - run: flutter analyze
+        working-directory: ${{ matrix.pkg }}
+      - run: flutter test
+        working-directory: ${{ matrix.pkg }}
+
+  catalog:
+    name: surge_ui catalog is generated
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+        working-directory: packages/surge_ui
+      - run: dart run tool/build_catalog.dart --check
+        working-directory: packages/surge_ui
+
+  tooling:
+    name: manifest validator + brick hooks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - name: manifest_validator
+        working-directory: tools/manifest_validator
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+      - name: validate the example manifest
+        working-directory: tools/manifest_validator
+        run: dart run bin/validate.dart ../../surge.manifest.example.yaml
+      - name: legal_gen
+        working-directory: tools/legal_gen
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+      - name: portfolio_gen
+        working-directory: tools/portfolio_gen
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+      - name: brick hooks analyze
+        working-directory: bricks/daedalus/hooks
+        run: |
+          dart pub get
+          dart analyze
+      - name: brick sync-check (foundation <-> __brick__ parity)
+        run: dart scripts/check_brick_sync.dart

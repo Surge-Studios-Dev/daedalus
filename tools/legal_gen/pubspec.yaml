@@ -1,0 +1,14 @@
+name: legal_gen
+description: Generates a Surge app's Privacy Policy, Terms of Service, Apple privacy manifest, and store privacy-label checklist from its surge.manifest.yaml.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  yaml: ^3.1.2
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^5.0.0

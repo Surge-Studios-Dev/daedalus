@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:manifest_validator/manifest_validator.dart';
 import 'package:mason/mason.dart';
 import 'package:yaml/yaml.dart';
 
@@ -13,6 +14,17 @@ Future<void> run(HookContext context) async {
     exit(1);
   }
   final m = loadYaml(file.readAsStringSync()) as YamlMap;
+
+  // Fail fast on a bad manifest, before anything is stamped. The rules live
+  // in tools/manifest_validator (path dep) - one rule set, one test suite.
+  final problems = validateManifest(m);
+  if (problems.isNotEmpty) {
+    context.logger.err('Invalid surge.manifest.yaml (${problems.length}):');
+    for (final p in problems) {
+      context.logger.err('  - $p');
+    }
+    exit(1);
+  }
 
   final identity = m['identity'] as YamlMap;
   final brand = (m['brand'] as YamlMap?) ?? YamlMap();
@@ -37,6 +49,10 @@ Future<void> run(HookContext context) async {
   // to satisfy App Store Guideline 4.8.
   final hasSocial = providers.any((p) => p != 'email');
 
+  final trialType = (trial['type'] ?? 'none').toString();
+  final trialDays = (trial['duration_days'] as num?)?.toInt() ?? 0;
+  final hasTrial = trialType != 'none' && trialDays > 0;
+
   context.vars = {
     ...context.vars,
     'slug': identity['slug'],
@@ -55,8 +71,9 @@ Future<void> run(HookContext context) async {
     'guest_mode': auth['guest_mode'] ?? false,
     'entitlement': mon['entitlement'] ?? 'pro',
     'mon_model': mon['model'] ?? 'subscription',
-    'trial_type': trial['type'] ?? 'none',
-    'trial_days': trial['duration_days'] ?? 0,
+    'trial_type': trialType,
+    'trial_days': trialDays,
+    'has_trial': hasTrial,
     'remote_config': features['remote_config'] ?? false,
     'notifications': features['notifications'] ?? false,
     'cross_promo': features['cross_promo'] ?? false,

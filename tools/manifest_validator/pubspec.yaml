@@ -1,0 +1,14 @@
+name: manifest_validator
+description: Validates a surge.manifest.yaml against the schema rules before it is used to stamp an app. Pure Dart; the single rule set, imported by the brick's pre_gen hook.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  yaml: ^3.1.2
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^5.0.0

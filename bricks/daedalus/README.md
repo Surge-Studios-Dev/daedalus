@@ -1,33 +1,71 @@
 # daedalus (Mason brick)
 
 Stamps a launch-ready Flutter app from a `surge.manifest.yaml`. Universal
-infrastructure (auth, nav, settings, paywall, telemetry, cross-promo) is filled
-in; domain tabs are wired stubs.
+infrastructure (auth, nav, settings, paywall, telemetry, onboarding) is filled
+in and runs on mocks out of the box; domain tabs are wired, themed stubs. The
+stamp pipeline is verified in CI: the example manifest produces an app that
+analyzes clean and passes its smoke test.
 
 ## Use
+
 ```bash
-mason add daedalus --path bricks/daedalus   # or from a brick registry
-cd path/to/new-app-dir                   # must contain surge.manifest.yaml
-mason make daedalus                      # pre_gen reads the manifest -> vars
+mason add daedalus --path bricks/daedalus
+cd path/to/new-app-dir            # must contain surge.manifest.yaml
+mason make daedalus -c vars.json  # pre_gen reads the manifest -> vars
+```
+
+`vars.json` supplies non-manifest stamping options (see below) and avoids
+interactive prompts. Minimal example:
+
+```json
+{ "manifest": "surge.manifest.yaml" }
 ```
 
 ## How it works
-- `hooks/pre_gen.dart` reads `surge.manifest.yaml` and flattens it into every
-  Mason var (palette -> Color literals, providers -> auth toggles, monetization
-  -> model/trial, navigation.tabs -> the tab list). The manifest is the only
-  thing a human edits.
-- `__brick__/` is the templated app. `{{mustache}}` slots are filled from vars.
-- `hooks/post_gen.dart` scaffolds one stub per non-builtin tab, writes
-  `lib/features/feature_registry.dart` (tab id -> screen, read by the router),
-  then runs `flutter pub get` and `dart format`.
 
-## What is real vs skeleton in this brick
-- Real / framework-light: tokens from palette, telemetry taxonomy, the
-  model-agnostic `gate()` + `Entitlement` + `TrialWindow`, cross-promo slot,
-  account deletion flow, the manifest->vars hooks, the feature-registry generation.
-- Skeleton (correct shape, verify against installed versions, fill TODOs):
-  bootstrap (Firebase/RevenueCat init), router (go_router 17 StatefulShellRoute),
-  auth provider wiring, paywall offering/purchase rendering, sign-in UI.
+- `hooks/pre_gen.dart` validates the manifest (rules imported from
+  `tools/manifest_validator` — single rule set, tested there) and flattens it
+  into Mason vars: palette -> Color literals, providers -> auth toggles,
+  monetization -> model/trial/entitlement, navigation.tabs -> the tab list.
+- `__brick__/` is the app template — a mirror of `foundation/` (see the sync
+  contract below).
+- `hooks/post_gen.dart` generates `lib/app/nav_config.dart`, one themed stub
+  screen per feature tab, and `lib/features/feature_registry.dart`, then runs
+  `flutter pub get` + `dart format`.
 
-Pin the `pubspec.yaml` versions to your verified set before relying on a build.
-This brick has not been compiled; treat the skeleton files as scaffolding.
+## surge_* dependency modes
+
+Stamped apps depend on the shared `surge_ui` / `surge_onboarding` packages.
+Two modes, chosen at stamp time via `use_git_deps` (default: **path**):
+
+| Mode | When | vars.json |
+|---|---|---|
+| **path** (default) | Workspace dev: the app sits as a sibling of the Daedalus checkout | `{ "surge_ui_path": "../Daedalus/packages/surge_ui", ... }` (defaults already match this layout) |
+| **git** | Standalone app repo / CI: pin packages to a ref of the Daedalus repo | `{ "use_git_deps": true, "surge_git_url": "https://github.com/Surge-Studios-Dev/Daedalus.git", "surge_git_ref": "main" }` |
+
+Git mode requires the packages to actually exist at that ref on the remote —
+push Daedalus before stamping a standalone app. For a private repo, the
+machine running `pub get` needs git access to it. Prefer pinning
+`surge_git_ref` to a tag or sha over `main` so app builds are reproducible.
+
+## Sync contract with `foundation/`
+
+`foundation/` is the source of truth; `__brick__/` mirrors it byte-for-byte
+**except** six deliberately divergent files (four mustache-templated: app,
+bootstrap, sign-in, paywall; two forked to read the generated nav config:
+router, tab shell) and `features/home/` (post_gen generates per-tab stubs
+instead). `scripts/check_brick_sync.dart` enforces this in CI — run it after
+any foundation edit, and mirror the change here. Adding a file to the
+divergent allowlist is an architectural decision: it's one more file that must
+be edited twice.
+
+## What is real vs stub in a stamped app
+
+- Working out of the box (on mock seams): sign in/up + guest mode, onboarding,
+  paywall + `gate()`, settings/account/legal, telemetry taxonomy, theming from
+  the manifest palette.
+- One-flag flips to live (see `lib/app/bootstrap.dart` and `scripts/forge.sh`):
+  Firebase auth/analytics/Crashlytics (`useFirebase`), RevenueCat
+  (`useRevenueCat` + `--dart-define=REVENUECAT_KEY=`).
+- Yours to build: every `lib/features/<tab>/` stub. Stub-only apps fail Apple
+  review (4.3); replace them before submission.

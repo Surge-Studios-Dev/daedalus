@@ -1,0 +1,30 @@
+name: CI
+
+# Analyze + test on every push / PR. Kept free of GitHub expression syntax on
+# purpose, so nothing collides with the brick's mustache rendering.
+#
+{{#use_git_deps}}
+# surge_* packages resolve from a git ref, so CI works in this repo standalone.
+# If the Daedalus repo is private, give the runner access (e.g. a deploy key or
+# an https token in the git URL) before this will fetch.
+{{/use_git_deps}}
+{{^use_git_deps}}
+# NOTE: this app depends on the shared surge_* packages by path (workspace
+# layout). In an isolated app repo those paths won't resolve — restamp with
+# use_git_deps=true (or edit pubspec.yaml to git refs) before relying on CI.
+{{/use_git_deps}}
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
