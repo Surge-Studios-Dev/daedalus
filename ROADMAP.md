@@ -3,7 +3,8 @@
 State of the Surge app factory as of 2026-07-01, and the phased plan to reach
 the goal: **an app released within ~1 week of the idea being fleshed out**, with
 app, backend, store approval, and web presence all produced from one manifest.
-Companion to [FRAMEWORK.md](FRAMEWORK.md) (architecture) and
+Companion to the [docs/ wiki](docs/README.md) (how everything works, with
+diagrams), [FRAMEWORK.md](FRAMEWORK.md) (architecture decisions), and
 [DAEDALUS.md](DAEDALUS.md) (the app contract).
 
 ---

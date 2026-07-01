@@ -8,6 +8,9 @@ marketing pages. Producing a new app should be filling in a manifest plus the
 domain stubs, not rebuilding plumbing.
 
 ## Contents
+- **[`docs/` — the wiki](docs/README.md)**: how every piece works and
+  connects, with flow diagrams throughout and `🔲 TODO` stubs for future
+  systems. **Start here.**
 - `DAEDALUS.md` - what a launch-ready app contains; the design contract.
 - `FRAMEWORK.md` - the shared-framework architecture (tiers, token contract,
   component-library conventions, distribution, promotion).
