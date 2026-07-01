@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:surge_ui/surge_ui.dart';
 
+import '../rating/rating.dart';
 import 'appearance_controller.dart';
 
 /// SET-01 · Settings ("You" tab). Grouped rows composed entirely from surge_ui.
@@ -47,15 +48,20 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SurgeGroupSection(
+          SurgeGroupSection(
             header: 'Support',
             children: [
               SurgeGroupRow(
+                title: 'Rate this app',
+                icon: Icons.star_outline,
+                onPressed: () => rateApp(ref),
+              ),
+              const SurgeGroupRow(
                 title: 'Contact support',
                 icon: Icons.mail_outline,
                 chevron: true,
               ),
-              SurgeGroupRow(
+              const SurgeGroupRow(
                 title: 'FAQ',
                 icon: Icons.help_outline,
                 chevron: true,

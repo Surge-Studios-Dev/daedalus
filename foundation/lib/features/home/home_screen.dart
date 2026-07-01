@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:surge_ui/surge_ui.dart';
 
 import '../../modules/paywall/gate.dart';
@@ -47,6 +48,11 @@ class HomeScreen extends ConsumerWidget {
                 'crown to see gate() present the paywall.',
                 style: SurgeText.body.copyWith(color: t.inkSecondary),
                 textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: SurgeSpace.lg),
+              SurgeButton.ghost(
+                'Notes (CRUD reference)',
+                onPressed: () => context.push('/notes'),
               ),
             ],
           ),

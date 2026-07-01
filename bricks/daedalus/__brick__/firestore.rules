@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// {{name}} Firestore rules - deny by default.
+//
+// Factory convention (matches surge_crud usage in the app): every user's data
+// lives under users/{uid}/..., and only that user can touch it. Anything not
+// explicitly matched below is denied by the catch-all, so a new collection is
+// unreachable until a rule is written for it - that is the point.
+//
+// Learned on Ladle: the recursive {document=**} wildcard does NOT match the
+// bare parent doc. Without the outer rule on users/{uid} itself, writes to
+// the user doc (profile fields, seed markers) get denied while subcollection
+// writes succeed - a confusing partial failure. Keep both rules.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Per-user data. Owner can do anything; everyone else is denied.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    // Pattern: server-only shared data (caches, curated content). Clients
+    // read, only Cloud Functions (admin SDK, bypasses rules) write.
+    // match /content_cache/{id} {
+    //   allow read: if request.auth != null;
+    //   allow write: if false;
+    // }
+
+    // Pattern: shared collection with tightly shaped client writes. Allow
+    // only known keys and enforce value shapes so clients cannot forge
+    // counters or stuff arbitrary fields (see Ladle's pantry_suggestions
+    // for a worked example with create/update split).
+    // match /suggestions/{slug} {
+    //   allow read: if request.auth != null;
+    //   allow create: if request.auth != null
+    //     && request.resource.data.keys().hasOnly(['name', 'uses'])
+    //     && request.resource.data.name is string
+    //     && request.resource.data.uses == 1;
+    //   allow update, delete: if false;
+    // }
+
+    // Catch-all: deny. Never delete this.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

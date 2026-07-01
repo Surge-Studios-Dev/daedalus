@@ -24,6 +24,12 @@ dependencies:
     path: ../packages/surge_ui
   surge_onboarding:
     path: ../packages/surge_onboarding
+  # CRUD reference feature (features/notes) - brings cloud_firestore along.
+  surge_crud:
+    path: ../packages/surge_crud
+  # "Rate this app" settings row + review-moment prompts.
+  surge_rating:
+    path: ../packages/surge_rating
 
 dev_dependencies:
   flutter_test:

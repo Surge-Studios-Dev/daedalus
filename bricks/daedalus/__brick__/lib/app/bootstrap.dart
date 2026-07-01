@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:surge_rating/surge_rating.dart';
 
 import '../firebase_options.dart';
 import '../modules/auth/auth_service.dart';
 import '../modules/auth/firebase_auth_service.dart';
 import '../modules/paywall/purchase_service.dart';
 import '../modules/paywall/revenuecat_purchase_service.dart';
+import '../modules/rating/rating.dart';
 import '../modules/storage/key_value_store.dart';
 import '../modules/storage/shared_prefs_store.dart';
 import '../modules/telemetry/analytics.dart';
@@ -45,6 +47,12 @@ Future<void> bootstrap() async {
   final prefs = await SharedPreferences.getInstance();
   overrides.add(
     keyValueStoreProvider.overrideWithValue(SharedPrefsKeyValueStore(prefs)),
+  );
+
+  // Real store-review prompt on devices. Tests never run bootstrap, so they
+  // keep the mock default.
+  overrides.add(
+    ratingServiceProvider.overrideWithValue(InAppReviewRatingService()),
   );
 
   if (useFirebase) {

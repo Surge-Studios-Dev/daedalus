@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/home/home_screen.dart';
+import '../features/notes/notes_screen.dart';
 import '../modules/auth/auth_controller.dart';
 import '../modules/auth/sign_in_screen.dart';
 import '../modules/auth/sign_up_screen.dart';
@@ -86,6 +87,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/account',
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const AccountScreen(),
+      ),
+      // NTS-01, the CRUD reference feature (foundation only, not stamped).
+      GoRoute(
+        path: '/notes',
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => const NotesScreen(),
       ),
       GoRoute(
         path: '/paywall',

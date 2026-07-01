@@ -37,10 +37,13 @@ const divergent = {
   'modules/shell/tab_shell.dart': 'nav_config.dart',
 };
 
-/// lib-relative paths that exist only in the foundation. The brick's post_gen
-/// generates their per-app replacements (one stub screen per feature tab).
+/// lib-relative paths that exist only in the foundation. Entries ending in
+/// '/' are directory prefixes. `features/home` is replaced per app by
+/// post_gen's generated stubs; `features/notes/` is the CRUD reference
+/// feature (a living example, not something every app ships).
 const foundationOnly = {
   'features/home/home_screen.dart',
+  'features/notes/',
 };
 
 /// Repo-root-relative pairs that must match byte-for-byte.
@@ -68,13 +71,17 @@ void main() {
   final fFiles = filesUnder(fLib);
   final bFiles = filesUnder(bLib);
 
+  bool isFoundationOnly(String rel) => foundationOnly.any(
+        (e) => e.endsWith('/') ? rel.startsWith(e) : rel == e,
+      );
+
   // 1 + 2: walk the foundation, compare against the brick.
   for (final rel in fFiles.toList()..sort()) {
     final inBrick = bFiles.contains(rel);
-    if (foundationOnly.contains(rel)) {
+    if (isFoundationOnly(rel)) {
       if (inBrick) {
         errors.add('$rel is FOUNDATION_ONLY but exists in the brick '
-            '(post_gen generates its replacement - delete the brick copy)');
+            '(the brick must not ship it - delete the brick copy)');
       }
       continue;
     }
@@ -114,7 +121,10 @@ void main() {
     }
   }
   for (final rel in foundationOnly) {
-    if (!fFiles.contains(rel)) {
+    final present = rel.endsWith('/')
+        ? fFiles.any((f) => f.startsWith(rel))
+        : fFiles.contains(rel);
+    if (!present) {
       errors.add('FOUNDATION_ONLY entry $rel is missing from foundation/lib '
           '(stale allowlist?)');
     }
@@ -136,10 +146,11 @@ void main() {
   });
 
   if (errors.isEmpty) {
-    final mirrored = fFiles.length - foundationOnly.length - divergent.length;
+    final fOnlyCount = fFiles.where(isFoundationOnly).length;
+    final mirrored = fFiles.length - fOnlyCount - divergent.length;
     stdout.writeln('brick sync OK: $mirrored mirrored, '
         '${divergent.length} divergent (templated/forked), '
-        '${foundationOnly.length} foundation-only, root parity clean.');
+        '$fOnlyCount foundation-only, root parity clean.');
     return;
   }
   stderr.writeln('brick sync FAILED (${errors.length}):');

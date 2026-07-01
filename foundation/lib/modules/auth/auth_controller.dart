@@ -80,3 +80,10 @@ final userEmailProvider = Provider<String?>((ref) {
   ref.watch(authControllerProvider); // rebuild when auth changes
   return ref.watch(authServiceProvider).currentUser?.email;
 });
+
+/// The signed-in user's uid (null for guests / signed out). Per-user data
+/// paths (`users/{uid}/...`, matching firestore.rules) key off this.
+final userUidProvider = Provider<String?>((ref) {
+  ref.watch(authControllerProvider); // rebuild when auth changes
+  return ref.watch(authServiceProvider).currentUser?.uid;
+});

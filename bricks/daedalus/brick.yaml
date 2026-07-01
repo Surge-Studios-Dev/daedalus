@@ -36,6 +36,7 @@ vars:
   notifications: { type: boolean, default: false }
   cross_promo: { type: boolean, default: true }
   support_email: { type: string, default: support@surgestudios.dev }
+  firebase_project: { type: string, default: my_app-prod }
   # -- surge_* dependency mode -------------------------------------------
   # path (default): workspace dev, apps sit as siblings of the Daedalus
   # checkout. git: standalone app repos / CI, pinned to a ref. Requires the
@@ -59,6 +60,10 @@ vars:
     type: string
     description: Path to the surge_onboarding System package (see surge_ui_path).
     default: ../Daedalus/packages/surge_onboarding
+  surge_rating_path:
+    type: string
+    description: Path to the surge_rating System package (see surge_ui_path).
+    default: ../Daedalus/packages/surge_rating
   tabs:
     type: array
     description: Filled by pre_gen from navigation.tabs.

@@ -1,0 +1,26 @@
+{
+  "name": "backend",
+  "private": true,
+  "description": "Cloud Functions + Firestore rules tests. Deploy: firebase deploy --only functions,firestore",
+  "engines": {
+    "node": "20"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && npm run test:rules",
+    "test:rules": "firebase emulators:exec --only firestore \"mocha test/*.test.mjs --timeout 15000\"",
+    "serve": "npm run build && firebase emulators:start --only auth,firestore,functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0",
+    "firebase-functions": "^6.1.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.0",
+    "firebase": "^11.1.0",
+    "firebase-tools": "^13.29.0",
+    "mocha": "^11.0.0",
+    "typescript": "^5.6.0"
+  }
+}

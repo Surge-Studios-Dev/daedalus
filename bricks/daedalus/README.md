@@ -48,6 +48,22 @@ push Daedalus before stamping a standalone app. For a private repo, the
 machine running `pub get` needs git access to it. Prefer pinning
 `surge_git_ref` to a tag or sha over `main` so app builds are reproducible.
 
+## Backend (stamped with every app)
+
+- `firestore.rules` — deny-by-default; per-user isolation at `users/{uid}/...`
+  (the path surge_crud features use; see `foundation/lib/features/notes` for
+  the reference integration). Commented patterns for server-only and
+  shaped-shared collections.
+- `backend/` — one npm package: Cloud Functions in TypeScript
+  (`onAccountDeleted` purges a deleted user's Firestore data — the
+  account-deletion story the privacy policy promises — plus the `ping`
+  callable pattern) and Firestore **rules unit tests** that pin the security
+  contract. `npm test` runs them under the emulator (needs Java; CI has it).
+- `firebase.json` / `.firebaserc` (project id from the manifest) /
+  `firestore.indexes.json`.
+- Deploy rules BEFORE flipping `useFirebase` in bootstrap:
+  `firebase deploy --only firestore,functions`.
+
 ## Sync contract with `foundation/`
 
 `foundation/` is the source of truth; `__brick__/` mirrors it byte-for-byte

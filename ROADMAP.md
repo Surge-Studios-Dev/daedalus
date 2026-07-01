@@ -23,6 +23,7 @@ a deliberately broken manifest is rejected with precise errors before stamping.
 | `packages/surge_rating` | 3 | `RatingService` + mock + in_app_review impl | 1 |
 | `foundation/` | 1 | Blank canvas: auth, purchases, storage, analytics, crash reporting — all behind swappable service seams with working mocks; onboarding; settings stack; auth→onboarding→app routing | 9 |
 | `bricks/daedalus` | factory | Stamps the foundation from a manifest: tabs/palette/providers/trial/entitlement templated, nav config + themed stubs + registry + smoke test + CI generated; fail-fast manifest validation in pre_gen | (stamp-verified) |
+| `bricks/daedalus` backend | factory | Per-app deny-by-default firestore.rules (per-user isolation), Functions scaffold (account-deletion purge + callable pattern), rules unit tests, firebase.json/.firebaserc from the manifest | 4 (emulator-verified) |
 | `tools/manifest_validator` | factory | Canonical schema rules + CLI | 6 |
 | `tools/legal_gen` | factory | Privacy + ToS (md + JSON), Apple `PrivacyInfo.xcprivacy`, store privacy-label checklist — from `data_practices` | 8 |
 | `tools/portfolio_gen` | factory | Manifest → portfolio-entry seed (narrative left as TODOs) | 1 |
@@ -58,7 +59,7 @@ unexplained difference, clobbered template, or missing mirror file.
 | One manifest drives legal/compliance | **Done** (privacy, ToS, Apple privacy manifest, store labels) |
 | One manifest drives the website | **Partial** (legal fully automated; portfolio semi-automated; no per-app marketing page template) |
 | Store approval workflow | **Partial** (compliance assets yes; upload/signing/readiness-lint no) |
-| Backend (rules/functions) | **Missing** (client-side surge_crud only) |
+| Backend (rules/functions) | **Done** (deny-by-default rules + tested; Functions scaffold with account purge; Phase 2) |
 | Idea → spec front door | **Done** (INTAKE → manifest → spec_gen skeleton → written spec; Phase 1) |
 | Live validation on device/Firebase/RevenueCat | **Deferred** (user-gated; all code paths ready) |
 
@@ -69,7 +70,7 @@ unexplained difference, clobbered template, or missing mirror file.
 | D1 | ~~Foundation↔brick sync is manual~~ | ~~High~~ | **Fixed (Phase 0)**: `scripts/check_brick_sync.dart` + CI job |
 | D2 | ~~Stamped apps use **path deps** to `surge_*` packages~~ | ~~High at first external repo~~ | **Fixed (Phase 0)**: `use_git_deps` stamp var — path (default, workspace dev) or git ref (standalone repos). Git mode needs Daedalus **pushed** first; see brick README |
 | D3 | ~~Validator rules duplicated (tools pkg + pre_gen inline mirror)~~ | ~~Medium~~ | **Fixed (Phase 0)**: hooks path-depend on manifest_validator; inline mirror deleted |
-| D4 | `surge_crud` / `surge_rating` have no reference integration in foundation | Medium — Tier-3 plug-in contract only proven once (onboarding) | Add a small `notes` demo feature (crud) + a rate-us settings row (rating) |
+| D4 | ~~`surge_crud` / `surge_rating` have no reference integration~~ | ~~Medium~~ | **Fixed (Phase 2)**: `features/notes` CRUD reference (foundation-only) + rate-us settings row (stamped everywhere) |
 | D5 | `app_gated` trial window not enforced (manifest supports one_time model; gate() ignores trial days); Remote Config + notifications flags unwired | Medium — contract promise unmet for one_time apps | Wire in Phase 5 (or when first one_time app appears) |
 | D6 | Cross-promo module from DAEDALUS.md contract not built | Low — needs 2+ live apps to matter | Phase 5 |
 | D7 | No golden tests; gallery verification is manual | Low | Add goldens when visual churn slows |
@@ -123,15 +124,26 @@ spec → stamp):
 - Per-app CLAUDE.md template: spec is source-of-truth #1, screen IDs in doc
   comments and commits, §8 edge cases become tests, spec-first working rule.
 
-### Phase 2 — Backend safety rail · every app needs it; absent today
-- Brick gains a `backend/` template: `firebase.json`, `.firebaserc`
-  placeholder, deny-by-default `firestore.rules` with per-user isolation
-  matching surge_crud's conventions, `firestore.indexes.json`, a TS Functions
-  scaffold with one callable.
-- Rules unit tests (@firebase/rules-unit-testing + emulator) wired into the
-  per-app CI template.
-- D4 closed: `notes` demo feature in foundation on `surge_crud`, covered by the
-  rules template.
+### Phase 2 — Backend safety rail · ✅ done 2026-07-01
+- Every stamp now ships a backend: `firebase.json`, `.firebaserc` (project id
+  from the manifest), deny-by-default `firestore.rules` with per-user
+  isolation at `users/{uid}/...` (carrying Ladle's parent-doc/`{document=**}`
+  lesson, plus commented server-only and shaped-shared-write patterns), and
+  `firestore.indexes.json`.
+- `backend/` npm package: TS Functions (`onAccountDeleted` recursively purges
+  a deleted user's Firestore data — the account-deletion promise the privacy
+  policy makes; `ping` shows the v2 callable pattern) + 4 rules unit tests
+  pinning the security contract (unauthed denied, owner allowed incl.
+  subcollections, cross-user denied, deny-by-default). Verified locally under
+  the real emulator (npm install + tsc build + 4/4 green); the stamped app's
+  CI runs them per push.
+- D4 closed both ways: `foundation/lib/features/notes` is the living
+  CrudRepository reference (in-memory default → per-user Firestore at exactly
+  the rules-isolated path when useFirebase flips; NTS-01, widget-tested), and
+  settings gained a "Rate this app" row on the surge_rating seam (mock in
+  tests, InAppReview on devices; stamped into every app).
+- forge.sh: backend step + deploy-rules-BEFORE-useFirebase ordering in the
+  launch checklist.
 
 ### Phase 3 — Release rail · turns forge's checklist into buttons
 - Fastlane template (beta/release lanes; match + keystore notes).
@@ -154,10 +166,10 @@ enforcement (D5); cross-promo (D6); sunset playbook.
 ## 5. Sequencing rationale
 
 0 → 1 → 2 → 3, with 4 whenever accounts/device are available (nothing blocks
-on it, and nothing in 1–3 requires it). Phases 0 and 1 are done: the factory
-is protected and the front door exists. Next is Phase 2, the safety-critical
-backend layer no app should ship without; then Phase 3 converts the remaining
-manual toil. The first real app should be built *during* phases 2–4, using
-the factory in anger — run INTAKE.md on the next idea and build it through
-the pipeline; that exercise, not more scaffolding, is what will surface the
-next round of truth.
+on it). Phases 0–2 are done: the factory is protected, the front door exists,
+and every stamp ships a tested backend safety rail. Phase 3 (release rail:
+Fastlane, store metadata from the manifest, ship_check linter) converts the
+remaining manual toil. The first real app should be built *now*, during
+phases 3–4 — run INTAKE.md on the next idea and take it through the pipeline;
+that exercise, not more scaffolding, is what will surface the next round of
+truth.

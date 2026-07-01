@@ -78,6 +78,8 @@ Future<void> run(HookContext context) async {
     'notifications': features['notifications'] ?? false,
     'cross_promo': features['cross_promo'] ?? false,
     'support_email': studio['support_email'] ?? '',
+    'firebase_project':
+        (m['integrations'] as YamlMap?)?['firebase_project'] ?? '',
     'tabs': (nav['tabs'] as YamlList?)
             ?.map((t) => {
                   'id': t['id'],

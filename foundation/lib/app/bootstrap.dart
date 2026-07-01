@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:surge_crud/surge_crud.dart';
+import 'package:surge_rating/surge_rating.dart';
 
+import '../features/notes/notes.dart';
 import '../firebase_options.dart';
+import '../modules/auth/auth_controller.dart';
 import '../modules/auth/auth_service.dart';
 import '../modules/auth/firebase_auth_service.dart';
 import '../modules/paywall/purchase_service.dart';
 import '../modules/paywall/revenuecat_purchase_service.dart';
+import '../modules/rating/rating.dart';
 import '../modules/storage/key_value_store.dart';
 import '../modules/storage/shared_prefs_store.dart';
 import '../modules/telemetry/analytics.dart';
@@ -47,6 +52,12 @@ Future<void> bootstrap() async {
     keyValueStoreProvider.overrideWithValue(SharedPrefsKeyValueStore(prefs)),
   );
 
+  // Real store-review prompt on devices. Tests never run bootstrap, so they
+  // keep the mock default.
+  overrides.add(
+    ratingServiceProvider.overrideWithValue(InAppReviewRatingService()),
+  );
+
   if (useFirebase) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -63,6 +74,20 @@ Future<void> bootstrap() async {
       authServiceProvider.overrideWithValue(FirebaseAuthService()),
       analyticsProvider.overrideWithValue(FirebaseAnalyticsService()),
       errorReporterProvider.overrideWithValue(CrashlyticsErrorReporter()),
+      // The CRUD reference seam: notes move to per-user Firestore, at the
+      // exact path firestore.rules isolates (users/{uid}/notes). Guests stay
+      // on the in-memory repository until they create an account.
+      notesRepositoryProvider.overrideWith((ref) {
+        final uid = ref.watch(userUidProvider);
+        return uid == null
+            ? InMemoryCrudRepository<Note>(idOf: (n) => n.id)
+            : FirestoreCrudRepository<Note>(
+                collectionPath: 'users/$uid/notes',
+                idOf: (n) => n.id,
+                toMap: (n) => n.toMap(),
+                fromMap: Note.fromMap,
+              );
+      }),
     ]);
   }
 

@@ -126,6 +126,21 @@ else
   note "dart or tools/legal_gen missing; generate legal assets manually"
 fi
 
+# ---------- 4b. backend (rules + functions) ----------
+# The stamp ships firestore.rules (deny-by-default, per-user isolation),
+# firestore.indexes.json, and backend/ (Functions: account-deletion purge +
+# callable pattern; rules unit tests). Deploy rules BEFORE flipping
+# useFirebase, or first writes fail against the default locked project.
+step "4b. Backend (rules + functions)"
+if [ -d backend ]; then
+  soft "npm install (backend)" bash -c 'cd backend && npm install --no-audit --no-fund'
+  note "rules tests: (cd backend && npm test) - needs Java for the Firestore emulator"
+  note "deploy rules + indexes: firebase deploy --only firestore"
+  note "deploy functions (account-deletion data purge): firebase deploy --only functions"
+else
+  note "no backend/ directory (older stamp) - restamp or copy the backend template"
+fi
+
 # ---------- 5. secrets ----------
 step "5. Secrets"
 if [ -n "${REVENUECAT_KEY:-}" ]; then
@@ -158,6 +173,8 @@ echo "  - iOS: set up Fastlane match or Codemagic signing."
 echo "  - Android: generate the upload keystore and wire it into the release build."
 echo
 bold "Flip the seams to live (they ship as working mocks)"
+echo "  - FIRST deploy the backend: firebase deploy --only firestore,functions"
+echo "    (rules are deny-by-default; functions include the account-deletion purge)."
 echo "  - Auth: after flutterfire configure, set useFirebase=true in lib/app/bootstrap.dart"
 echo "    and enable Email/Password (and Apple/Google) in the Firebase console."
 echo "  - Purchases: set useRevenueCat=true (see the RevenueCat step above)."

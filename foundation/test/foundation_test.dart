@@ -6,7 +6,9 @@ import 'package:surge_foundation/modules/auth/auth_controller.dart';
 import 'package:surge_foundation/modules/auth/auth_service.dart';
 import 'package:surge_foundation/modules/onboarding/onboarding_controller.dart';
 import 'package:surge_foundation/modules/paywall/purchase_service.dart';
+import 'package:surge_foundation/modules/rating/rating.dart';
 import 'package:surge_foundation/modules/storage/key_value_store.dart';
+import 'package:surge_rating/surge_rating.dart';
 
 Future<void> _pump(WidgetTester tester, {List<Override> overrides = const []}) async {
   await tester.pumpWidget(
@@ -57,6 +59,8 @@ void main() {
     await tester.tap(find.text('You'));
     await tester.pumpAndSettle();
     expect(find.text('Settings'), findsOneWidget);
+    // The legal group sits below the fold now; ListView builds lazily.
+    await tester.scrollUntilVisible(find.text('Privacy policy'), 200);
     expect(find.text('Privacy policy'), findsOneWidget);
   });
 
@@ -126,6 +130,52 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Unlocked action ran.'), findsOneWidget);
     expect(find.text('Go Pro'), findsNothing);
+  });
+
+  testWidgets('notes CRUD reference: add and delete through the repository seam', (
+    tester,
+  ) async {
+    await _pump(tester, overrides: [_seen]);
+    await tester.tap(find.text('Continue as guest'));
+    await tester.pumpAndSettle();
+
+    // The reference feature is reachable from the blank home.
+    await tester.tap(find.text('Notes (CRUD reference)'));
+    await tester.pumpAndSettle();
+    expect(find.text('No notes yet'), findsOneWidget);
+
+    // Add flows through CrudRepository.upsert into the watchAll stream.
+    await tester.enterText(find.byType(TextField), 'Buy milk');
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pumpAndSettle();
+    expect(find.text('Buy milk'), findsOneWidget);
+    expect(find.text('No notes yet'), findsNothing);
+
+    // Delete flows through CrudRepository.delete.
+    await tester.tap(find.byIcon(Icons.delete_outline));
+    await tester.pumpAndSettle();
+    expect(find.text('Buy milk'), findsNothing);
+    expect(find.text('No notes yet'), findsOneWidget);
+  });
+
+  testWidgets('rate-this-app row drives the RatingService seam', (
+    tester,
+  ) async {
+    final rating = MockRatingService();
+    await _pump(
+      tester,
+      overrides: [
+        _seen,
+        ratingServiceProvider.overrideWithValue(rating),
+      ],
+    );
+    await tester.tap(find.text('Continue as guest'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('You'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Rate this app'));
+    await tester.pumpAndSettle();
+    expect(rating.reviewRequested, isTrue);
   });
 
   testWidgets('purchasing on the paywall unlocks the gated action', (

@@ -28,12 +28,19 @@ dependencies:
       url: {{{surge_git_url}}}
       ref: {{{surge_git_ref}}}
       path: packages/surge_onboarding
+  surge_rating:
+    git:
+      url: {{{surge_git_url}}}
+      ref: {{{surge_git_ref}}}
+      path: packages/surge_rating
 {{/use_git_deps}}
 {{^use_git_deps}}
   surge_ui:
     path: {{{surge_ui_path}}}
   surge_onboarding:
     path: {{{surge_onboarding_path}}}
+  surge_rating:
+    path: {{{surge_rating_path}}}
 {{/use_git_deps}}
   # Auth backend. The app depends on modules/auth/AuthService; these power the
   # FirebaseAuthService binding, selected in bootstrap once `flutterfire
@@ -52,8 +59,11 @@ dependencies:
   # Local persistence for settings + the onboarding flag (always on).
   shared_preferences: ^2.3.2
 
-  # SEAM: uncomment as you wire each further integration (see bootstrap.dart and
-  # the SEAM: markers). surge_crud uses cloud_firestore.
+  # SEAM: uncomment as you wire each further integration (see bootstrap.dart
+  # and the SEAM: markers). For per-user data, add surge_crud (same source as
+  # surge_ui above) and follow foundation/lib/features/notes - the reference
+  # CrudRepository integration; firestore.rules already isolates
+  # users/{uid}/... for it.
   # cloud_firestore: ^5.4.4{{#remote_config}}
   # firebase_remote_config: ^5.1.3{{/remote_config}}
 
