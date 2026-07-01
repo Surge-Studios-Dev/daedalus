@@ -28,6 +28,9 @@ a deliberately broken manifest is rejected with precise errors before stamping.
 | `tools/legal_gen` | factory | Privacy + ToS (md + JSON), Apple `PrivacyInfo.xcprivacy`, store privacy-label checklist — from `data_practices` | 8 |
 | `tools/portfolio_gen` | factory | Manifest → portfolio-entry seed (narrative left as TODOs) | 1 |
 | `tools/spec_gen` | factory | Manifest → `design/spec.md` skeleton (IDs, gates, monetization; template-parity-tested) | 5 |
+| `tools/store_gen` | factory | Manifest `store` block → Fastlane deliver/supply metadata trees + limit warnings | 4 |
+| `tools/ship_check` | factory | Pre-submission linter (stubs, seams, privacy manifest, ATT, secrets, legal, metadata limits); red/green report | 5 |
+| `bricks/daedalus` fastlane | factory | Beta/release lanes (both stores) on `flutter build`, Appfile from manifest, Gemfile | (stamp-verified) |
 | `INTAKE.md` + `templates/spec.template.md` | front door | Idea → manifest + spec pipeline with a definition of "fleshed out" | (via spec_gen) |
 | `scripts/forge.sh` | factory | Provisioning: platform folders, flutterfire, icons, legal_gen, seam-flip + site-registration checklist | (syntax-checked) |
 | `scripts/check_brick_sync.dart` | factory | Enforces the foundation <-> `__brick__` sync contract (divergent-file allowlist + signatures, root lint parity) in CI | (stamp + negative-tested) |
@@ -58,7 +61,7 @@ unexplained difference, clobbered template, or missing mirror file.
 | One manifest drives app | **Done, verified** |
 | One manifest drives legal/compliance | **Done** (privacy, ToS, Apple privacy manifest, store labels) |
 | One manifest drives the website | **Partial** (legal fully automated; portfolio semi-automated; no per-app marketing page template) |
-| Store approval workflow | **Partial** (compliance assets yes; upload/signing/readiness-lint no) |
+| Store approval workflow | **Done to the signing line** (compliance assets, metadata, upload lanes, readiness linter; signing/accounts are Phase 4's human step) |
 | Backend (rules/functions) | **Done** (deny-by-default rules + tested; Functions scaffold with account purge; Phase 2) |
 | Idea → spec front door | **Done** (INTAKE → manifest → spec_gen skeleton → written spec; Phase 1) |
 | Live validation on device/Firebase/RevenueCat | **Deferred** (user-gated; all code paths ready) |
@@ -75,7 +78,7 @@ unexplained difference, clobbered template, or missing mirror file.
 | D6 | Cross-promo module from DAEDALUS.md contract not built | Low — needs 2+ live apps to matter | Phase 5 |
 | D7 | No golden tests; gallery verification is manual | Low | Add goldens when visual churn slows |
 | D8 | ~~"Tally" example reads like a real product~~ | ~~Low~~ | **Fixed (Phase 0)**: marked fictional in the example manifest, root README, and examples/README |
-| D9 | Store metadata block exists but nothing consumes it | Low until Phase 3 | Fastlane deliver/supply generation |
+| D9 | ~~Store metadata block exists but nothing consumes it~~ | ~~Low~~ | **Fixed (Phase 3)**: `tools/store_gen` → deliver/supply trees + limit checks |
 | D10 | Loose version pins (many "newer available" warnings) | Low | Pin before first release build |
 
 ## 4. Forward plan
@@ -145,13 +148,23 @@ spec → stamp):
 - forge.sh: backend step + deploy-rules-BEFORE-useFirebase ordering in the
   launch checklist.
 
-### Phase 3 — Release rail · turns forge's checklist into buttons
-- Fastlane template (beta/release lanes; match + keystore notes).
-- Store metadata generated from the manifest `store` block into
-  deliver/supply structure (closes D9).
-- `tools/ship_check` pre-submission linter: stubs remaining, legal registered
-  on the site, ATT string when tracking, version bump, smoke test, PrivacyInfo
-  in the Runner target. forge.sh runs it; red/green report.
+### Phase 3 — Release rail · ✅ done 2026-07-01
+- `tools/store_gen` (4 tests): manifest `store` block → Fastlane deliver
+  (iOS) + supply (Play) metadata trees, with store character-limit warnings
+  instead of silent truncation (closes D9). Its first run caught a real bug:
+  the example tagline was 31 chars — one over Apple's subtitle limit.
+- Brick ships `fastlane/` (beta/release lanes for both platforms built on
+  `flutter build ipa`/`appbundle`, Appfile pre-filled from the manifest,
+  Gemfile). Store copy is regenerated from the manifest, never hand-edited.
+- `tools/ship_check` (5 tests): the pre-submission linter — feature stubs
+  remaining (Apple 4.3), seams still on mocks, placeholder firebase_options,
+  PrivacyInfo present AND referenced by the Runner target, ATT string when
+  tracking, hardcoded-key hygiene, legal artifacts, metadata limits, version,
+  backend presence, optional `--run-tests`. Red/green report, exit 1 on
+  blockers. Verified against a fresh stamp: 6 truthful day-0 blockers,
+  5 passes.
+- forge.sh: store_gen step (4a) + ship check as the closing step ("red items
+  = the remaining to-do list") + release-lanes checklist section.
 
 ### Phase 4 — Live validation · user-gated, can interleave any time
 Firebase project (`flutterfire configure`, enable providers), platform config
@@ -165,11 +178,11 @@ enforcement (D5); cross-promo (D6); sunset playbook.
 
 ## 5. Sequencing rationale
 
-0 → 1 → 2 → 3, with 4 whenever accounts/device are available (nothing blocks
-on it). Phases 0–2 are done: the factory is protected, the front door exists,
-and every stamp ships a tested backend safety rail. Phase 3 (release rail:
-Fastlane, store metadata from the manifest, ship_check linter) converts the
-remaining manual toil. The first real app should be built *now*, during
-phases 3–4 — run INTAKE.md on the next idea and take it through the pipeline;
-that exercise, not more scaffolding, is what will surface the next round of
-truth.
+Phases 0–3 are done: the factory is protected, the front door exists, every
+stamp ships a tested backend safety rail, and the release rail runs from
+manifest to store-ready metadata with a linter standing at the submission
+gate. What remains is Phase 4 (live validation — your accounts + a device;
+nothing blocks on it) and Phase 5 (operate layer, post-first-launch). The
+scaffolding era is over: run INTAKE.md on the next real idea and take it
+through the pipeline — building an actual app is what surfaces the next
+round of truth, and Phase 4 happens naturally along the way.

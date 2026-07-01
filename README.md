@@ -25,8 +25,9 @@ domain stubs, not rebuilding plumbing.
 - `foundation/` - the blank canvas (Tier 1): a runnable app wired to `surge_ui`.
 - `bricks/daedalus/` - the Mason brick that stamps the canvas from a manifest.
 - `tools/` - manifest_validator, spec_gen (manifest -> spec skeleton),
-  legal_gen (privacy/ToS/Apple privacy manifest/store labels), portfolio_gen
-  (site portfolio entry).
+  legal_gen (privacy/ToS/Apple privacy manifest/store labels), store_gen
+  (manifest -> Fastlane deliver/supply metadata with limit checks),
+  ship_check (pre-submission linter), portfolio_gen (site portfolio entry).
 - `scripts/forge.sh` - provisions a stamped app (Firebase, ids, icons, legal,
   and the manual launch checklist).
 

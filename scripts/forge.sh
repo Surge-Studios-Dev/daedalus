@@ -126,6 +126,21 @@ else
   note "dart or tools/legal_gen missing; generate legal assets manually"
 fi
 
+# ---------- 4a. store metadata ----------
+# Fastlane deliver/supply trees generated from the manifest store block.
+# Regenerate whenever store copy changes in the manifest.
+step "4a. Store metadata (fastlane/metadata)"
+STORE_TOOL="$SCRIPT_DIR/../tools/store_gen"
+APP_ROOT="$(pwd)"
+if [ -d "$STORE_TOOL" ]; then
+  ( cd "$STORE_TOOL" && dart pub get >/dev/null 2>&1 \
+      && dart run bin/store_gen.dart "$MANIFEST_ABS" "$APP_ROOT" ) \
+    && ok "wrote fastlane/metadata (deliver + supply)" \
+    || note "store_gen failed; run it manually from $STORE_TOOL"
+else
+  note "tools/store_gen missing; write fastlane/metadata by hand"
+fi
+
 # ---------- 4b. backend (rules + functions) ----------
 # The stamp ships firestore.rules (deny-by-default, per-user isolation),
 # firestore.indexes.json, and backend/ (Functions: account-deletion purge +
@@ -172,6 +187,13 @@ bold "Signing"
 echo "  - iOS: set up Fastlane match or Codemagic signing."
 echo "  - Android: generate the upload keystore and wire it into the release build."
 echo
+bold "Release lanes (fastlane/ is stamped; metadata comes from the manifest)"
+echo "  - bundle install                       # once; installs fastlane"
+echo "  - bundle exec fastlane ios beta        # TestFlight"
+echo "  - bundle exec fastlane android beta    # Play internal track"
+echo "  - bundle exec fastlane ios release     # upload + metadata (review manually first)"
+echo "  - store copy changed? edit the manifest, re-run tools/store_gen."
+echo
 bold "Flip the seams to live (they ship as working mocks)"
 echo "  - FIRST deploy the backend: firebase deploy --only firestore,functions"
 echo "    (rules are deny-by-default; functions include the account-deletion purge)."
@@ -183,5 +205,20 @@ bold "Before submission"
 echo "  - Replace every lib/features/* stub with real functionality (stub-only fails Apple 4.3)."
 echo "  - Verify in-app account deletion, restore purchases, and Sign in with Apple all work."
 [ "$TRACKING" = "true" ] && echo "  - Confirm the ATT prompt fires and the Info.plist usage string is set."
+echo
+
+# ---------- 7. ship check ----------
+# The pre-submission linter. Red on day 0 is expected - it IS the to-do list.
+# Re-run before submitting; add --run-tests for the full gate.
+step "7. Ship check (red items = the remaining to-do list)"
+SHIP_TOOL="$SCRIPT_DIR/../tools/ship_check"
+if [ -d "$SHIP_TOOL" ]; then
+  ( cd "$SHIP_TOOL" && dart pub get >/dev/null 2>&1 \
+      && dart run bin/ship_check.dart "$APP_ROOT" --manifest="$MANIFEST_ABS" ) \
+    || note "re-run before submitting: dart run bin/ship_check.dart . --run-tests (from $SHIP_TOOL)"
+else
+  note "tools/ship_check missing"
+fi
+
 echo
 ok "init complete for $NAME"

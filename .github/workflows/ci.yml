@@ -79,6 +79,18 @@ jobs:
           dart pub get
           dart analyze
           dart test
+      - name: store_gen
+        working-directory: tools/store_gen
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+      - name: ship_check
+        working-directory: tools/ship_check
+        run: |
+          dart pub get
+          dart analyze
+          dart test
       - name: brick hooks analyze
         working-directory: bricks/daedalus/hooks
         run: |

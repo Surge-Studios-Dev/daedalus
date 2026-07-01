@@ -1,0 +1,70 @@
+# Release lanes for a Surge app. Runs from the app root (this fastlane/ dir
+# sits beside lib/, ios/, android/). Store copy lives in fastlane/metadata,
+# generated from the manifest by tools/store_gen - edit the manifest and
+# regenerate rather than editing the txt files.
+#
+# Prerequisites (once per app; see the Signing section of scripts/forge.sh):
+#   iOS: signing via `fastlane match` (recommended) or Xcode-managed profiles,
+#        plus an App Store Connect API key for CI (avoids 2FA prompts).
+#   Android: an upload keystore wired into android/key.properties, and a Play
+#        service-account JSON for supply (json_key_file in the Appfile).
+#
+# Verify lane options against your installed fastlane major version the first
+# time - these are skeleton-honest, not battle-tested per version.
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Build the iOS release and push to TestFlight"
+  lane :beta do
+    sh("flutter", "build", "ipa", "--release")
+    upload_to_testflight(
+      ipa: "../build/ios/ipa/#{ipa_name}",
+      skip_waiting_for_build_processing: true,
+    )
+  end
+
+  desc "Build, upload metadata from fastlane/metadata, and submit for review"
+  lane :release do
+    sh("flutter", "build", "ipa", "--release")
+    deliver(
+      ipa: "../build/ios/ipa/#{ipa_name}",
+      metadata_path: "./fastlane/metadata",
+      submit_for_review: false, # flip when the listing is complete
+      automatic_release: false,
+      force: true, # skip the HTML preview prompt (CI-safe)
+      precheck_include_in_app_purchases: false, # needs API-key auth to enable
+    )
+  end
+
+  # flutter build ipa names the artifact after the app; glob it.
+  def ipa_name
+    Dir.chdir("..") { Dir.glob("build/ios/ipa/*.ipa").map { |f| File.basename(f) }.first }
+  end
+end
+
+platform :android do
+  desc "Build the app bundle and push to the Play internal track"
+  lane :beta do
+    sh("flutter", "build", "appbundle", "--release")
+    upload_to_play_store(
+      track: "internal",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+
+  desc "Promote to production with metadata from fastlane/metadata"
+  lane :release do
+    sh("flutter", "build", "appbundle", "--release")
+    upload_to_play_store(
+      track: "production",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      metadata_path: "./fastlane/metadata/android",
+      skip_upload_images: true,      # add screenshots to metadata/ then enable
+      skip_upload_screenshots: true,
+    )
+  end
+end

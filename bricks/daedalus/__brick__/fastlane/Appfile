@@ -1,0 +1,10 @@
+# Fastlane app identity, filled from surge.manifest.yaml at stamp time.
+app_identifier("{{bundle_id_ios}}")   # iOS bundle id
+package_name("{{package_android}}")  # Android package name
+
+# Set these once your accounts exist (or export FASTLANE_USER / use an
+# App Store Connect API key - preferred for CI):
+# apple_id("you@example.com")
+# itc_team_id("...")
+# team_id("...")
+# json_key_file("play-console-service-account.json")  # supply auth; gitignored

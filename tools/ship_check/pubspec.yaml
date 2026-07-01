@@ -1,0 +1,14 @@
+name: ship_check
+description: Pre-submission linter for a stamped Surge app - stubs, seams, privacy manifest, ATT, secrets hygiene, legal + store metadata, tests. Red/green report; exits 1 on any FAIL.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  yaml: ^3.1.2
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^5.0.0

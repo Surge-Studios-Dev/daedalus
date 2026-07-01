@@ -9,7 +9,8 @@ schema: 1
 identity:
   slug: tally
   name: Tally
-  tagline: Count anything, see the streak.
+  # Doubles as the App Store subtitle: 30 chars max, no terminal period.
+  tagline: Count anything, see a streak
   bundle_id_ios: com.surgestudios.tally
   package_android: com.surgestudios.tally
 

@@ -1,0 +1,5 @@
+# Fastlane via bundler so lane runs are reproducible: `bundle install` once,
+# then `bundle exec fastlane ios beta` etc.
+source "https://rubygems.org"
+
+gem "fastlane"
