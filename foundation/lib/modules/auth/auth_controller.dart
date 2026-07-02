@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../paywall/purchase_service.dart';
 import '../telemetry/analytics.dart';
 import 'auth_service.dart';
 
@@ -21,6 +24,7 @@ class AuthController extends Notifier<AuthState> {
     final sub = service.authStateChanges().listen((user) {
       if (user != null) {
         state = AuthState.signedIn;
+        _bindIdentity(user.uid);
       } else if (state != AuthState.guest) {
         state = AuthState.signedOut;
       }
@@ -31,27 +35,50 @@ class AuthController extends Notifier<AuthState> {
         : AuthState.signedOut;
   }
 
+  /// The Ladle law: analytics identity and the purchases account bind
+  /// together, in this order, in exactly one place - otherwise subscription
+  /// events land on a different distinct id and monetization funnels
+  /// fracture. Guests stay anonymous (no identify until an account exists).
+  void _bindIdentity(String uid) {
+    _analytics.identify(uid);
+    unawaited(ref.read(purchaseServiceProvider).setUser(uid));
+  }
+
+  void _bindCurrent() {
+    final uid = _service.currentUser?.uid;
+    if (uid != null) _bindIdentity(uid);
+  }
+
+  void _clearIdentity() {
+    _analytics.reset();
+    unawaited(ref.read(purchaseServiceProvider).setUser(null));
+  }
+
   Future<void> signInWithEmail(String email, String password) async {
     await _service.signInWithEmail(email, password);
     state = AuthState.signedIn;
+    _bindCurrent();
     _analytics.log(Ev.login, {'method': 'email'});
   }
 
   Future<void> signUpWithEmail(String email, String password) async {
     await _service.signUpWithEmail(email, password);
     state = AuthState.signedIn;
+    _bindCurrent();
     _analytics.log(Ev.signUp, {'method': 'email'});
   }
 
   Future<void> signInWithApple() async {
     await _service.signInWithApple();
     state = AuthState.signedIn;
+    _bindCurrent();
     _analytics.log(Ev.login, {'method': 'apple'});
   }
 
   Future<void> signInWithGoogle() async {
     await _service.signInWithGoogle();
     state = AuthState.signedIn;
+    _bindCurrent();
     _analytics.log(Ev.login, {'method': 'google'});
   }
 
@@ -62,11 +89,13 @@ class AuthController extends Notifier<AuthState> {
 
   Future<void> signOut() async {
     await _service.signOut();
+    _clearIdentity();
     state = AuthState.signedOut;
   }
 
   Future<void> deleteAccount() async {
     await _service.deleteAccount();
+    _clearIdentity();
     state = AuthState.signedOut;
   }
 }

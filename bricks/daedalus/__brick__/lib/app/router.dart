@@ -13,6 +13,8 @@ import '../modules/settings/account_screen.dart';
 import '../modules/settings/legal_screen.dart';
 import '../modules/settings/settings_screen.dart';
 import '../modules/shell/tab_shell.dart';
+import '../modules/telemetry/analytics.dart';
+import '../modules/telemetry/screen_observer.dart';
 import 'nav_config.dart';
 
 final _rootKey = GlobalKey<NavigatorState>();
@@ -30,6 +32,8 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: '/${navTabs.first.id}',
+    // Screen views for root-level routes; tab views are logged by TabShell.
+    observers: [AnalyticsScreenObserver(ref.read(analyticsProvider))],
     refreshListenable: refresh,
     redirect: (context, state) {
       final loggedIn = ref.read(authControllerProvider) != AuthState.signedOut;
@@ -47,16 +51,19 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/signin',
+        name: 'signin',
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const SignInScreen(),
       ),
       GoRoute(
         path: '/signup',
+        name: 'signup',
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const SignUpScreen(),
       ),
       GoRoute(
         path: '/onboarding',
+        name: 'onboarding',
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const OnboardingScreen(),
       ),
@@ -69,6 +76,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               routes: [
                 GoRoute(
                   path: '/${tab.id}',
+                  name: tab.id,
                   builder: (context, state) => tab.builtin
                       ? const SettingsScreen()
                       : featureBuilders[tab.id]!(context),
@@ -79,17 +87,20 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/account',
+        name: 'account',
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const AccountScreen(),
       ),
       GoRoute(
         path: '/paywall',
+        name: 'paywall',
         parentNavigatorKey: _rootKey,
         builder: (context, state) =>
             PaywallScreen(source: state.uri.queryParameters['source']),
       ),
       GoRoute(
         path: '/legal/:kind',
+        name: 'legal',
         parentNavigatorKey: _rootKey,
         builder: (context, state) =>
             LegalScreen(kind: state.pathParameters['kind'] ?? 'privacy'),

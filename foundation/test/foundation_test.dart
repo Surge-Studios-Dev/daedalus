@@ -8,6 +8,7 @@ import 'package:surge_foundation/modules/onboarding/onboarding_controller.dart';
 import 'package:surge_foundation/modules/paywall/purchase_service.dart';
 import 'package:surge_foundation/modules/rating/rating.dart';
 import 'package:surge_foundation/modules/storage/key_value_store.dart';
+import 'package:surge_foundation/modules/telemetry/analytics.dart';
 import 'package:surge_rating/surge_rating.dart';
 
 Future<void> _pump(WidgetTester tester, {List<Override> overrides = const []}) async {
@@ -178,6 +179,43 @@ void main() {
     expect(rating.reviewRequested, isTrue);
   });
 
+  testWidgets('backend sign-in binds the analytics identity (Ladle law)', (
+    tester,
+  ) async {
+    final analytics = _RecordingAnalytics();
+    await _pump(
+      tester,
+      overrides: [
+        _seen,
+        authServiceProvider.overrideWithValue(_FakeSignedInService()),
+        analyticsProvider.overrideWithValue(analytics),
+      ],
+    );
+    // The auth-state listener identified the already-signed-in backend user.
+    expect(analytics.identified, contains('backend'));
+    expect(analytics.wasReset, isFalse);
+  });
+
+  testWidgets('settings exposes the analytics opt-out and it persists', (
+    tester,
+  ) async {
+    final store = InMemoryKeyValueStore({'onboarding_complete': true});
+    await _pump(
+      tester,
+      overrides: [keyValueStoreProvider.overrideWithValue(store)],
+    );
+    await tester.tap(find.text('Continue as guest'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('You'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Share analytics'), findsOneWidget);
+    await tester.tap(find.text('Share analytics'));
+    await tester.pumpAndSettle();
+    expect(find.text('Off'), findsOneWidget);
+    expect(store.getBool('analytics_enabled'), isFalse);
+  });
+
   testWidgets('purchasing on the paywall unlocks the gated action', (
     tester,
   ) async {
@@ -217,11 +255,28 @@ class _UnlockedPurchases implements PurchaseService {
   Future<void> purchase() async {}
   @override
   Future<void> restore() async {}
+  @override
+  Future<void> setUser(String? userId) async {}
 }
 
 class _SeenOnboarding extends OnboardingController {
   @override
   bool build() => true;
+}
+
+/// Records identity calls so tests can pin the identify/reset contract.
+class _RecordingAnalytics implements Analytics {
+  final identified = <String>[];
+  bool wasReset = false;
+
+  @override
+  void log(String event, [Map<String, Object?> params = const {}]) {}
+  @override
+  void screen(String name) {}
+  @override
+  void identify(String userId) => identified.add(userId);
+  @override
+  void reset() => wasReset = true;
 }
 
 /// A stand-in auth backend that reports an already-signed-in user, used to prove

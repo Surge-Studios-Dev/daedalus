@@ -129,8 +129,8 @@ Future<List<CheckResult>> runChecks(
     );
   }
 
-  // -- 7. Secrets hygiene: no hardcoded RevenueCat keys in source. -----------
-  final keyPattern = RegExp('(appl|goog)_[A-Za-z0-9]{12,}');
+  // -- 7. Secrets hygiene: no hardcoded RevenueCat/PostHog keys in source. --
+  final keyPattern = RegExp('(appl|goog|phc)_[A-Za-z0-9]{12,}');
   final leaks = <String>[
     for (final f in _dartFilesUnder(dirAt('lib')))
       if (keyPattern.hasMatch(_read(f))) _rel(f, appDir),
@@ -138,10 +138,21 @@ Future<List<CheckResult>> runChecks(
   results.add(
     leaks.isEmpty
         ? const CheckResult('secrets hygiene', CheckStatus.pass,
-            'no hardcoded store keys; REVENUECAT_KEY flows via --dart-define')
+            'no hardcoded store/analytics keys; REVENUECAT_KEY and '
+            'POSTHOG_KEY flow via --dart-define')
         : CheckResult('secrets hygiene', CheckStatus.fail,
-            'hardcoded RevenueCat key in: ${leaks.join(', ')} - move it to '
-            '--dart-define=REVENUECAT_KEY'),
+            'hardcoded key in: ${leaks.join(', ')} - move it to '
+            '--dart-define'),
+  );
+
+  // -- 7b. Analytics doctrine present. ---------------------------------------
+  results.add(
+    at('ANALYTICS.md').existsSync()
+        ? const CheckResult('analytics doc', CheckStatus.pass,
+            'ANALYTICS.md present - run its TestFlight checklist')
+        : const CheckResult('analytics doc', CheckStatus.warn,
+            'ANALYTICS.md missing (older stamp) - copy the template; it '
+            'carries the dashboards + no-PII rules'),
   );
 
   // -- 8. Legal artifacts generated. -----------------------------------------

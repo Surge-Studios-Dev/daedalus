@@ -56,6 +56,7 @@ flowchart TB
 | [surge_ui](surge-ui.md) | The toolbox: token contract, catalog system, promotion path |
 | [Backend](backend.md) | The safety rail: Firestore rules model, Functions, rules tests |
 | [Provisioning](provisioning.md) | The cloud side automated: Firebase/GCP, auth providers, ASC, RevenueCat — from manifest + credentials |
+| [Analytics](analytics.md) | The monitoring platform: per-app PostHog, the identity law, and the Surge HQ spend-vs-revenue rollup |
 | [Compliance & Web](compliance-and-web.md) | Legal generation, the LLC umbrella model, site registration |
 | [Release](release.md) | Store metadata, Fastlane lanes, the ship_check gate |
 | [Future systems](future.md) | Phase 4/5 stubs, the debt register, the parking lot |

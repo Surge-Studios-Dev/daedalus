@@ -1,0 +1,3 @@
+app,channel,amount_usd
+# Manual monthly entry (ad networks have no free-tier APIs worth wiring yet).
+# One row per app per channel; the rollup sums them.

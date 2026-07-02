@@ -56,6 +56,20 @@ class RevenueCatPurchaseService implements PurchaseService {
     await Purchases.restorePurchases();
   }
 
+  @override
+  Future<void> setUser(String? userId) async {
+    try {
+      if (userId != null) {
+        await Purchases.logIn(userId);
+      } else {
+        await Purchases.logOut();
+      }
+    } catch (_) {
+      // logOut throws when already anonymous; a failed logIn will retry on
+      // the next auth transition. Never let identity plumbing crash the app.
+    }
+  }
+
   void dispose() {
     Purchases.removeCustomerInfoUpdateListener(_apply);
     _controller.close();

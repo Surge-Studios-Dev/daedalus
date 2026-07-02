@@ -305,6 +305,39 @@ else
   note "grab the PUBLIC SDK key from the RevenueCat app settings -> --dart-define=REVENUECAT_KEY="
 fi
 
+# ---------- 5b. PostHog (per-app prod + dev projects) ----------
+# One project pair per app so a client app's analytics transfer with the
+# repo. Personal API key + org id from provision.env; project API keys
+# (phc_...) come back in the create response -> feed --dart-define.
+step "5b. PostHog projects"
+if [ "$DRY" = 0 ] && [ -z "${POSTHOG_PERSONAL_API_KEY:-}" ]; then
+  note "POSTHOG_PERSONAL_API_KEY unset - create '$NAME' + '$NAME dev' projects in the PostHog UI"
+elif [ "$DRY" = 0 ] && ! have jq; then
+  note "jq missing - PostHog automation needs it"
+else
+  PH="${POSTHOG_HOST:-https://us.posthog.com}"
+  PH_ORG="${POSTHOG_ORG_ID:-@current}"
+  ph_create() { # $1 project name
+    if [ "$DRY" = 1 ]; then
+      printf '  \033[36mDRY\033[0m  create PostHog project "%s"\n       $ curl -X POST %s/api/organizations/%s/projects/ -d {"name":"%s"}\n' "$1" "$PH" "$PH_ORG" "$1"
+      return 0
+    fi
+    local resp
+    if resp=$(curl -sf -X POST "$PH/api/organizations/$PH_ORG/projects/" \
+        -H "Authorization: Bearer $POSTHOG_PERSONAL_API_KEY" \
+        -H "Content-Type: application/json" -d "{\"name\":\"$1\"}"); then
+      ok "project '$1' -> key: $(echo "$resp" | jq -r '.api_token // "check dashboard"')"
+    else
+      note "API rejected creating '$1' (exists already? create in the UI)"
+    fi
+  }
+  ph_create "$NAME"
+  ph_create "$NAME dev"
+  note "wire the keys: flutter run --dart-define=POSTHOG_KEY=<dev phc_...>; release builds get the prod key"
+  note "enable the RevenueCat -> PostHog integration (RevenueCat dashboard -> Integrations)"
+  note "set POSTHOG_PROJECT_KEY in backend/.env for the crash bridge function"
+fi
+
 # ---------- 6. Deploy the backend ----------
 step "6. Deploy rules + functions (BEFORE flipping useFirebase)"
 if have firebase; then

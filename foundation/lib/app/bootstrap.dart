@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:surge_crud/surge_crud.dart';
@@ -18,9 +19,11 @@ import '../modules/rating/rating.dart';
 import '../modules/storage/key_value_store.dart';
 import '../modules/storage/shared_prefs_store.dart';
 import '../modules/telemetry/analytics.dart';
+import '../modules/telemetry/analytics_consent.dart';
 import '../modules/telemetry/crashlytics_error_reporter.dart';
 import '../modules/telemetry/error_reporter.dart';
 import '../modules/telemetry/firebase_analytics_service.dart';
+import '../modules/telemetry/posthog_analytics_service.dart';
 import 'app.dart';
 
 /// Flip to true once `flutterfire configure` has generated firebase_options.dart
@@ -38,6 +41,16 @@ const String entitlementId = 'pro';
 /// RevenueCat public SDK key, injected at build time:
 /// `flutter run --dart-define=REVENUECAT_KEY=xxx`. Never commit the value.
 const String _revenueCatKey = String.fromEnvironment('REVENUECAT_KEY');
+
+/// PostHog project API key (per app, prod vs dev projects - see ANALYTICS.md),
+/// injected at build time: `--dart-define=POSTHOG_KEY=phc_xxx`. When present,
+/// PostHog becomes the analytics sink (the studio's only product dashboard);
+/// otherwise DebugAnalytics / Firebase Analytics apply. Never commit the key.
+const String _posthogKey = String.fromEnvironment('POSTHOG_KEY');
+const String _posthogHost = String.fromEnvironment(
+  'POSTHOG_HOST',
+  defaultValue: 'https://us.i.posthog.com',
+);
 
 /// One place for all startup wiring. The framework-heavy integrations are
 /// selected here so the rest of the app stays backend-agnostic.
@@ -58,6 +71,20 @@ Future<void> bootstrap() async {
     ratingServiceProvider.overrideWithValue(InAppReviewRatingService()),
   );
 
+  if (_posthogKey.isNotEmpty) {
+    // PostHog is the primary product-analytics sink (per-app project; see
+    // ANALYTICS.md). Recordings stay off (no-PII rule). Consent is honored
+    // BEFORE any cold-start event; the settings toggle flips it live.
+    final config = PostHogConfig(_posthogKey)..host = _posthogHost;
+    await Posthog().setup(config);
+    if (prefs.getBool(AnalyticsConsent.key) == false) {
+      await Posthog().disable();
+    }
+    overrides.add(
+      analyticsProvider.overrideWithValue(PosthogAnalyticsService()),
+    );
+  }
+
   if (useFirebase) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -72,7 +99,10 @@ Future<void> bootstrap() async {
 
     overrides.addAll([
       authServiceProvider.overrideWithValue(FirebaseAuthService()),
-      analyticsProvider.overrideWithValue(FirebaseAnalyticsService()),
+      // PostHog is the only product dashboard when configured; Firebase
+      // Analytics is the fallback sink, never a second one.
+      if (_posthogKey.isEmpty)
+        analyticsProvider.overrideWithValue(FirebaseAnalyticsService()),
       errorReporterProvider.overrideWithValue(CrashlyticsErrorReporter()),
       // The CRUD reference seam: notes move to per-user Firestore, at the
       // exact path firestore.rules isolates (users/{uid}/notes). Guests stay

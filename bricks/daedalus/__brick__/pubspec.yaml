@@ -56,6 +56,9 @@ dependencies:
   # powers the RevenueCatPurchaseService binding, selected in bootstrap once the
   # RevenueCat app/entitlement/products exist and useRevenueCat is flipped on.
   purchases_flutter: ^8.1.0
+  # Primary product analytics: one PostHog project per app (prod + dev), key
+  # via --dart-define=POSTHOG_KEY. See ANALYTICS.md; recordings stay off.
+  posthog_flutter: ^4.7.0
   # Local persistence for settings + the onboarding flag (always on).
   shared_preferences: ^2.3.2
 

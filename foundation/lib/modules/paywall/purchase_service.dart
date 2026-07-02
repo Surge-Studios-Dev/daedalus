@@ -19,6 +19,12 @@ abstract interface class PurchaseService {
 
   /// Restore prior purchases (mandatory in every app).
   Future<void> restore();
+
+  /// Bind purchases to the signed-in user (RevenueCat logIn/logOut); null on
+  /// sign-out. Called by the auth controller at the SAME moment as
+  /// [Analytics.identify]/reset, so revenue events share the user's distinct
+  /// id and monetization funnels stay whole.
+  Future<void> setUser(String? userId);
 }
 
 /// In-memory purchases for development and tests: [purchase] unlocks, [restore]
@@ -45,6 +51,11 @@ class MockPurchaseService implements PurchaseService {
   @override
   Future<void> restore() async {
     // Nothing to restore in the mock.
+  }
+
+  @override
+  Future<void> setUser(String? userId) async {
+    // The mock has no per-user account state.
   }
 
   void dispose() => _controller.close();

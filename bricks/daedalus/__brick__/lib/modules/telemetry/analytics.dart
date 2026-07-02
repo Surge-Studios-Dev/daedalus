@@ -20,10 +20,21 @@ abstract final class Ev {
 }
 
 /// Analytics sink. The default [DebugAnalytics] prints in debug and no-ops in
-/// release. SEAM: swap for a FirebaseAnalytics-backed impl in bootstrap.
+/// release. SEAM: bootstrap binds PostHog (primary, when POSTHOG_KEY is set)
+/// or Firebase Analytics (fallback under useFirebase).
 abstract interface class Analytics {
   void log(String event, [Map<String, Object?> params]);
   void screen(String name);
+
+  /// Tie subsequent events to the signed-in user. The Ladle law: call this at
+  /// the SAME moment as [PurchaseService.setUser] (auth controller does both),
+  /// or subscription events land on a different distinct id and every
+  /// monetization funnel fractures.
+  void identify(String userId);
+
+  /// Drop the identity on sign-out / account deletion; the next events are
+  /// anonymous again.
+  void reset();
 }
 
 class DebugAnalytics implements Analytics {
@@ -36,6 +47,12 @@ class DebugAnalytics implements Analytics {
 
   @override
   void screen(String name) => log(Ev.screenView, {'screen': name});
+
+  @override
+  void identify(String userId) => log('identify', {'user': userId});
+
+  @override
+  void reset() => log('reset');
 }
 
 final analyticsProvider = Provider<Analytics>((ref) => const DebugAnalytics());

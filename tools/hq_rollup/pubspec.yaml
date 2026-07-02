@@ -1,0 +1,14 @@
+name: hq_rollup
+description: Surge HQ portfolio rollup - merges per-app KPIs (PostHog/RevenueCat) with manual ad-spend CSVs into one monthly spend-vs-revenue dashboard across every app.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  yaml: ^3.1.2
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^5.0.0

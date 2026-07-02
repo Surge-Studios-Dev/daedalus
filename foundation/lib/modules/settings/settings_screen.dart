@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:surge_ui/surge_ui.dart';
 
 import '../rating/rating.dart';
+import '../telemetry/analytics_consent.dart';
 import 'appearance_controller.dart';
 
 /// SET-01 · Settings ("You" tab). Grouped rows composed entirely from surge_ui.
@@ -45,6 +46,15 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.brightness_6,
                 value: appearance.label,
                 onPressed: appearance.cycle,
+              ),
+              // The analytics opt-out the privacy policy promises. Applies
+              // immediately; bootstrap honors it before any cold-start event.
+              SurgeGroupRow(
+                title: 'Share analytics',
+                icon: Icons.insights_outlined,
+                value: ref.watch(analyticsConsentProvider) ? 'On' : 'Off',
+                onPressed: () =>
+                    ref.read(analyticsConsentProvider.notifier).toggle(),
               ),
             ],
           ),

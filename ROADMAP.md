@@ -35,7 +35,9 @@ a deliberately broken manifest is rejected with precise errors before stamping.
 | `INTAKE.md` + `templates/spec.template.md` | front door | Idea → manifest + spec pipeline with a definition of "fleshed out" | (via spec_gen) |
 | `scripts/forge.sh` | factory | Provisioning: platform folders, flutterfire, icons, legal_gen, seam-flip + site-registration checklist | (syntax-checked) |
 | `scripts/check_brick_sync.dart` | factory | Enforces the foundation <-> `__brick__` sync contract (divergent-file allowlist + signatures, root lint parity) in CI | (stamp + negative-tested) |
-| `scripts/provision.sh` | factory | Cloud provisioning from manifest + provision.env: Firebase/GCP, auth providers, ASC record, keystore, RevenueCat graph, deploys | (dry-run verified; live at Phase 4) |
+| `scripts/provision.sh` | factory | Cloud provisioning from manifest + provision.env: Firebase/GCP, auth providers, ASC record, keystore, RevenueCat graph, PostHog project pair, deploys | (dry-run verified; live at Phase 4) |
+| Analytics platform (M1) | factory | PostHog seam + identity law (identify/setUser together, tested), consent toggle, screen observer, stamped ANALYTICS.md doctrine, Crashlytics→PostHog bridge | (foundation 13; stamp-verified) |
+| `tools/hq_rollup` + `hq/` | studio | Portfolio rollup: registry + manual ad-spend CSVs + KPI JSON → self-contained spend-vs-revenue dashboard | 4 |
 | `.github/workflows/ci.yml` | factory | All packages + catalog freshness + validator + legal_gen + hooks | — |
 | Surge-Studios-Site | web | Master `/privacy` + `/terms` as the LLC umbrella with auto-updating covered-apps list; per-app `/<slug>/privacy|terms` from generated JSON; legal registry generator (`npm run build:legal`); Ladle in the portfolio | (build-verified) |
 

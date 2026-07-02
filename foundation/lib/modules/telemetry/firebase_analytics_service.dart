@@ -19,4 +19,10 @@ class FirebaseAnalyticsService implements Analytics {
 
   @override
   void screen(String name) => _analytics.logScreenView(screenName: name);
+
+  @override
+  void identify(String userId) => _analytics.setUserId(id: userId);
+
+  @override
+  void reset() => _analytics.setUserId(id: null);
 }

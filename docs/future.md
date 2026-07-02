@@ -68,11 +68,13 @@ typed accessor module, kill-switch key convention. Then enforce the
 override) so `one_time` apps get their promised trial mechanics — today the
 manifest accepts the model but `gate()` ignores the window.
 
-### Analytics sink + portfolio dashboard
-The `Ev` taxonomy already flows per-app. Missing: the cross-app view — one
-place showing installs, trials, conversions per product under the umbrella.
-Likely BigQuery export + a small dashboard page; decide when there are two
-revenue streams to compare.
+### Analytics sink + portfolio dashboard — M1 BUILT
+The factory share is done (see [Analytics](analytics.md)): PostHog seam +
+identity law + consent + stamped ANALYTICS.md + crash bridge + the Surge HQ
+rollup (`tools/hq_rollup` → spend-vs-revenue dashboard, fixture-driven).
+Remaining here: the live KPI pull (PostHog trends + RevenueCat metrics APIs
+writing the HQ KPI JSON) and alerting thresholds — both activate at
+Phase 4 / first launch.
 
 ### Cross-promo (D6)
 `features.cross_promo` + `Ev.crosspromoTap` exist; the module doesn't. Sketch:

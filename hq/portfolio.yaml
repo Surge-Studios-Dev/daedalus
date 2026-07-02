@@ -1,0 +1,14 @@
+# Surge HQ app registry - the portfolio the rollup reads. One entry per app;
+# status transferred = client handoff (its PostHog project went with it, so
+# it drops out of KPI pulls but stays here for the record).
+apps:
+  - slug: takeoff
+    name: TakeOff
+    status: dev
+    posthog_project_id: ""      # filled by provision.sh at Phase 4
+    revenuecat_project_id: ""
+  - slug: ladle
+    name: Ladle
+    status: dev
+    posthog_project_id: ""
+    revenuecat_project_id: ""

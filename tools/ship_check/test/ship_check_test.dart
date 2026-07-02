@@ -30,6 +30,7 @@ Directory readyApp() {
       '... PrivacyInfo.xcprivacy in Resources ...');
   put('legal/legal.json', '{}');
   put('legal/privacy.md', '# Privacy');
+  put('ANALYTICS.md', '# Analytics');
   put('fastlane/metadata/en-US/name.txt', 'X');
   put('fastlane/metadata/en-US/subtitle.txt', 'Short subtitle');
   put('fastlane/metadata/en-US/keywords.txt', 'a,b,c');
@@ -95,6 +96,19 @@ void main() {
     final rs = await runChecks(d.path, manifest());
     expect(byName(rs, 'secrets hygiene').status, CheckStatus.fail);
     expect(byName(rs, 'store metadata').status, CheckStatus.fail);
+    d.deleteSync(recursive: true);
+  });
+
+  test('hardcoded PostHog keys block; missing ANALYTICS.md only warns',
+      () async {
+    final d = readyApp();
+    File('${d.path}/lib/features/counters/counters_screen.dart')
+        .writeAsStringSync("const k = 'phc_AbCdEfGhIjKlMnOpQr';\n");
+    File('${d.path}/ANALYTICS.md').deleteSync();
+
+    final rs = await runChecks(d.path, manifest());
+    expect(byName(rs, 'secrets hygiene').status, CheckStatus.fail);
+    expect(byName(rs, 'analytics doc').status, CheckStatus.warn);
     d.deleteSync(recursive: true);
   });
 

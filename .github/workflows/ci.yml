@@ -91,6 +91,12 @@ jobs:
           dart pub get
           dart analyze
           dart test
+      - name: hq_rollup
+        working-directory: tools/hq_rollup
+        run: |
+          dart pub get
+          dart analyze
+          dart test
       - name: brick hooks analyze
         working-directory: bricks/daedalus/hooks
         run: |

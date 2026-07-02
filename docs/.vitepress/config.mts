@@ -97,6 +97,7 @@ export default withMermaid(
           items: [
             { text: 'Backend safety rail', link: '/backend' },
             { text: 'Provisioning (cloud)', link: '/provisioning' },
+            { text: 'Analytics (monitoring)', link: '/analytics' },
             { text: 'Compliance & web', link: '/compliance-and-web' },
             { text: 'Release rail', link: '/release' },
           ],
