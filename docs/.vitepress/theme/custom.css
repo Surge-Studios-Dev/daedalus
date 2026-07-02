@@ -1,0 +1,50 @@
+/* Daedalus docs theme: Surge forest green (the wiki diagrams' "truth" color)
+ * as the brand, with the TakeOff sky-blue as the gradient partner. */
+:root {
+  --vp-c-brand-1: #1f7a55;
+  --vp-c-brand-2: #2e7d5f;
+  --vp-c-brand-3: #1f4d3b;
+  --vp-c-brand-soft: rgba(46, 125, 95, 0.14);
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #2e7d5f 30%, #75d8ff);
+  --vp-home-hero-image-background-image: linear-gradient(
+    -45deg,
+    rgba(46, 125, 95, 0.35) 40%,
+    rgba(117, 216, 255, 0.35) 60%
+  );
+  --vp-home-hero-image-filter: blur(56px);
+}
+
+.dark {
+  --vp-c-brand-1: #3fa47c;
+  --vp-c-brand-2: #2e7d5f;
+  --vp-c-brand-3: #1f4d3b;
+}
+
+/* 🔲 TODO stubs (future systems) — visibly different from prose quotes:
+ * dashed amber card instead of the default gray bar. */
+.vp-doc blockquote.todo-stub {
+  border: 1.5px dashed var(--vp-c-yellow-2, #d8a03d);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: var(--vp-c-yellow-soft, rgba(234, 179, 8, 0.12));
+  padding: 10px 16px;
+}
+.vp-doc blockquote.todo-stub p {
+  color: var(--vp-c-text-1);
+}
+
+/* Mermaid diagrams: center them and give them breathing room on cards. */
+.vp-doc .mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+/* Tables in this wiki are dense reference tables — let them use the width. */
+.vp-doc table {
+  display: table;
+  width: 100%;
+}

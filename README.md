@@ -10,7 +10,8 @@ domain stubs, not rebuilding plumbing.
 ## Contents
 - **[`docs/` — the wiki](docs/README.md)**: how every piece works and
   connects, with flow diagrams throughout and `🔲 TODO` stubs for future
-  systems. **Start here.**
+  systems. **Start here.** Also a full website (VitePress: sidebar, search,
+  landing page): `cd docs && npm install && npm run dev`.
 - `VISION.md` - why the factory exists and what "working" looks like.
 - `DAEDALUS.md` - what a launch-ready app contains; the design contract.
 - `FRAMEWORK.md` - the shared-framework architecture (tiers, token contract,

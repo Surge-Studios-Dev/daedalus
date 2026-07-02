@@ -1,0 +1,16 @@
+{
+  "name": "daedalus-docs",
+  "private": true,
+  "description": "The Daedalus wiki as a website. Source of truth stays the markdown; this just renders it navigable.",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "mermaid": "^11.4.1",
+    "vitepress": "^1.6.3",
+    "vitepress-plugin-mermaid": "^2.0.17"
+  }
+}

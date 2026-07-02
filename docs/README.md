@@ -4,6 +4,11 @@ The Surge Studios app factory, documented. One `surge.manifest.yaml` drives an
 app, its backend, its legal, its store listing, and its web presence — this
 wiki explains how every piece works and how they connect.
 
+> **📖 Read this as a website** (sidebar, search, dark mode, rendered
+> diagrams): `cd docs && npm install && npm run dev` → http://localhost:5173.
+> The markdown stays the source of truth; VitePress just renders it. Deploy
+> to GitHub Pages any time via the manual **Deploy docs** workflow.
+
 **Status:** build phases 0–3 complete and verified (60 tests across 11
 suites + 4 emulator-verified rules tests in the app template). Remaining work
 is stubbed throughout with `🔲 TODO (Phase N)` markers and collected in
