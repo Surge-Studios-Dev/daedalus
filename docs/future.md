@@ -119,6 +119,13 @@ annotation. Write it *before* it's needed; it's a template, not code.
   the Ladle rules) once an app needs it.
 - **Windows/desktop targets** — everything is phone-first; revisit if a
   product wants it.
+- **Docs site: VitePress 2 upgrade** — `npm audit` in `docs/` reports three
+  Vite-5 advisories that are dev-server-only (path traversal / fs.deny
+  bypass / launch-editor NTLM — all require a running `npm run dev` plus
+  attacker interaction; the static build ships none of Vite). esbuild is
+  already overridden to a patched version. Upgrade when VitePress 2 is
+  stable AND vitepress-plugin-mermaid declares 2.x peer support — that
+  moves the toolchain to Vite 7 and clears the audit.
 
 ## How to add a new future system to this wiki
 
