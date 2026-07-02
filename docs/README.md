@@ -24,10 +24,11 @@ flowchart TB
     manifest -->|"tools/portfolio_gen"| folio["Site portfolio entry"]
 
     spec -.->|"humans write §6 + §8"| app
-    app --> forge["scripts/forge.sh<br/>provision: ids, Firebase,<br/>icons, legal, backend"]
+    app --> forge["scripts/forge.sh<br/>local: ids, icons,<br/>legal, metadata"]
+    forge --> prov["scripts/provision.sh<br/>cloud: Firebase · auth ·<br/>ASC · RevenueCat"]
     legal --> site["Surge-Studios-Site<br/>/slug/privacy · /slug/terms"]
     folio --> site
-    forge --> build["Build features<br/>(Tier 4, spec-first)"]
+    prov --> build["Build features<br/>(Tier 4, spec-first)"]
     build --> check{"tools/ship_check<br/>red / green"}
     check -->|"red = to-do list"| build
     check -->|green| lanes["fastlane beta / release"]
@@ -49,6 +50,7 @@ flowchart TB
 | [Brick](brick.md) | Stamping mechanics, the foundation↔brick sync contract, dependency modes |
 | [surge_ui](surge-ui.md) | The toolbox: token contract, catalog system, promotion path |
 | [Backend](backend.md) | The safety rail: Firestore rules model, Functions, rules tests |
+| [Provisioning](provisioning.md) | The cloud side automated: Firebase/GCP, auth providers, ASC, RevenueCat — from manifest + credentials |
 | [Compliance & Web](compliance-and-web.md) | Legal generation, the LLC umbrella model, site registration |
 | [Release](release.md) | Store metadata, Fastlane lanes, the ship_check gate |
 | [Future systems](future.md) | Phase 4/5 stubs, the debt register, the parking lot |

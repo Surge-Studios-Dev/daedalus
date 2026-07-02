@@ -11,6 +11,7 @@ domain stubs, not rebuilding plumbing.
 - **[`docs/` — the wiki](docs/README.md)**: how every piece works and
   connects, with flow diagrams throughout and `🔲 TODO` stubs for future
   systems. **Start here.**
+- `VISION.md` - why the factory exists and what "working" looks like.
 - `DAEDALUS.md` - what a launch-ready app contains; the design contract.
 - `FRAMEWORK.md` - the shared-framework architecture (tiers, token contract,
   component-library conventions, distribution, promotion).

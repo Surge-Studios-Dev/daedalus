@@ -165,7 +165,8 @@ else
 fi
 
 # ---------- 6. manual checklist ----------
-step "Manual checklist (needs a browser)"
+step "Manual checklist (mostly automatable: scripts/provision.sh)"
+note "scripts/provision.sh executes most of the below from provision.env credentials; run it with --dry-run first to review the plan. What follows is the fallback / verification list."
 bold "App Store Connect + Play Console"
 echo "  - Create app records for $IOS_ID and $AND_ID."
 echo "  - Set support URL and the privacy policy URL ($(m '.legal.privacy_url'))."

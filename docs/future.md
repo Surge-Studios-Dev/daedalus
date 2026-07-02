@@ -33,7 +33,7 @@ paths are ready; this phase flips them against reality for the first time.
 
 ```mermaid
 flowchart LR
-    subgraph consoles["Console setup (human)"]
+    subgraph consoles["Console setup (now scripted: provision.sh)"]
         fb["Firebase project ·<br/>flutterfire configure ·<br/>enable Email/Apple/Google"]
         rc["RevenueCat app ·<br/>entitlement + products ·<br/>REVENUECAT_KEY"]
         sign["Apple capability + signing ·<br/>Play keystore"]
@@ -50,6 +50,10 @@ flowchart LR
 
 Exit criteria: every box green on a physical device, and the mock→live flip
 documented as an updated forge checklist with anything that surprised us.
+Phase 4 is also the first live execution of
+[`scripts/provision.sh`](provisioning.md) — run `--dry-run` first, expect to
+pin `fastlane produce` flags and RevenueCat v2 payload shapes, then remove
+its skeleton-honest caveat.
 
 ---
 
@@ -96,6 +100,10 @@ annotation. Write it *before* it's needed; it's a template, not code.
 
 ## Parking lot (ideas with no phase yet)
 
+- **Store-side product automation** — create the actual IAP/subscription
+  records in App Store Connect (ASC API) and Play (Developer API) from the
+  manifest's products + reference prices, completing
+  [provisioning](provisioning.md); today they're manual with generated ids.
 - **`daedalus update`** — apply manifest changes to an already-built app as
   a guided diff instead of a scratch-dir re-stamp ([Manifest](manifest.md)).
 - **Screenshot pipeline** — generate store screenshots from the app's

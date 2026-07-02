@@ -23,12 +23,13 @@ flowchart TD
 
     subgraph week["⏱️ The 1-week clock"]
         stamp["mason make daedalus<br/>→ running app on mocks"]
-        provision["scripts/forge.sh<br/>ids · Firebase · icons ·<br/>legal · store metadata · backend"]
+        forge["scripts/forge.sh<br/>local: ids · icons · legal ·<br/>store metadata"]
+        provision["scripts/provision.sh<br/>cloud: Firebase · auth providers ·<br/>ASC record · RevenueCat · deploy"]
         features["Build lib/features/*<br/>spec-first: §6 block before code,<br/>§8 edges become tests"]
-        flip["Flip seams live:<br/>deploy rules → useFirebase=true<br/>→ useRevenueCat=true"]
+        flip["Flip seams live:<br/>useFirebase=true<br/>→ useRevenueCat=true"]
         gate{"ship_check<br/>green?"}
         ship["fastlane beta → release"]
-        stamp --> provision --> features --> flip --> gate
+        stamp --> forge --> provision --> features --> flip --> gate
         gate -->|"red list = to-do list"| features
         gate -->|yes| ship
     end
@@ -52,7 +53,8 @@ flowchart TD
 | Validate | `tools/manifest_validator` — fail-fast schema rules | seconds | [Manifest](manifest.md) |
 | Spec | `tools/spec_gen` → `design/spec.md`; humans write intent at `**TODO**` markers | the real work | [templates/spec.template.md](../templates/spec.template.md) |
 | Stamp | `mason make daedalus -c vars.json` | ~30 s | [Brick](brick.md) |
-| Provision | `scripts/forge.sh` (idempotent, safe to re-run) | ~1 h incl. consoles | [Release](release.md) |
+| Forge (local) | `scripts/forge.sh` (idempotent, safe to re-run) | minutes | [Release](release.md) |
+| Provision (cloud) | `scripts/provision.sh [--dry-run]` — Firebase, auth, ASC, RevenueCat from `provision.env` | minutes + small manual core | [Provisioning](provisioning.md) |
 | Build | `lib/features/*` on [surge_ui](surge-ui.md), gated by `ref.gate()` | days 1–5 | [Foundation](foundation.md) |
 | Go live | deploy backend → flip seams | ~1 h | [Backend](backend.md) |
 | Gate | `tools/ship_check` — red/green, exit 1 on blockers | seconds | [Release](release.md) |

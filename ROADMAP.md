@@ -35,6 +35,7 @@ a deliberately broken manifest is rejected with precise errors before stamping.
 | `INTAKE.md` + `templates/spec.template.md` | front door | Idea → manifest + spec pipeline with a definition of "fleshed out" | (via spec_gen) |
 | `scripts/forge.sh` | factory | Provisioning: platform folders, flutterfire, icons, legal_gen, seam-flip + site-registration checklist | (syntax-checked) |
 | `scripts/check_brick_sync.dart` | factory | Enforces the foundation <-> `__brick__` sync contract (divergent-file allowlist + signatures, root lint parity) in CI | (stamp + negative-tested) |
+| `scripts/provision.sh` | factory | Cloud provisioning from manifest + provision.env: Firebase/GCP, auth providers, ASC record, keystore, RevenueCat graph, deploys | (dry-run verified; live at Phase 4) |
 | `.github/workflows/ci.yml` | factory | All packages + catalog freshness + validator + legal_gen + hooks | — |
 | Surge-Studios-Site | web | Master `/privacy` + `/terms` as the LLC umbrella with auto-updating covered-apps list; per-app `/<slug>/privacy|terms` from generated JSON; legal registry generator (`npm run build:legal`); Ladle in the portfolio | (build-verified) |
 
@@ -166,6 +167,21 @@ spec → stamp):
   5 passes.
 - forge.sh: store_gen step (4a) + ship check as the closing step ("red items
   = the remaining to-do list") + release-lanes checklist section.
+
+### Phase 3.5 — Provisioning rail · ✅ built 2026-07-01 (skeleton-honest)
+`scripts/provision.sh`: the cloud consoles, scripted. Firebase/GCP project
+creation + API enablement + billing link + Firestore db (firebase/gcloud
+CLIs), auth providers straight from `auth.providers` (Identity Toolkit admin
+API), ASC bundle id + app record + capabilities (fastlane produce), Android
+upload keystore + key.properties, the full RevenueCat v2 object graph from
+the monetization block (project → store apps → entitlement → products →
+offering → packages → attach), and rules/functions deploy. Credentials via
+gitignored `provision.env` (studio-wide `~/.surge/` + per-app), every step
+soft-degrades to a note, `--dry-run` prints the exact plan (verified against
+the example manifest). Irreducible manual core: Play "Create app" click, the
+two privacy questionnaires (answers pre-generated), store-side products,
+screenshots, and one-time studio enrollments. **Proven at Phase 4's first
+live run** — expect flag/payload adjustments there.
 
 ### Phase 4 — Live validation · user-gated, can interleave any time
 Firebase project (`flutterfire configure`, enable providers), platform config
