@@ -100,14 +100,17 @@ PROVIDERS=$(m '.auth.providers | join(" ")')
 ok "$NAME ($SLUG) -> project $FB_PROJECT, entitlement $ENTITLEMENT, auth [$PROVIDERS]"
 
 # ---------- 1. GCP / Firebase project ----------
+# Dry-run always prints the full plan, even where a CLI is missing locally.
 step "1. Firebase project + services"
-if have firebase; then
+if [ "$DRY" = 1 ] || have firebase; then
+  have firebase || note "firebase-tools not installed here (npm i -g firebase-tools; then firebase login)"
   run "create Firebase project $FB_PROJECT" \
     firebase projects:create "$FB_PROJECT" --display-name "$NAME"
 else
   note "firebase-tools missing (npm i -g firebase-tools; then firebase login)"
 fi
-if have gcloud; then
+if [ "$DRY" = 1 ] || have gcloud; then
+  have gcloud || note "gcloud not installed here (cloud.google.com/sdk; then gcloud auth login)"
   run "enable core APIs" \
     gcloud services enable firebase.googleapis.com firestore.googleapis.com \
       cloudfunctions.googleapis.com identitytoolkit.googleapis.com \
@@ -170,7 +173,8 @@ fi
 
 # ---------- 3. Apple: bundle id + ASC record + capabilities ----------
 step "3. App Store Connect (fastlane produce)"
-if have fastlane && { [ -n "${ASC_KEY_PATH:-}" ] || [ -n "${APPLE_ID:-}" ]; }; then
+if [ "$DRY" = 1 ] || { have fastlane && { [ -n "${ASC_KEY_PATH:-}" ] || [ -n "${APPLE_ID:-}" ]; }; }; then
+  have fastlane || note "fastlane not installed here (gem install fastlane)"
   PRODUCE_AUTH=()
   [ -n "${ASC_KEY_PATH:-}" ] && PRODUCE_AUTH=(--api_key_path "$ASC_KEY_PATH")
   run "register $IOS_ID + create the App Store Connect record" \
@@ -190,11 +194,16 @@ step "4. Android signing + Play"
 if [ -f android/upload-keystore.jks ]; then
   ok "android/upload-keystore.jks exists"
 elif have keytool && [ -n "${ANDROID_KEYSTORE_PASS:-}" ] && [ -d android ]; then
-  run "generate upload keystore" \
-    keytool -genkeypair -v -keystore android/upload-keystore.jks \
-      -alias upload -keyalg RSA -keysize 2048 -validity 10000 \
-      -storepass "$ANDROID_KEYSTORE_PASS" -keypass "$ANDROID_KEYSTORE_PASS" \
-      -dname "CN=Surge Studios LLC"
+  if [ "$DRY" = 1 ]; then
+    # Never echo the real password, even in a local plan preview.
+    printf '  \033[36mDRY\033[0m  generate upload keystore\n       $ keytool -genkeypair -keystore android/upload-keystore.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000 -storepass *** -keypass *** -dname "CN=Surge Studios LLC"\n'
+  else
+    run "generate upload keystore" \
+      keytool -genkeypair -v -keystore android/upload-keystore.jks \
+        -alias upload -keyalg RSA -keysize 2048 -validity 10000 \
+        -storepass "$ANDROID_KEYSTORE_PASS" -keypass "$ANDROID_KEYSTORE_PASS" \
+        -dname "CN=Surge Studios LLC"
+  fi
   if [ "$DRY" = 0 ] && [ ! -f android/key.properties ]; then
     printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=upload\nstoreFile=../upload-keystore.jks\n' \
       "$ANDROID_KEYSTORE_PASS" "$ANDROID_KEYSTORE_PASS" > android/key.properties
@@ -212,9 +221,9 @@ note "Play Console has NO app-creation API: create '$NAME' ($AND_ID) manually on
 # packages. API shapes match the documented v2 REST API; verify against the
 # current reference on first live run.
 step "5. RevenueCat ($MODEL / entitlement '$ENTITLEMENT')"
-if [ -z "${REVENUECAT_SECRET_KEY:-}" ]; then
+if [ "$DRY" = 0 ] && [ -z "${REVENUECAT_SECRET_KEY:-}" ]; then
   note "REVENUECAT_SECRET_KEY unset - create project/entitlement/products in the dashboard (see forge checklist)"
-elif ! have jq; then
+elif [ "$DRY" = 0 ] && ! have jq; then
   note "jq missing (winget install jqlang.jq) - RevenueCat automation needs it"
 else
   RC="https://api.revenuecat.com/v2"
@@ -233,27 +242,31 @@ else
       note "API rejected: $4" >&2; echo '{}'
     fi
   }
+  # Extract .id from an rc_call response. Dry-run needs no jq at all.
+  rid() {
+    if [ "$DRY" = 1 ]; then cat >/dev/null; echo "dry_id"; else jq -r '.id // "dry_id"'; fi
+  }
 
   if [ -n "${RC_PROJECT_ID:-}" ]; then
     PID="$RC_PROJECT_ID"; ok "using existing RevenueCat project $PID"
   else
-    PID=$(rc_call POST /projects "{\"name\":\"$NAME\"}" "create project '$NAME'" | jq -r '.id // "dry_id"')
+    PID=$(rc_call POST /projects "{\"name\":\"$NAME\"}" "create project '$NAME'" | rid)
   fi
 
   IOS_APP=$(rc_call POST "/projects/$PID/apps" \
     "{\"name\":\"$NAME iOS\",\"type\":\"app_store\",\"app_store\":{\"bundle_id\":\"$IOS_ID\"}}" \
-    "register App Store app ($IOS_ID)" | jq -r '.id // "dry_id"')
+    "register App Store app ($IOS_ID)" | rid)
   AND_APP=$(rc_call POST "/projects/$PID/apps" \
     "{\"name\":\"$NAME Android\",\"type\":\"play_store\",\"play_store\":{\"package_name\":\"$AND_ID\"}}" \
-    "register Play app ($AND_ID)" | jq -r '.id // "dry_id"')
+    "register Play app ($AND_ID)" | rid)
 
   EID=$(rc_call POST "/projects/$PID/entitlements" \
     "{\"lookup_key\":\"$ENTITLEMENT\",\"display_name\":\"$NAME full access\"}" \
-    "create entitlement '$ENTITLEMENT'" | jq -r '.id // "dry_id"')
+    "create entitlement '$ENTITLEMENT'" | rid)
 
   OID=$(rc_call POST "/projects/$PID/offerings" \
     '{"lookup_key":"default","display_name":"Standard"}' \
-    "create offering 'default'" | jq -r '.id // "dry_id"')
+    "create offering 'default'" | rid)
 
   PRODUCT_IDS=()
   N_PRODUCTS=$(m '.monetization.products | length')
@@ -271,12 +284,12 @@ else
     # it (products are per-store-app in RevenueCat, packages are not).
     PKGID=$(rc_call POST "/projects/$PID/offerings/$OID/packages" \
       "{\"lookup_key\":\"$PKG_KEY\",\"display_name\":\"$PKG_NAME\"}" \
-      "package $PKG_KEY" | jq -r '.id // "dry_id"')
+      "package $PKG_KEY" | rid)
     for APP_PAIR in "$IOS_APP:app_store" "$AND_APP:play_store"; do
       APP_REF="${APP_PAIR%%:*}"
       PRID=$(rc_call POST "/projects/$PID/products" \
         "{\"store_identifier\":\"$P_ID\",\"app_id\":\"$APP_REF\",\"type\":\"$RC_TYPE\",\"display_name\":\"$P_ID\"}" \
-        "create product $P_ID (${APP_PAIR##*:})" | jq -r '.id // "dry_id"')
+        "create product $P_ID (${APP_PAIR##*:})" | rid)
       PRODUCT_IDS+=("$PRID")
       rc_call POST "/projects/$PID/packages/$PKGID/actions/attach_products" \
         "{\"products\":[{\"product_id\":\"$PRID\",\"eligibility_criteria\":\"all\"}]}" \
