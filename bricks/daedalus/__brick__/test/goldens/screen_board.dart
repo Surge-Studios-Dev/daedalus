@@ -7,6 +7,8 @@ import 'package:{{slug}}/app/nav_config.dart';
 import 'package:{{slug}}/dev/fixtures.dart';
 import 'package:{{slug}}/features/feature_registry.dart';
 import 'package:{{slug}}/modules/auth/sign_in_screen.dart';
+import 'package:{{slug}}/modules/onboarding/onboarding_screen.dart';
+import 'package:{{slug}}/modules/paywall/paywall_screen.dart';
 import 'package:{{slug}}/modules/settings/settings_screen.dart';
 
 /// {{name}} screen board — every screen as light/dark PNGs plus a browsable
@@ -36,6 +38,18 @@ void main() => screenBoard(
       id: 'settings',
       label: 'Settings',
       build: SettingsScreen.new,
+    ),
+    // The first impression and the money screen - the two surfaces where a
+    // visual regression costs the most, on the board from day one.
+    const ScreenSpec(
+      id: 'onboarding',
+      label: 'Onboarding',
+      build: OnboardingScreen.new,
+    ),
+    const ScreenSpec(
+      id: 'paywall',
+      label: 'Paywall',
+      build: PaywallScreen.new,
     ),
   ],
   title: '{{name}} screen board',

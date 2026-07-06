@@ -51,6 +51,29 @@ jobs:
       - run: dart run tool/build_catalog.dart --check
         working-directory: packages/surge_ui
 
+  stamp-smoke:
+    name: stamp the example manifest end to end
+    runs-on: ubuntu-latest
+    steps:
+      # Checked out as "Daedalus" (capital D) because the stamped app's
+      # surge_* path deps point at ../Daedalus/... - case matters on Linux.
+      - uses: actions/checkout@v4
+        with:
+          path: Daedalus
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: install mason
+        run: |
+          dart pub global activate mason_cli
+          echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+      - name: stamp + prove (validate -> mason -> spec -> analyze -> test)
+        working-directory: Daedalus
+        run: ./scripts/new_app.sh surge.manifest.example.yaml "$GITHUB_WORKSPACE/stamp_smoke"
+      - name: screen board renders headlessly
+        working-directory: stamp_smoke
+        run: flutter test --update-goldens test/goldens/screen_board.dart
+
   tooling:
     name: manifest validator + brick hooks
     runs-on: ubuntu-latest
