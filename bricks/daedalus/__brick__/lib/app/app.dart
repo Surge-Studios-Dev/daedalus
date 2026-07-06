@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:surge_ui/surge_ui.dart';
 
 import '../modules/settings/appearance_controller.dart';
 import 'router.dart';
+import 'theme.dart';
 
-/// The app root. Builds light/dark themes from surge_ui with this app's brand
-/// palette (from surge.manifest.yaml) and drives them off the appearance
-/// setting; navigation comes from [routerProvider].
+/// The app root. Themes come from lib/app/theme.dart (the one theme
+/// source, shared with the proofing harnesses) and are driven off the
+/// appearance setting; navigation comes from [routerProvider].
 class SurgeApp extends ConsumerWidget {
   const SurgeApp({super.key});
-
-  // Design personality (brand.theme_pack) + brand accent (brand.palette)
-  // from the manifest. The pack carries the whole look (shape, motion,
-  // neutrals); the accent is tuned within it. Override more in _tokens as
-  // the brand grows.
-  static const _accent = Color({{accent_hex}});
-  static final _pack = SurgeThemePacks.byId('{{theme_pack}}');
-
-  SurgeTokens _tokens(Brightness brightness) {
-    return _pack.tokens(brightness).copyWith(accentBase: _accent);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,9 +19,8 @@ class SurgeApp extends ConsumerWidget {
     return MaterialApp.router(
       title: '{{name}}',
       debugShowCheckedModeBanner: false,
-      theme: buildSurgeTheme(Brightness.light, tokens: _tokens(Brightness.light)),
-      darkTheme:
-          buildSurgeTheme(Brightness.dark, tokens: _tokens(Brightness.dark)),
+      theme: appTheme(Brightness.light),
+      darkTheme: appTheme(Brightness.dark),
       themeMode: mode,
       routerConfig: router,
     );

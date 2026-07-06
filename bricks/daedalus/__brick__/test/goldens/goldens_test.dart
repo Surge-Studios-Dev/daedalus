@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:surge_ui/surge_ui.dart';
+import 'package:{{slug}}/app/theme.dart';
 
 /// Goldens for the most-used components, light + dark (pattern from
 /// Ladle's M1 definition of done). Layout, ink, and token regressions
@@ -30,23 +31,46 @@ void main() {
   final skip = !seeded && !autoUpdateGoldenFiles;
 
   setUpAll(() async {
-    // Goldens render real type when the app's bundled font is loaded here
-    // (see pubspec flutter/fonts); without one, flutter_test's Ahem blocks
-    // still catch layout/color regressions, just not glyph-level ones.
-    const fontFamily = 'AppFont';
-    const fontPath = 'assets/fonts/AppFont.ttf';
-    final fontFile = File(fontPath);
-    if (fontFile.existsSync()) {
-      final data = fontFile.readAsBytesSync();
-      final loader = FontLoader(fontFamily)
-        ..addFont(Future.value(data.buffer.asByteData()));
-      await loader.load();
+    // Goldens render Ahem blocks for any unloaded family: load every
+    // bundled brand font file (assets/fonts, added at M1 with the pubspec
+    // flutter/fonts block) and MaterialIcons from the Flutter SDK so type
+    // and icons are real. Without them the goldens still catch layout and
+    // color regressions, just not glyph-level ones.
+    final fontsDir = Directory('assets/fonts');
+    if (fontsDir.existsSync()) {
+      final loader = FontLoader(appFontFamily);
+      var any = false;
+      for (final f in fontsDir.listSync().whereType<File>().where(
+            (f) => f.path.endsWith('.ttf') || f.path.endsWith('.otf'),
+          )) {
+        loader.addFont(
+          Future.value(f.readAsBytesSync().buffer.asByteData()),
+        );
+        any = true;
+      }
+      if (any) await loader.load();
+    }
+    final flutterRoot = Platform.environment['FLUTTER_ROOT'];
+    if (flutterRoot != null) {
+      final icons = File(
+        '$flutterRoot/bin/cache/artifacts/material_fonts/'
+        'MaterialIcons-Regular.otf',
+      );
+      if (icons.existsSync()) {
+        final loader = FontLoader('MaterialIcons')
+          ..addFont(
+            Future.value(icons.readAsBytesSync().buffer.asByteData()),
+          );
+        await loader.load();
+      }
     }
   });
 
+  // The goldens must render the SHIPPING theme (lib/app/theme.dart), not
+  // pack defaults - a reference in the wrong clothes protects nothing.
   Widget host(Brightness brightness, Widget child) => MaterialApp(
     debugShowCheckedModeBanner: false,
-    theme: buildSurgeTheme(brightness),
+    theme: appTheme(brightness),
     home: Scaffold(
       body: Center(
         child: Padding(padding: const EdgeInsets.all(16), child: child),

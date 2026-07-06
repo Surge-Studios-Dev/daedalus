@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:golden_board/golden_board.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:surge_ui/surge_ui.dart';
 import 'package:{{slug}}/app/nav_config.dart';
+import 'package:{{slug}}/app/theme.dart';
 import 'package:{{slug}}/dev/fixtures.dart';
 import 'package:{{slug}}/features/feature_registry.dart';
 import 'package:{{slug}}/modules/auth/sign_in_screen.dart';
@@ -53,16 +55,33 @@ void main() => screenBoard(
     ),
   ],
   title: '{{name}} screen board',
+  // The board must render the SHIPPING theme (lib/app/theme.dart), not
+  // pack defaults - a board in the wrong clothes proofs a different app
+  // (Ember's first board rendered pack defaults and hid the brand).
   host: (brightness, child) => ProviderScope(
     overrides: devSeedOverrides(),
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: buildSurgeTheme(
-        brightness,
-        pack: SurgeThemePacks.byId('{{theme_pack}}'),
-      ),
+      theme: appTheme(brightness),
       home: child,
     ),
   ),
+  // Goldens render Ahem blocks for any unloaded family: load every bundled
+  // brand font file (assets/fonts, added at M1) and MaterialIcons from the
+  // Flutter SDK so type and icons on the board are real.
+  fonts: [
+    if (Directory('assets/fonts').existsSync())
+      for (final f in Directory('assets/fonts')
+          .listSync()
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.ttf') || f.path.endsWith('.otf')))
+        BoardFont.asset(family: appFontFamily, path: f.path),
+    if (Platform.environment['FLUTTER_ROOT'] case final root?)
+      BoardFont.asset(
+        family: 'MaterialIcons',
+        path: '$root/bin/cache/artifacts/material_fonts/'
+            'MaterialIcons-Regular.otf',
+      ),
+  ],
   beforeEach: () async => SharedPreferences.setMockInitialValues({}),
 );

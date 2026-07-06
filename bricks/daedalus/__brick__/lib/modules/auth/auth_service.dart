@@ -54,8 +54,12 @@ class MockAuthService implements AuthService {
       _set(AuthUser(uid: 'mock-user', email: email));
 
   @override
-  Future<void> signInWithApple() async =>
-      _set(const AuthUser(uid: 'mock-apple', email: 'you@privaterelay.appleid.com'));
+  Future<void> signInWithApple() async => _set(
+    const AuthUser(
+      uid: 'mock-apple',
+      email: 'you@privaterelay.appleid.com',
+    ),
+  );
 
   @override
   Future<void> signInWithGoogle() async =>
