@@ -22,6 +22,9 @@ dependencies:
   # Primary product analytics (per-app PostHog project; see ANALYTICS.md).
   posthog_flutter: ^4.7.0
   shared_preferences: ^2.3.2
+  # Pure-Dart core utilities (DST-safe dates); no Flutter imports.
+  surge_core:
+    path: ../packages/surge_core
   surge_ui:
     path: ../packages/surge_ui
   surge_onboarding:

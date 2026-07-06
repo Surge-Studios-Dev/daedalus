@@ -18,6 +18,11 @@ dependencies:
   # apps sit as siblings of the Daedalus checkout, git for standalone repos /
   # CI, pinned to a ref. Drop other surge_* Systems in the same way.
 {{#use_git_deps}}
+  surge_core:
+    git:
+      url: {{{surge_git_url}}}
+      ref: {{{surge_git_ref}}}
+      path: packages/surge_core
   surge_ui:
     git:
       url: {{{surge_git_url}}}
@@ -40,6 +45,8 @@ dependencies:
       path: packages/surge_share
 {{/use_git_deps}}
 {{^use_git_deps}}
+  surge_core:
+    path: {{{surge_core_path}}}
   surge_ui:
     path: {{{surge_ui_path}}}
   surge_onboarding:
