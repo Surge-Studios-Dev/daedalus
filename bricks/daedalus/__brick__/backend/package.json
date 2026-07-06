@@ -11,6 +11,7 @@
     "test": "npm run build && npm run test:unit && npm run test:rules",
     "test:unit": "mocha test/unit/*.test.mjs --timeout 5000",
     "test:rules": "firebase emulators:exec --only firestore \"mocha test/*.test.mjs --timeout 15000\"",
+    "corpus": "node corpus/run.mjs",
     "serve": "npm run build && firebase emulators:start --only auth,firestore,functions"
   },
   "dependencies": {

@@ -1,0 +1,31 @@
+{
+  "concurrency": 3,
+  "serialTypes": ["tiktok", "instagram"],
+  "serialGapMs": 1000,
+  "gate": { "passPct": 90, "p50Ms": 20000, "minItems": 100 },
+  "items": [
+    {
+      "id": "web-001",
+      "type": "web",
+      "input": "https://example.com/a-typical-source-page",
+      "expect": {
+        "outcome": "ok",
+        "equal": { "title": "The Exact Expected Title" },
+        "min": { "items": 5 },
+        "near": { "totalKcal": { "value": 520, "pct": 10 } }
+      }
+    },
+    {
+      "id": "tt-001",
+      "type": "tiktok",
+      "input": "https://www.tiktok.com/@creator/video/123",
+      "expect": { "outcome": "ok", "min": { "items": 4 } }
+    },
+    {
+      "id": "web-junk-001",
+      "type": "web",
+      "input": "https://example.com/a-page-with-no-extractable-content",
+      "expect": { "outcome": "fail" }
+    }
+  ]
+}

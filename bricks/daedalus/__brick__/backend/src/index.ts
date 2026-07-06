@@ -10,6 +10,9 @@
  *    client calls it via FirebaseFunctions.instance.httpsCallable('ping').
  *  - notify/: Discord ops notifications (installs, purchases, support) -
  *    dormant until the .env webhook URLs are set.
+ *  - ai/: the AI rail (AI-RAIL.md) - the cached-extraction callable pattern
+ *    (cache key + TTL + pipeline version) on a working model mock. The app
+ *    NEVER calls a model directly; every AI surface is a callable here.
  *  - sharing/: the growth rail (SHARING.md) - share snapshots, referral
  *    codes and rewards, and the shareLink web/unfurl endpoint. The client
  *    side is packages/surge_share; `shares` / `referrals` / `referral_codes`
@@ -24,6 +27,7 @@ import { onNewFatalIssuePublished } from "firebase-functions/v2/alerts/crashlyti
 import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 
+import { MockModelClient, runExtract } from "./ai/extract";
 import { enforceRateLimit } from "./rate_limit";
 import {
   claimEntitlementCredit as runClaimEntitlementCredit,
@@ -72,6 +76,27 @@ export const onAccountDeleted = functionsV1.auth.user().onDelete(
 export const ping = onCall(async (request) => {
   return { pong: true, uid: request.auth?.uid ?? null };
 });
+
+// ---------------------------------------------------------------------------
+// AI rail (AI-RAIL.md; corpus gate: backend/corpus).
+
+/**
+ * The cached AI extraction callable. Ships on MockModelClient so a stamped
+ * app runs end-to-end; SEAM: swap in a real model client (add
+ * `@google/genai`, build the prompt + schema per app) and bump
+ * PIPELINE_VERSION in ai/extract.ts on quality-affecting changes. Charge
+ * the app-side meter when this SUCCEEDS, not on save.
+ */
+export const extract = onCall<{ url?: string }>(
+  { timeoutSeconds: 120, memory: "512MiB", region: "us-central1", invoker: "public" },
+  async (request) => {
+    requireAuth(request);
+    await enforceRateLimit(request.auth?.uid, "extract");
+    const url = request.data?.url?.trim();
+    if (!url) throw new HttpsError("invalid-argument", "Share a link to extract.");
+    return runExtract(url, new MockModelClient());
+  },
+);
 
 // ---------------------------------------------------------------------------
 // Sharing + referrals (SHARING.md; client: packages/surge_share).
