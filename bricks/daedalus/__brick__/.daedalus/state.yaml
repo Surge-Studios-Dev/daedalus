@@ -1,0 +1,18 @@
+# Pipeline state for {{name}} - the first file any session reads and the
+# last file it updates. Keeps a fresh agent session productive in one read:
+# where the app is in the pipeline, which milestone is active, and which
+# gates have passed. Humans read it too; keep notes short and factual.
+stage: stamped # stamped -> m0 -> building -> hardening -> shipped
+milestone: M0
+last_session: ""
+
+# Hard gates (MILESTONES.md holds the exit criteria).
+gates:
+  corpus: pending # backend/corpus green on 100+ items (skip if no AI surface)
+  core_tests: pending # lib/core pure-Dart logic test-locked before UI consumes it
+  goldens: pending # test/goldens seeded + green in both modes
+  paywall: pending # purchase + restore verified (mock now, StoreKit later)
+  ship_check: pending # tools/ship_check green
+
+# Session log - newest first, one line each: date, what shipped, what's next.
+log: []

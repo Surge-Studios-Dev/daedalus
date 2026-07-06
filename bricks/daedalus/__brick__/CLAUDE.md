@@ -14,6 +14,35 @@ wiring.
    wiring; regenerate rather than hand-editing generated files.
 3. Still ambiguous → ask, don't invent.
 
+## Session working rules
+- **Read `.daedalus/state.yaml` and `MILESTONES.md` first**, before any other
+  file. Work only the active milestone, one milestone (or one M3 screen group)
+  per session. Update the state file (stage, gates, one log line) before
+  ending.
+- Anything touching >1 file: present a plan (files, approach) before writing
+  code. New packages must be justified against the stack below.
+- The merge bar — analyze clean + formatted + tests green — is enforced by the
+  committed `.claude/hooks/merge_bar.sh` on every `git commit`. Don't fight
+  it; a blocked commit means fix the failure, not bypass the hook.
+- Commit per completed screen/module with the spec ID in the message
+  (`feat(COU-01): counters home`).
+- Human gates — STOP and ask rather than proceeding: spec §6/§8 approval,
+  design direction changes, anything touching money or store submission.
+
+## Eyes (never build UI blind)
+- **Screen board**: `flutter test --update-goldens test/goldens/screen_board.dart`
+  renders every screen to light/dark PNGs + `test/goldens/contact_sheet.html`,
+  headlessly, seeded from `lib/dev/fixtures.dart`. Run it after every visual
+  change and LOOK at it (Read the PNGs) before calling UI done. Add specs for
+  new screens and presented sheets as they land; grow the fixtures with the
+  real models.
+- **Component goldens**: `flutter test --update-goldens test/goldens` seeds;
+  after that, an unintended golden diff is the test working.
+- UI is not "done" until compared against the design reference in BOTH modes.
+- Optional deeper loop: a Flutter MCP toolkit (hot reload + widget snapshots
+  against the running app) can be wired in `.mcp.json`; the screen board is
+  the dependency-free baseline every stamp has.
+
 ## Stack (decided; do not relitigate)
 Flutter stable, Dart 3.x. **Riverpod** (`flutter_riverpod`, no codegen yet).
 **go_router**. UI from the shared **surge_ui** package (tokens + components).
@@ -28,9 +57,24 @@ today. Wire them by replacing the seam bodies and uncommenting the deps in
 - `lib/app/` bootstrap, router, app root, generated `nav_config.dart`.
 - `lib/modules/` universal, do not fork per feature: auth, onboarding, paywall
   (gate + entitlement), settings, telemetry, shell.
-- `lib/features/<tab>/` the part you build. One themed stub per feature tab
-  exists already; `feature_registry.dart` maps tab id -> screen (generated).
-- `lib/core/` pure Dart, tested. `lib/models/` app models.
+- `lib/features/<tab>/` the part you build. Each feature tab starts as a
+  WORKING pattern vertical (model + CrudRepository seam + searchable list ->
+  editor sheet -> delete) — reshape it into the real spec §6 feature instead
+  of writing screens from scratch. `feature_registry.dart` maps tab id ->
+  screen (generated).
+- `lib/core/` pure Dart, tested BEFORE any UI consumes it. `lib/models/` app
+  models. `lib/dev/fixtures.dart` seed data (screen board, tests,
+  screenshots — one seam, keep it current).
+- Design personality: theme pack `{{theme_pack}}` + the manifest palette.
+  Never restyle ad hoc — change the pack/palette, or propose a new pack in
+  surge_ui.
+
+## Parallel build (M3 only)
+After M2 locks core logic, feature tabs are independent. To parallelize:
+one agent per screen group in its own git worktree, each obeying this file
+and the merge bar, plus one integrator session that merges, re-runs the full
+suite, and re-captures the screen board. The fan-out playbook lives in the
+Daedalus repo at `docs/parallel-build.md`.
 
 ## Rules
 - Gate paid value with `ref.gate(context, 'gateId', onSuccess)`. Never check the
