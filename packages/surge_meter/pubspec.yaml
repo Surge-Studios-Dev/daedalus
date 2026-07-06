@@ -1,0 +1,16 @@
+name: surge_meter
+description: Free-tier usage meter (Tier 3 System) — periodic allowance with DST-safe reset, banked bonus credits, and an at-limit gate, extracted from Ladle's import meter.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  surge_core:
+    path: ../surge_core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
