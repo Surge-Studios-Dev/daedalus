@@ -20,6 +20,7 @@ jobs:
           - packages/surge_meter
           - packages/surge_import_queue
           - packages/surge_ui
+          - packages/surge_ui/gallery
           - packages/surge_onboarding
           - packages/surge_crud
           - packages/surge_rating
