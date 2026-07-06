@@ -46,7 +46,7 @@ class SurgeBanner extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(SurgeRadii.md),
+        borderRadius: BorderRadius.circular(t.radiusMd),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -15,38 +15,59 @@ class GalleryApp extends StatefulWidget {
 
 class _GalleryAppState extends State<GalleryApp> {
   ThemeMode _mode = ThemeMode.light;
+  SurgeThemePack _pack = SurgeThemePacks.canvas;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'surge_ui gallery',
       debugShowCheckedModeBanner: false,
-      theme: buildSurgeTheme(Brightness.light),
-      darkTheme: buildSurgeTheme(Brightness.dark),
+      theme: buildSurgeTheme(Brightness.light, pack: _pack),
+      darkTheme: buildSurgeTheme(Brightness.dark, pack: _pack),
       themeMode: _mode,
       home: _Gallery(
         mode: _mode,
+        pack: _pack,
         onToggleTheme: () => setState(
           () => _mode =
               _mode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light,
         ),
+        onSelectPack: (pack) => setState(() => _pack = pack),
       ),
     );
   }
 }
 
 class _Gallery extends StatelessWidget {
-  const _Gallery({required this.mode, required this.onToggleTheme});
+  const _Gallery({
+    required this.mode,
+    required this.pack,
+    required this.onToggleTheme,
+    required this.onSelectPack,
+  });
 
   final ThemeMode mode;
+  final SurgeThemePack pack;
   final VoidCallback onToggleTheme;
+  final ValueChanged<SurgeThemePack> onSelectPack;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('surge_ui'),
+        title: Text('surge_ui · ${pack.name}'),
         actions: [
+          // Every pack must be checkable against every component here, the
+          // same way the light/dark toggle works.
+          PopupMenuButton<SurgeThemePack>(
+            icon: const Icon(Icons.palette_outlined),
+            initialValue: pack,
+            onSelected: onSelectPack,
+            itemBuilder: (context) => [
+              for (final p in SurgeThemePacks.all.values)
+                PopupMenuItem(value: p, child: Text(p.name)),
+            ],
+          ),
           IconButton(
             icon: Icon(
               mode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode,
@@ -361,7 +382,7 @@ class _PlaceholderDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(SurgeRadii.md),
+      borderRadius: BorderRadius.circular(context.tokens.radiusMd),
       child: const SizedBox(
         height: 120,
         width: double.infinity,

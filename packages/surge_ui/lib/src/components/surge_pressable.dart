@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../tokens/surge_tokens.dart';
+
 /// Shared press feedback. Buttons scale down slightly on tap; rows dim instead.
 /// Every tappable surface in the library goes through this so press behavior is
 /// identical everywhere.
@@ -54,10 +56,10 @@ class _SurgePressableState extends State<SurgePressable> {
       onLongPress: widget.enabled ? widget.onLongPress : null,
       child: AnimatedScale(
         scale: active ? widget.scaleTo : 1.0,
-        duration: const Duration(milliseconds: 120),
+        duration: context.tokens.motionFast,
         child: AnimatedOpacity(
           opacity: active ? widget.opacityTo : 1.0,
-          duration: const Duration(milliseconds: 120),
+          duration: context.tokens.motionFast,
           child: widget.child,
         ),
       ),

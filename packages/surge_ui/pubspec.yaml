@@ -1,6 +1,6 @@
 name: surge_ui
 description: Surge Studios shared UI toolbox — token contract, theme, and the presentational component library every Surge app composes from.
-version: 0.3.0
+version: 0.4.0
 publish_to: none
 
 environment:

@@ -62,8 +62,8 @@ class SurgeSegmented extends StatelessWidget {
           return Stack(
             children: [
               AnimatedPositioned(
-                duration: const Duration(milliseconds: 200),
-                curve: const Cubic(0.2, 0, 0, 1),
+                duration: t.motionFast,
+                curve: t.curveStandard,
                 left: index * segWidth,
                 width: segWidth,
                 top: 0,
@@ -85,7 +85,7 @@ class SurgeSegmented extends StatelessWidget {
                         onTap: () => onChanged(options[i]),
                         child: Center(
                           child: AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 200),
+                            duration: t.motionFast,
                             style: SurgeText.subhead.copyWith(
                               fontWeight: FontWeight.w600,
                               color: options[i] == value
@@ -123,8 +123,8 @@ class SurgeSegmented extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               onTap: () => onChanged(options[i]),
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: const Cubic(0.2, 0, 0, 1),
+                duration: t.motionFast,
+                curve: t.curveStandard,
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(

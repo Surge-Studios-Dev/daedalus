@@ -92,13 +92,14 @@ class _SurgeTextFieldState extends State<SurgeTextField> {
         : Colors.transparent;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 120),
+      duration: t.motionFast,
+      curve: t.curveStandard,
       constraints: widget.multiline
           ? null
           : const BoxConstraints(minHeight: 52),
       decoration: BoxDecoration(
         color: focused ? t.bgBase : t.bgInset,
-        borderRadius: BorderRadius.circular(SurgeRadii.md),
+        borderRadius: BorderRadius.circular(t.radiusMd),
         border: Border.all(color: borderColor, width: 2),
       ),
       child: Row(
@@ -211,7 +212,7 @@ class SurgeSearchField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: t.bgInset,
-        borderRadius: BorderRadius.circular(SurgeRadii.md),
+        borderRadius: BorderRadius.circular(t.radiusMd),
       ),
       child: Row(
         children: [

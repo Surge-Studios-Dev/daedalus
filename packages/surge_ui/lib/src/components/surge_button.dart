@@ -107,8 +107,8 @@ class SurgeButton extends StatelessWidget {
     };
     final double radius = switch (_variant) {
       _Variant.ghost => SurgeRadii.pill,
-      _Variant.small => 10,
-      _ => SurgeRadii.md,
+      _Variant.small => t.radiusSm,
+      _ => t.radiusMd,
     };
     final double hpad = switch (_variant) {
       _Variant.small => 14,

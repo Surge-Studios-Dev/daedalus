@@ -36,7 +36,7 @@ class SurgeIconTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: background ?? t.accentTint,
         shape: square ? BoxShape.rectangle : BoxShape.circle,
-        borderRadius: square ? BorderRadius.circular(SurgeRadii.sm) : null,
+        borderRadius: square ? BorderRadius.circular(t.radiusSm) : null,
       ),
       child: Icon(icon, size: size / 2, color: color ?? t.accentBase),
     );
@@ -177,7 +177,7 @@ class SurgeGroupSection extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: t.bgBase,
-              borderRadius: BorderRadius.circular(SurgeRadii.md),
+              borderRadius: BorderRadius.circular(t.radiusMd),
             ),
             child: Column(
               children: [

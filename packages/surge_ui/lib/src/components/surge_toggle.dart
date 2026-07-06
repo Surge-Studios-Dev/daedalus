@@ -26,7 +26,7 @@ class SurgeToggle extends StatelessWidget {
           onChanged(!on);
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: t.motionFast,
           width: 51,
           height: 31,
           padding: const EdgeInsets.all(2),
@@ -35,8 +35,8 @@ class SurgeToggle extends StatelessWidget {
             borderRadius: BorderRadius.circular(SurgeRadii.pill),
           ),
           child: AnimatedAlign(
-            duration: const Duration(milliseconds: 200),
-            curve: const Cubic(0.2, 0, 0, 1),
+            duration: t.motionFast,
+            curve: t.curveStandard,
             alignment: on ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
               width: 27,

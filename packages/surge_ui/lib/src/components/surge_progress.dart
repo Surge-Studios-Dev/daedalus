@@ -25,8 +25,8 @@ class SurgeProgressBar extends StatelessWidget {
           children: [
             Container(color: t.bgInset),
             AnimatedFractionallySizedBox(
-              duration: const Duration(milliseconds: 280),
-              curve: const Cubic(0.2, 0, 0, 1),
+              duration: t.motionBase,
+              curve: t.curveStandard,
               alignment: Alignment.centerLeft,
               widthFactor: value.clamp(0, 1),
               child: Container(color: t.accentBase),

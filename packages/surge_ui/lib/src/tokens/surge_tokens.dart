@@ -1,3 +1,5 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
 
 /// The universal, frozen token contract every Surge app provides and every
@@ -8,9 +10,12 @@ import 'package:flutter/material.dart';
 /// tokens (domain colors, brand flourishes) live in a separate [ThemeExtension]
 /// the app owns; `surge_ui` never references those. Do not add fields here
 /// without a major version bump — the whole library is built against this shape.
+/// (0.4.0 widened the contract with radii + motion so theme packs can change
+/// shape and feel, not just color — done while zero stamped apps existed.)
 ///
-/// Values come from [SurgeTokens.light] / [SurgeTokens.dark] by default and are
-/// overridden per app (from the manifest `brand.palette`) via [copyWith].
+/// Values come from a [SurgeThemePack] (or the [SurgeTokens.light] /
+/// [SurgeTokens.dark] canvas defaults) and are overridden per app (from the
+/// manifest `brand.palette`) via [copyWith].
 @immutable
 class SurgeTokens extends ThemeExtension<SurgeTokens> {
   const SurgeTokens({
@@ -37,6 +42,15 @@ class SurgeTokens extends ThemeExtension<SurgeTokens> {
     required this.inverseInk,
     required this.shadowFloat,
     required this.shadowLift,
+    this.radiusSm = 8,
+    this.radiusMd = 12,
+    this.radiusLg = 16,
+    this.radiusXl = 24,
+    this.motionFast = const Duration(milliseconds: 140),
+    this.motionBase = const Duration(milliseconds: 240),
+    this.motionSlow = const Duration(milliseconds: 400),
+    this.curveStandard = Curves.easeOutCubic,
+    this.curveEmphasized = Curves.easeInOutCubicEmphasized,
   });
 
   /// Surfaces, back to front.
@@ -76,6 +90,24 @@ class SurgeTokens extends ThemeExtension<SurgeTokens> {
   /// Elevation: [shadowFloat] for resting cards, [shadowLift] for sheets/menus.
   final List<BoxShadow> shadowFloat;
   final List<BoxShadow> shadowLift;
+
+  /// Corner radii, smallest to largest. Per-pack: a soft pack rounds
+  /// everything up, an editorial pack sharpens. Fully round pills use the
+  /// constant [SurgeRadii.pill], which is shape, not personality.
+  final double radiusSm;
+  final double radiusMd;
+  final double radiusLg;
+  final double radiusXl;
+
+  /// Motion character: [motionFast] for state flips (toggle, chip select),
+  /// [motionBase] for standard transitions, [motionSlow] for entrances and
+  /// sheets. Curves: [curveStandard] for most animation, [curveEmphasized]
+  /// for hero moments.
+  final Duration motionFast;
+  final Duration motionBase;
+  final Duration motionSlow;
+  final Curve curveStandard;
+  final Curve curveEmphasized;
 
   /// Neutral light defaults — a blank-canvas palette (slate + blue accent).
   static const light = SurgeTokens(
@@ -164,6 +196,15 @@ class SurgeTokens extends ThemeExtension<SurgeTokens> {
     Color? inverseInk,
     List<BoxShadow>? shadowFloat,
     List<BoxShadow>? shadowLift,
+    double? radiusSm,
+    double? radiusMd,
+    double? radiusLg,
+    double? radiusXl,
+    Duration? motionFast,
+    Duration? motionBase,
+    Duration? motionSlow,
+    Curve? curveStandard,
+    Curve? curveEmphasized,
   }) {
     return SurgeTokens(
       bgBase: bgBase ?? this.bgBase,
@@ -189,6 +230,15 @@ class SurgeTokens extends ThemeExtension<SurgeTokens> {
       inverseInk: inverseInk ?? this.inverseInk,
       shadowFloat: shadowFloat ?? this.shadowFloat,
       shadowLift: shadowLift ?? this.shadowLift,
+      radiusSm: radiusSm ?? this.radiusSm,
+      radiusMd: radiusMd ?? this.radiusMd,
+      radiusLg: radiusLg ?? this.radiusLg,
+      radiusXl: radiusXl ?? this.radiusXl,
+      motionFast: motionFast ?? this.motionFast,
+      motionBase: motionBase ?? this.motionBase,
+      motionSlow: motionSlow ?? this.motionSlow,
+      curveStandard: curveStandard ?? this.curveStandard,
+      curveEmphasized: curveEmphasized ?? this.curveEmphasized,
     );
   }
 
@@ -219,16 +269,32 @@ class SurgeTokens extends ThemeExtension<SurgeTokens> {
       inverseInk: Color.lerp(inverseInk, other.inverseInk, t)!,
       shadowFloat: BoxShadow.lerpList(shadowFloat, other.shadowFloat, t)!,
       shadowLift: BoxShadow.lerpList(shadowLift, other.shadowLift, t)!,
+      radiusSm: lerpDouble(radiusSm, other.radiusSm, t)!,
+      radiusMd: lerpDouble(radiusMd, other.radiusMd, t)!,
+      radiusLg: lerpDouble(radiusLg, other.radiusLg, t)!,
+      radiusXl: lerpDouble(radiusXl, other.radiusXl, t)!,
+      motionFast: _lerpDuration(motionFast, other.motionFast, t),
+      motionBase: _lerpDuration(motionBase, other.motionBase, t),
+      motionSlow: _lerpDuration(motionSlow, other.motionSlow, t),
+      // Curves don't interpolate; switch at the midpoint of a theme change.
+      curveStandard: t < 0.5 ? curveStandard : other.curveStandard,
+      curveEmphasized: t < 0.5 ? curveEmphasized : other.curveEmphasized,
     );
   }
+
+  static Duration _lerpDuration(Duration a, Duration b, double t) => Duration(
+    microseconds: lerpDouble(
+      a.inMicroseconds.toDouble(),
+      b.inMicroseconds.toDouble(),
+      t,
+    )!.round(),
+  );
 }
 
-/// Corner radii. Fixed scale, referenced by name everywhere.
+/// Fully-round pill radius — shape, not personality, so it stays constant.
+/// Sized radii (sm/md/lg/xl) moved into [SurgeTokens] in 0.4.0 so theme
+/// packs can carry shape; read them via `context.tokens.radiusMd`.
 abstract final class SurgeRadii {
-  static const sm = 8.0;
-  static const md = 12.0;
-  static const lg = 16.0;
-  static const xl = 24.0;
   static const pill = 999.0;
 }
 

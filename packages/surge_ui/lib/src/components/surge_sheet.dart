@@ -56,8 +56,8 @@ class SurgeSheet extends StatelessWidget {
       constraints: BoxConstraints(maxHeight: screenHeight * 0.92),
       decoration: BoxDecoration(
         color: t.bgBase,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(SurgeRadii.xl),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(t.radiusXl),
         ),
         boxShadow: t.shadowLift,
       ),
@@ -159,7 +159,7 @@ Future<bool> showSurgeConfirm(
     barrierDismissible: true,
     barrierLabel: 'Dismiss',
     barrierColor: const Color(0x66000000),
-    transitionDuration: const Duration(milliseconds: 200),
+    transitionDuration: t.motionBase,
     transitionBuilder: (context, animation, _, child) {
       final curved = CurvedAnimation(
         parent: animation,
@@ -180,7 +180,7 @@ Future<bool> showSurgeConfirm(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: t.bgBase,
-          borderRadius: BorderRadius.circular(SurgeRadii.lg),
+          borderRadius: BorderRadius.circular(t.radiusLg),
           boxShadow: t.shadowLift,
         ),
         child: Material(
@@ -340,7 +340,7 @@ class _ModalButton extends StatelessWidget {
         height: 52,
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(SurgeRadii.md),
+          borderRadius: BorderRadius.circular(context.tokens.radiusMd),
         ),
         alignment: Alignment.center,
         child: Text(

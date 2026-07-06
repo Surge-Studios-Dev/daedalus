@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../tokens/surge_text.dart';
 import '../tokens/surge_tokens.dart';
+import 'surge_theme_pack.dart';
 
 /// Builds a [ThemeData] wired to a [SurgeTokens] set for one [brightness].
 ///
 /// Apps call this twice (light + dark) and pass the results to `MaterialApp`.
-/// Pass [tokens] to override the neutral defaults (from the manifest palette);
-/// pass [fontFamily] to set the app's bundled type family for the whole scale.
+/// Pass a [pack] to adopt a design personality (see [SurgeThemePacks]),
+/// [tokens] for the fully-resolved set (wins over [pack] — used when the app
+/// overrides the pack's accent from the manifest palette), and [fontFamily]
+/// to set the app's bundled type family for the whole scale.
 ThemeData buildSurgeTheme(
   Brightness brightness, {
+  SurgeThemePack? pack,
   SurgeTokens? tokens,
   String? fontFamily,
 }) {
   final t =
       tokens ??
-      (brightness == Brightness.dark ? SurgeTokens.dark : SurgeTokens.light);
+      (pack ?? SurgeThemePacks.canvas).tokens(brightness);
 
   return ThemeData(
     useMaterial3: true,

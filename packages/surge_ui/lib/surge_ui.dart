@@ -21,6 +21,7 @@ library;
 export 'src/tokens/surge_tokens.dart';
 export 'src/tokens/surge_text.dart';
 export 'src/theme/surge_theme.dart';
+export 'src/theme/surge_theme_pack.dart';
 
 // Catalog metadata.
 export 'src/catalog/component_meta.dart';

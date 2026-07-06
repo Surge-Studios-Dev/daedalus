@@ -34,7 +34,7 @@ class SurgeCard extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         color: t.bgSubtle,
-        borderRadius: BorderRadius.circular(SurgeRadii.lg),
+        borderRadius: BorderRadius.circular(t.radiusLg),
         border: Border.all(color: t.lineHairline),
         boxShadow: elevated ? t.shadowFloat : null,
       ),
@@ -82,7 +82,7 @@ class SurgeActionCard extends StatelessWidget {
         padding: EdgeInsets.all(selected ? 15 : 16),
         decoration: BoxDecoration(
           color: selected ? t.accentTint : t.bgSubtle,
-          borderRadius: BorderRadius.circular(SurgeRadii.lg),
+          borderRadius: BorderRadius.circular(t.radiusLg),
           border: selected
               ? Border.all(color: t.accentBase, width: 2)
               : Border.all(color: t.lineHairline),
