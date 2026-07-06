@@ -63,6 +63,10 @@ Future<void> run(HookContext context) async {
     'accent_hex': toColor(palette['accent'], '#75D8FF'),
     'accent_soft_hex': toColor(palette['accent_soft'], '#2B89D8'),
     'panel_hex': toColor(palette['panel'], '#0E1B27'),
+    // Design personality (surge_ui SurgeThemePacks). The pack carries the
+    // whole look (shape, motion, neutrals); the palette above tunes the
+    // accent within it. Validator holds the allowed ids.
+    'theme_pack': brand['theme_pack'] ?? 'canvas',
     'font_display': fonts['display'] ?? 'Inter',
     'font_text': fonts['text'] ?? 'Inter',
     'auth_email': providers.contains('email'),

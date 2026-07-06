@@ -11,14 +11,15 @@ import 'router.dart';
 class SurgeApp extends ConsumerWidget {
   const SurgeApp({super.key});
 
-  // Brand accent from the manifest palette. Every other token inherits the
-  // neutral surge_ui default; override more in _tokens as the brand grows.
+  // Design personality (brand.theme_pack) + brand accent (brand.palette)
+  // from the manifest. The pack carries the whole look (shape, motion,
+  // neutrals); the accent is tuned within it. Override more in _tokens as
+  // the brand grows.
   static const _accent = Color({{accent_hex}});
+  static final _pack = SurgeThemePacks.byId('{{theme_pack}}');
 
   SurgeTokens _tokens(Brightness brightness) {
-    final base =
-        brightness == Brightness.dark ? SurgeTokens.dark : SurgeTokens.light;
-    return base.copyWith(accentBase: _accent);
+    return _pack.tokens(brightness).copyWith(accentBase: _accent);
   }
 
   @override

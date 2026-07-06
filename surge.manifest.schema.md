@@ -30,7 +30,8 @@ studio:
   marketing_site: https://surgestudios.dev
 
 brand:
-  palette:                          # overrides the template's default token set
+  theme_pack: soft_depth            # design personality: canvas | soft_depth
+  palette:                          # tunes the accent within the pack
     accent: "#75D8FF"
     accent_soft: "#2B89D8"
     panel: "#0E1B27"
@@ -154,7 +155,7 @@ The `gate()` helper and entitlement check are the same in both cases. Only the t
 
 **studio** - shared across the portfolio; the init script can default these from a studio-level config so you only set them once.
 
-**brand** - `palette` overrides the template's default `ThemeExtension` tokens; any token you omit inherits the default. `fonts` must be bundled assets. The site reads this block to theme the marketing page so app and page match.
+**brand** - `theme_pack` selects the design personality from surge_ui's `SurgeThemePacks` (default `canvas`, the neutral blank canvas; `soft_depth` is the first shipped personality). The pack carries the whole look — neutrals, shape, elevation, motion; `palette` then tunes the accent within it (any token you omit inherits the pack). INTAKE pass 5 requires 2-3 reference apps before this gets set; never default a shipping app to `canvas`. `fonts` must be bundled assets; packs recommend a pairing (soft_depth: Manrope) and forge notes a mismatch. The site reads this block to theme the marketing page so app and page match.
 
 **navigation** - `tabs` builds the go_router shell. `type: builtin` is reserved for the settings/"You" tab rendered by `modules/settings`; `type: feature` generates a wired stub under `features/<id>`. `icon` values are `lucide_icons` names. `primary_action` is optional.
 

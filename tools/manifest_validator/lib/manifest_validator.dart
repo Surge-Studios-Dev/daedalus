@@ -59,6 +59,20 @@ List<String> validateManifest(Map manifest) {
     }
   }
 
+  // brand (optional block; absent = canvas pack + template palette)
+  final brand = manifest['brand'];
+  if (brand is Map) {
+    // Must mirror surge_ui's SurgeThemePacks.all — the app falls back to
+    // canvas on an unknown id, so the typo has to die here instead.
+    const packs = {'canvas', 'soft_depth'};
+    final pack = brand['theme_pack'];
+    if (pack != null && !packs.contains(pack)) {
+      errors.add(
+        'brand.theme_pack must be one of ${packs.join('|')} (got "$pack")',
+      );
+    }
+  }
+
   // auth
   final providers = (manifest['auth'] as Map?)?['providers'];
   if (providers is! List || providers.isEmpty) {

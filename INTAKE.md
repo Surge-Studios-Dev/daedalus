@@ -91,23 +91,35 @@ has 5+ edge cases in Section 8. Then - and only then - stamp.
     scheme - choose like it's forever even if the name isn't.
 22. **Tagline.** The one-liner from question 1, tightened to store-listing
     length.
-23. **Palette.** accent / accent_soft / panel hex values (surge_ui themes
-    everything from these three). Dark-first or light-first?
-24. **Fonts.** display + text (default Inter/Inter; Ladle used
-    Fraunces/Inter).
-25. **Logo mode.** `wordmark` or `monogram` (drives the site portfolio card).
-26. **Banned vocabulary.** What words would betray the product's values?
+23. **References first, then look.** Name 2-3 shipped apps whose look this
+    app should sit beside (screenshots, not vibes). This question is not
+    skippable: direction proposed without references drifted into the
+    generic 2026 "AI app" look on Ladle (tomato/coral accents on warm
+    paper) and had to be redone — that palette family is banned, and so is
+    defaulting to whatever the template already looks like.
+24. **Theme pack.** Pick the `brand.theme_pack` personality the references
+    point at (`soft_depth` today; `canvas` is the unstyled blank canvas —
+    never ship it as-is). No pack fits? That's a signal to design a new
+    pack in surge_ui, not to bend the app onto a wrong one.
+25. **Palette.** accent / accent_soft / panel hex values, tuned WITHIN the
+    pack (the pack carries neutrals, shape, and motion). Dark-first or
+    light-first?
+26. **Fonts.** display + text. Start from the pack's recommended pairing
+    (soft_depth: Manrope) and diverge only with a reason; fonts must be
+    bundled assets.
+27. **Logo mode.** `wordmark` or `monogram` (drives the site portfolio card).
+28. **Banned vocabulary.** What words would betray the product's values?
     (Ladle banned diet-culture language app-wide.)
 
 ## Pass 6 · Ops → `integrations`, `studio`, `features`
 
-27. **Firebase project id.** `<slug>-prod` unless there's a reason not to.
-28. **Support email.** `support@<domain>` - must exist before store
+29. **Firebase project id.** `<slug>-prod` unless there's a reason not to.
+30. **Support email.** `support@<domain>` - must exist before store
     submission.
-29. **Notifications in v1?** If yes, spec §7 gets written (types, triggers,
+31. **Notifications in v1?** If yes, spec §7 gets written (types, triggers,
     caps). Default no - it's a fast follow that needs server logic.
-30. **Remote config in v1?** Needed for app_gated trials and kill switches.
-31. **Cross-promo slot?** Show other Surge apps in settings (default yes).
+32. **Remote config in v1?** Needed for app_gated trials and kill switches.
+33. **Cross-promo slot?** Show other Surge apps in settings (default yes).
 
 ---
 

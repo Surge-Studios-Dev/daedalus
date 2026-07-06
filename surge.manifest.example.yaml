@@ -20,6 +20,7 @@ studio:
   marketing_site: https://surgestudios.dev
 
 brand:
+  theme_pack: soft_depth # design personality (see surge_ui SurgeThemePacks)
   palette:
     accent: "#75D8FF"
     accent_soft: "#2B89D8"

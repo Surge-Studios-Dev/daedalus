@@ -51,6 +51,16 @@ void main() {
     expect(errors, contains(contains('builtin tab')));
   });
 
+  test('brand.theme_pack accepts known packs and flags typos', () {
+    final m = _valid();
+    m['brand'] = {'theme_pack': 'soft_depth'};
+    expect(validateManifest(m), isEmpty);
+    m['brand'] = {'theme_pack': 'soft-depth'}; // kebab typo
+    expect(validateManifest(m), contains(contains('theme_pack')));
+    m['brand'] = {'palette': {'accent': '#75D8FF'}}; // no pack = canvas
+    expect(validateManifest(m), isEmpty);
+  });
+
   test('flags trial/model inconsistency', () {
     final m = _valid();
     (m['monetization'] as Map)['model'] = 'one_time';

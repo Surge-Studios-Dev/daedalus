@@ -21,6 +21,7 @@ vars:
   accent_hex: { type: string, default: "0xFF75D8FF" }
   accent_soft_hex: { type: string, default: "0xFF2B89D8" }
   panel_hex: { type: string, default: "0xFF0E1B27" }
+  theme_pack: { type: string, default: canvas }
   font_display: { type: string, default: Inter }
   font_text: { type: string, default: Inter }
   auth_email: { type: boolean, default: true }
