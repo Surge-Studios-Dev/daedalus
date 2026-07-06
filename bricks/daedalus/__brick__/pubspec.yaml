@@ -82,7 +82,9 @@ dependencies:
   # CrudRepository integration; firestore.rules already isolates
   # users/{uid}/... for it. If the free tier is metered (INTAKE pass 3), add
   # surge_meter the same way and charge via consumeAllowance the moment the
-  # metered work succeeds.
+  # metered work succeeds. If content is shared INTO the app (share sheet),
+  # add surge_import_queue + the platform templates in
+  # templates/share_extension/.
   # cloud_firestore: ^5.4.4{{#remote_config}}
   # firebase_remote_config: ^5.1.3{{/remote_config}}
 

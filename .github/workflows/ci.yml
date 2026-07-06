@@ -18,6 +18,7 @@ jobs:
         pkg:
           - packages/surge_core
           - packages/surge_meter
+          - packages/surge_import_queue
           - packages/surge_ui
           - packages/surge_onboarding
           - packages/surge_crud
