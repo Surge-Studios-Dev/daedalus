@@ -106,6 +106,10 @@ String generateSpec(Map manifest, {required String date}) {
       'never raw hex.');
   b.writeln('- Section 8 is the QA checklist: every line is an acceptance '
       'criterion.');
+  b.writeln('- This is a **living document with as-built deviations**: when '
+      'implementation changes a decision, add a numbered footnote at the '
+      'affected spot (`> **Deviation N (date):** what changed and why`) '
+      'instead of rewriting history.');
   b.writeln();
 
   // ---- 1. product overview -------------------------------------------

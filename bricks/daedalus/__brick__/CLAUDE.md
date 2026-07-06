@@ -46,7 +46,25 @@ today. Wire them by replacing the seam bodies and uncommenting the deps in
   comment (`/// COU-01 · Counters home`) and commits carry it too
   (`feat(COU-01): counters home`).
 - Work spec-first: before building a screen, its §6 block must exist; before
-  calling it done, its §8 edge cases must be tests.
+  calling it done, its §8 edge cases must be tests. When implementation changes
+  a spec decision, add a numbered deviation footnote at the affected spot —
+  never rewrite history.
+- Mark every launch placeholder with a grep-able `LAUNCH-TODO:` comment that
+  names its checklist item, and make the checklist point back at the code.
+  Retire the tag the moment the item ships.
+
+## Debugging (evidence before theory)
+- Screenshot the user's actual screen before theorizing (`adb shell screencap`
+  on Android; simulator screenshot on iOS). One real capture ends a
+  multi-round guessing game.
+- Users report symptoms in their own vocabulary ("overflow", "it's broken").
+  Map words to mechanisms with evidence, not assumption — and when a fix
+  ships, verify the *user's* scenario end-to-end, not the reduced case.
+- Headless-browser layout lies at phone sizes; verify web surfaces on a real
+  device.
+- Immutable published artifacts (cached images, message link previews) keep
+  showing old bugs after the fix — say "reshare/refresh to see it" or the fix
+  looks broken.
 
 ## Commands
 ```

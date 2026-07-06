@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.{{bundle_id_ios}}"],
+        "components": [
+          { "/": "/s/*", "comment": "Shared content" },
+          { "/": "/i/*", "comment": "Bare referral invites" }
+        ],
+        "comment": "LAUNCH-TODO(universal-links): replace TEAMID with the Apple Team ID and add the Associated Domains capability (applinks:<this host>) to the Runner entitlements. Both this host and any custom SHARE_LINK_BASE domain must be listed there forever."
+      }
+    ]
+  }
+}

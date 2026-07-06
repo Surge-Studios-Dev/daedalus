@@ -116,6 +116,70 @@ List<String> validateManifest(Map manifest) {
     }
   }
 
+  // sharing (optional block; absent = referrals on with studio defaults)
+  final sharing = manifest['sharing'];
+  if (sharing != null) {
+    if (sharing is! Map) {
+      errors.add('sharing must be a map');
+    } else {
+      final referrals = sharing['referrals'];
+      if (referrals != null && referrals is! bool) {
+        errors.add('sharing.referrals must be true|false (got "$referrals")');
+      }
+      // reward is optional (absent = studio defaults: 7 days, cap 90) but
+      // must be coherent when present.
+      final reward = sharing['reward'];
+      if (reward != null) {
+        if (reward is! Map) {
+          errors.add('sharing.reward must be a map');
+        } else {
+          if (reward['type'] != 'entitlement_days') {
+            errors.add(
+              'sharing.reward.type must be entitlement_days (got "${reward['type']}")',
+            );
+          }
+          final per = reward['per_referral'];
+          if (per is! num || per <= 0) {
+            errors.add('sharing.reward.per_referral must be > 0');
+          }
+          final cap = reward['cap'];
+          if (cap is! num || (per is num && cap < per)) {
+            errors.add('sharing.reward.cap must be >= per_referral');
+          }
+          if (referrals == false) {
+            errors.add(
+              'sharing.reward is set but sharing.referrals is false - remove one',
+            );
+          }
+        }
+      }
+      final domain = sharing['link_domain'];
+      if (domain != null) {
+        if (domain is! String ||
+            !RegExp(r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$')
+                .hasMatch(domain)) {
+          errors.add(
+            'sharing.link_domain must be a bare domain, no scheme (got "$domain")',
+          );
+        }
+      }
+      final content = sharing['content'];
+      if (content != null) {
+        if (content is! List || content.isEmpty) {
+          errors.add('sharing.content must be a non-empty list of type ids');
+        } else {
+          for (final c in content) {
+            if (c is! String || !RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(c)) {
+              errors.add(
+                'sharing.content ids must be lowercase snake_case (got "$c")',
+              );
+            }
+          }
+        }
+      }
+    }
+  }
+
   // legal
   final legal = manifest['legal'];
   if (legal is! Map) {

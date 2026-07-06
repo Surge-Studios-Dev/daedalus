@@ -217,6 +217,52 @@ Future<List<CheckResult>> runChecks(
             'no firestore.rules (older stamp) - copy the backend template'),
   );
 
+  // -- 11b. Growth rail: deep-link files real, backend exported. -------------
+  final aasa = at('hosting/public/.well-known/apple-app-site-association');
+  final assetlinks = at('hosting/public/.well-known/assetlinks.json');
+  if (!aasa.existsSync() || !assetlinks.existsSync()) {
+    results.add(const CheckResult('share links', CheckStatus.warn,
+        'hosting/public/.well-known files missing (older stamp) - share '
+        'links will not open the app (SHARING.md)'));
+  } else {
+    final placeholders = <String>[
+      if (_read(aasa).contains('TEAMID')) 'AASA still says TEAMID',
+      if (_read(assetlinks).contains('LAUNCH-TODO'))
+        'assetlinks fingerprint is a placeholder',
+    ];
+    results.add(
+      placeholders.isEmpty
+          ? const CheckResult('share links', CheckStatus.pass,
+              '.well-known files filled - verify on-device link opens both '
+              'platforms')
+          : CheckResult('share links', CheckStatus.fail,
+              '${placeholders.join('; ')} - installed devices will fall to '
+              'the web page instead of the app'),
+    );
+  }
+  final entitlements = at('ios/Runner/Runner.entitlements');
+  if (dirAt('ios').existsSync()) {
+    final hasApplinks =
+        entitlements.existsSync() && _read(entitlements).contains('applinks:');
+    results.add(
+      hasApplinks
+          ? const CheckResult('universal links', CheckStatus.pass,
+              'associated domains present in Runner.entitlements')
+          : const CheckResult('universal links', CheckStatus.fail,
+              'no applinks: entry in ios/Runner/Runner.entitlements - '
+              'add the Associated Domains capability for the share host(s)'),
+    );
+  }
+  results.add(
+    dirAt('backend/src/sharing').existsSync()
+        ? const CheckResult('sharing backend', CheckStatus.pass,
+            'backend/src/sharing present - deploy includes shareLink + '
+            'referral callables')
+        : const CheckResult('sharing backend', CheckStatus.warn,
+            'backend/src/sharing missing (older stamp) - the referral loop '
+            'has no server side'),
+  );
+
   // -- 12. Tests (optional; the slow one). ------------------------------------
   if (runTests) {
     final r = await Process.run('flutter', ['test'],

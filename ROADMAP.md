@@ -22,6 +22,10 @@ a deliberately broken manifest is rejected with precise errors before stamping.
 | `packages/surge_onboarding` | 3 | Data-driven first-run flow (integrated into foundation + brick) | 3 |
 | `packages/surge_crud` | 3 | `CrudRepository<T>` + in-memory + Firestore impls | 2 |
 | `packages/surge_rating` | 3 | `RatingService` + mock + in_app_review impl | 1 |
+| `packages/surge_share` | 3 | The growth rail (SHARING.md): device-minted share links, light-doc-first choreography, referral/credit client with server-rule-enforcing mock, offscreen card-capture harness | 20 |
+| `bricks/daedalus` sharing backend | factory | Generalized from Ladle: share snapshots (create-only, sanitize trust boundary), referral economy (transactional, config-doc tunable, RevenueCat promotional grants), the shareLink unfurl page + stable og:image endpoint, hosting rewrites + `.well-known` deep-link templates, rate limiting | 35 unit + 7 rules (emulator) |
+| `bricks/daedalus` notify | factory | Discord ops notifications (install proxy, RevenueCat webhook with fail-closed auth, Firestore support trigger); pure formatters unit-tested; dormant until `.env` filled | 21 |
+| foundation `modules/share` | 1 | Invite card on the settings surface (code, copy-link, "Have a code?" sheet), share seams on MockShareBackend, credit-claimer drain | 3 (in foundation's 16) |
 | `foundation/` | 1 | Blank canvas: auth, purchases, storage, analytics, crash reporting — all behind swappable service seams with working mocks; onboarding; settings stack; auth→onboarding→app routing | 9 |
 | `bricks/daedalus` | factory | Stamps the foundation from a manifest: tabs/palette/providers/trial/entitlement templated, nav config + themed stubs + registry + smoke test + CI generated; fail-fast manifest validation in pre_gen | (stamp-verified) |
 | `bricks/daedalus` backend | factory | Per-app deny-by-default firestore.rules (per-user isolation), Functions scaffold (account-deletion purge + callable pattern), rules unit tests, firebase.json/.firebaserc from the manifest | 4 (emulator-verified) |
@@ -79,8 +83,9 @@ unexplained difference, clobbered template, or missing mirror file.
 | D3 | ~~Validator rules duplicated (tools pkg + pre_gen inline mirror)~~ | ~~Medium~~ | **Fixed (Phase 0)**: hooks path-depend on manifest_validator; inline mirror deleted |
 | D4 | ~~`surge_crud` / `surge_rating` have no reference integration~~ | ~~Medium~~ | **Fixed (Phase 2)**: `features/notes` CRUD reference (foundation-only) + rate-us settings row (stamped everywhere) |
 | D5 | `app_gated` trial window not enforced (manifest supports one_time model; gate() ignores trial days); Remote Config + notifications flags unwired | Medium — contract promise unmet for one_time apps | Wire in Phase 5 (or when first one_time app appears) |
-| D6 | Cross-promo module from DAEDALUS.md contract not built | Low — needs 2+ live apps to matter | Phase 5 |
+| D6 | Cross-promo module from DAEDALUS.md contract not built | Low — needs 2+ live apps to matter; the growth rail (Phase 5a) now outranks it as the acquisition channel from app #1 | Phase 5 |
 | D7 | No golden tests; gallery verification is manual | Low | Add goldens when visual churn slows |
+| D11 | ~~`surge_share` has no reference integration~~ | ~~Medium~~ | **Fixed (Phase 5a)**: backend `sharing/` scaffold, hosting/deep-link templates, and the foundation invite surface all stamp; verified end to end. Live RevenueCat grants + on-device link opening remain Phase 4 items |
 | D8 | ~~"Tally" example reads like a real product~~ | ~~Low~~ | **Fixed (Phase 0)**: marked fictional in the example manifest, root README, and examples/README |
 | D9 | ~~Store metadata block exists but nothing consumes it~~ | ~~Low~~ | **Fixed (Phase 3)**: `tools/store_gen` → deliver/supply trees + limit checks |
 | D10 | Loose version pins (many "newer available" warnings) | Low | Pin before first release build |
@@ -190,6 +195,61 @@ Firebase project (`flutterfire configure`, enable providers), platform config
 for Apple/Google sign-in, RevenueCat app/entitlement/products, device run.
 Execute the DoD: three-way sign-in, sandbox purchase + restore, account
 deletion, events flowing. First real test of the mock→live flips.
+
+### Phase 5a — Growth rail · ✅ built + integrated 2026-07-02
+Sharing + referrals in every app (word of mouth is the acquisition plan),
+extracted from Ladle's sharing sprint — `SHARING.md` is the contract,
+`Ladle/DAEDALUS-LESSONS.md` + `Ladle/WEBHOOK-NOTIFICATIONS.md` the source
+documents. Every piece below is stamp-verified: the example manifest
+produces an app that analyzes clean, passes its smoke test, and whose
+rendered backend compiles with 35/35 unit tests green.
+
+- `packages/surge_share` (20 tests): device-minted ids/links, the
+  light-doc-first share choreography, referral/credit client (loud
+  `redeem()` for manual entry, silent `autoRedeem()` for shares;
+  `CreditClaimer` drains banked days one chunk per claim), offscreen
+  card-capture harness encoding every trap from the Ladle sprint.
+  `MockShareBackend` enforces the real server rules, so a stamp exercises
+  the whole flow with no cloud.
+- Manifest `sharing` block (schema + example + validator rules): referrals
+  default-on, reward economy validated, bare-domain check.
+- Brick backend `sharing/` (35 unit tests + 7 emulator rules tests):
+  generalized from Ladle — codes/links/storage/rewards/sanitize (the
+  generic trust boundary with structural caps)/revenuecat (promotional
+  grants on `{{entitlement}}`, replace-not-stack chunking)/referrals
+  (transactional redeem, lifetime cap, config-doc economy)/shares
+  (create-only ids, light-doc + items subcollection, fill-only image
+  attach)/web (the unfurl-contract page + stable `/c/{id}.png` endpoint) —
+  plus per-uid rate limiting and referral purge on account deletion. Rules
+  lock `shares`/`referral_codes`/`rate_limits` server-only and
+  `referrals/{uid}` owner-read.
+- Brick plumbing: `firebase.json` hosting rewrites (`/s /i /c` →
+  `shareLink`), `hosting/public/.well-known` AASA + assetlinks templated
+  from the manifest bundle ids (TEAMID/fingerprint as LAUNCH-TODOs), a
+  landing stub, `.env.example` (SHARE_LINK_BASE, REVENUECAT_SECRET).
+- Brick backend `notify/` (21 tests): Discord ops notifications (installs /
+  purchases / support) with fail-closed webhook auth; dormant until `.env`
+  webhooks are set.
+- Foundation (mirrored to the brick; 16 foundation tests): `modules/share`
+  seam (MockShareBackend default; SEAM maps 1:1 onto the callables), the
+  inline invite card on the settings surface (code, copy-link,
+  "Have a code?" sheet with friendly rejection copy), and the status-driven
+  credit-claimer drain. `Ev` taxonomy extended with the growth events.
+- ship_check: `.well-known` placeholders and missing `applinks:`
+  entitlements are blockers; missing sharing backend warns. forge.sh prints
+  the share-links checklist (TEAMID, fingerprints, custom domain,
+  REVENUECAT_SECRET, real-device verification).
+
+Remaining (deliberately):
+- Phase 4 live run: sandbox RevenueCat promotional grants (replace, not
+  stack — verify the drain-one-chunk loop against the real SDK), and
+  on-device Universal/App Links verification (needs the signed app + real
+  team id/fingerprints).
+- Per-app content sharing (`sharing.content`): the app supplies its
+  `Shareable` snapshots + card layout on the surge_share harness; spec_gen
+  `SHR-xx` id reservation when the first content-sharing app is specced.
+- Deferred deep linking does not exist by design (the invitee re-taps the
+  link); revisit only if funnel data demands it.
 
 ### Phase 5 — Operate layer · after first launch
 Analytics sink + portfolio dashboard; Remote Config + app_gated trial

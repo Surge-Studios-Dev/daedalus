@@ -29,6 +29,10 @@ Rules that made this format work:
 - Phase tags: **[P0]** launch build, **[P1]** fast follow, **[P2]** later.
 - Color/type references use surge_ui token and style names, never raw hex.
 - Section 8 is the QA checklist: every line is an acceptance criterion.
+- This is a **living document with as-built deviations**: when implementation
+  changes a decision, add a numbered footnote at the affected spot
+  (`> **Deviation N (date):** what changed and why`) instead of rewriting
+  history. The spec stays true without pretending it predicted everything.
 
 ## 1. Product overview
 

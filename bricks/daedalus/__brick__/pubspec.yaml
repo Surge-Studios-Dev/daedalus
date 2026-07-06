@@ -33,6 +33,11 @@ dependencies:
       url: {{{surge_git_url}}}
       ref: {{{surge_git_ref}}}
       path: packages/surge_rating
+  surge_share:
+    git:
+      url: {{{surge_git_url}}}
+      ref: {{{surge_git_ref}}}
+      path: packages/surge_share
 {{/use_git_deps}}
 {{^use_git_deps}}
   surge_ui:
@@ -41,6 +46,8 @@ dependencies:
     path: {{{surge_onboarding_path}}}
   surge_rating:
     path: {{{surge_rating_path}}}
+  surge_share:
+    path: {{{surge_share_path}}}
 {{/use_git_deps}}
   # Auth backend. The app depends on modules/auth/AuthService; these power the
   # FirebaseAuthService binding, selected in bootstrap once `flutterfire

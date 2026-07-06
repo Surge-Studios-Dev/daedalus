@@ -7,10 +7,44 @@
     "source": "backend",
     "predeploy": ["npm --prefix backend run build"]
   },
+  "hosting": {
+    "public": "hosting/public",
+    "ignore": ["**/.*"],
+    "headers": [
+      {
+        "source": "/.well-known/apple-app-site-association",
+        "headers": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Cache-Control", "value": "public, max-age=3600" }
+        ]
+      },
+      {
+        "source": "/.well-known/assetlinks.json",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=3600" }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/s/**",
+        "function": { "functionId": "shareLink", "region": "us-central1" }
+      },
+      {
+        "source": "/i/**",
+        "function": { "functionId": "shareLink", "region": "us-central1" }
+      },
+      {
+        "source": "/c/**",
+        "function": { "functionId": "shareLink", "region": "us-central1" }
+      }
+    ]
+  },
   "emulators": {
     "auth": { "port": 9099 },
     "firestore": { "port": 8080 },
     "functions": { "port": 5001 },
+    "hosting": { "port": 5000 },
     "ui": { "enabled": false },
     "singleProjectMode": true
   }

@@ -20,6 +20,7 @@ jobs:
           - packages/surge_onboarding
           - packages/surge_crud
           - packages/surge_rating
+          - packages/surge_share
           - foundation
     steps:
       - uses: actions/checkout@v4

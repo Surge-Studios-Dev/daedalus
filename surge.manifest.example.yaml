@@ -54,6 +54,11 @@ features:
   notifications: true
   cross_promo: true
 
+sharing:
+  referrals: true
+  reward: { type: entitlement_days, per_referral: 7, cap: 90 }
+  content: [counter]
+
 legal:
   privacy_url: https://surgestudios.dev/tally/privacy
   terms_url: https://surgestudios.dev/tally/terms

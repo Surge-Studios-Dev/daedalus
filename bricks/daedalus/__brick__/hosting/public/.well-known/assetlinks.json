@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "{{package_android}}",
+      "sha256_cert_fingerprints": [
+        "LAUNCH-TODO(app-links): paste the upload-key SHA256 fingerprint (keytool -list -v) AND Play App Signing's fingerprint once enrolled; add the intent filter with android:autoVerify=true for this host and any custom SHARE_LINK_BASE domain"
+      ]
+    }
+  }
+]

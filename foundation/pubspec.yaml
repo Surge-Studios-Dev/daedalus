@@ -32,6 +32,9 @@ dependencies:
   # "Rate this app" settings row + review-moment prompts.
   surge_rating:
     path: ../packages/surge_rating
+  # The growth rail: referral/invite loop (default-on) + content sharing.
+  surge_share:
+    path: ../packages/surge_share
 
 dev_dependencies:
   flutter_test:

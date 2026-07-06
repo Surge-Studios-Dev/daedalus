@@ -85,6 +85,15 @@ features:
   notifications: false
   cross_promo: true
 
+sharing:                            # the growth rail (SHARING.md); omit = referrals on with defaults
+  referrals: true                   # invite loop; default true, false opts out
+  reward:
+    type: entitlement_days          # the only reward type today
+    per_referral: 7                 # days granted per successful referral
+    cap: 90                         # lifetime cap per account
+  link_domain: go.ladle.kitchen     # optional custom domain (no scheme); *.web.app fallback always works
+  content: [recipe, collection]     # shareable type ids; omit for referral-only
+
 legal:
   privacy_url: https://surgestudios.dev/ladle/privacy
   terms_url: https://surgestudios.dev/ladle/terms
@@ -154,6 +163,8 @@ The `gate()` helper and entitlement check are the same in both cases. Only the t
 **monetization** - one entitlement per app. `model` picks subscription, one_time, or hybrid. `trial.type` must be consistent with `model` (`store_intro_offer` for subscriptions, `app_gated` for one_time, `none` to disable). `products[].type` is `auto_renew_subscription` or `non_consumable`. `reference_price` is never the source of truth for billing; the stores are. `gates` lists the feature ids `gate()` protects; `all` gates the entire app behind the unlock.
 
 **features** - module toggles. `remote_config` enables the per-app kill-switch and the tunable trial window. `cross_promo` enables the house-ads slot.
+
+**sharing** - the growth rail (see `SHARING.md`). `referrals` defaults to **true** — every app ships the invite loop unless explicitly opted out. `reward` is optional (absent = studio defaults: 7 days per referral, cap 90) but must be coherent when present: `type: entitlement_days` with `per_referral > 0` and `cap >= per_referral`, and it cannot be combined with `referrals: false`. `link_domain` is a bare domain (no scheme); the `*.web.app` default host always stays registered so old links never die. `content` lists the app's shareable type ids (snake_case); omit it for referral-only sharing.
 
 **legal** - URLs back the in-app Privacy/Terms screens and the store listing. `data_practices` drives the generated Privacy Policy, Terms of Service, Apple privacy manifest, and the store data-disclosure labels (via `tools/legal_gen`); setting `tracking: true` wires the ATT prompt. The optional `governing_law`, `content_summary`, `domain_disclaimer`, and `extra_providers` tailor the generated copy to the app; omit them for correct-but-generic text. Generated per-app policies are hosted on the marketing site at `/<slug>/privacy` and `/<slug>/terms`, which is what `privacy_url` / `terms_url` should point to.
 

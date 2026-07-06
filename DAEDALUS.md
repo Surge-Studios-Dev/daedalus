@@ -10,8 +10,13 @@ The launch-ready Flutter starter every Surge app is stamped from. Universal infr
 > manifest (a stamped app analyzes clean). Deltas from the text below: the base
 > ships **Riverpod without codegen**; **Firebase and RevenueCat are working mocks**
 > marked `SEAM:` (uncomment the deps to wire them), not yet live; gating is
-> **`ref.gate(context, gateId, onSuccess)`**. See `FRAMEWORK.md` for the tier
-> model, token contract, and component-library conventions.
+> **`ref.gate(context, gateId, onSuccess)`**. The growth rail is built and
+> stamped: **`packages/surge_share`** (client), the brick backend's
+> `sharing/` callables + `shareLink` unfurl endpoint, hosting deep-link
+> templates, the foundation invite card, and the `notify/` ops triggers —
+> all on mocks/placeholders until forge's share-links checklist is run.
+> See `FRAMEWORK.md` for the tier model, token contract, and
+> component-library conventions, and `SHARING.md` for the growth rail.
 
 ## What "launchable" means
 
@@ -76,7 +81,9 @@ The split is the whole point. `modules/` is universal and quarantined; `features
 - **Settings stack** (`modules/settings`): Settings, Account (email, change password, sign out, **delete account**), Manage Subscription, Contact/Support, FAQ, Legal (Privacy + Terms rendered from per-app markdown), Notifications toggle, version/build.
 - **Monetization** (`modules/paywall`): paywall, RevenueCat wiring, the `gate()` helper, restore purchases. Model-agnostic (see below).
 - **Telemetry** (`modules/telemetry`): Crashlytics + Analytics with the standard event taxonomy.
-- **Cross-promo** (`modules/crosspromo`): a house-ads slot, wired from app #1 so the portfolio becomes its own acquisition channel.
+- **Sharing + referrals** (the growth rail — `packages/surge_share`, contract in `SHARING.md`): the referral/invite loop is **default-on in every app** (invite link → both sides earn entitlement-credit days; needs zero domain knowledge because every app has the single entitlement); content sharing (self-hosted share links, branded unfurl cards) turns on when the manifest declares `sharing.content`. Word of mouth is the acquisition plan, so this is universal infrastructure, not a feature.
+- **Ops notifications** (`backend/src/notify/`): Discord embeds for installs (auth-creation proxy), purchases (RevenueCat webhook; auth fails closed), and support requests (Firestore trigger). Best-effort, never throw; dormant until the functions `.env` webhook URLs are set — no manifest field.
+- **Cross-promo** (`modules/crosspromo`): a house-ads slot, wired from app #1 so the portfolio becomes its own acquisition channel. Referrals rank ahead of it: they generate acquisition from app #1, while cross-promo only matters at 2+ live apps.
 - **UI** (external `packages/surge_ui`): the token contract plus the generic component library (buttons, chips, inputs, rows, sheets, toasts, banners, stepper, segmented, toggle, progress, spinner) and loading/empty/error states. Apps depend on it; see `FRAMEWORK.md` and `packages/surge_ui/CATALOG.md`.
 - **App identity**: launcher icon and splash generated from the `brand` block.
 
@@ -100,7 +107,7 @@ Restore purchases is mandatory and always present. Reference prices in the manif
 
 ## Telemetry taxonomy (identical across every app)
 
-Standard events, so the portfolio dashboard works with zero per-app wiring: `app_open`, `screen_view{screen}`, `sign_up{method}`, `login{method}`, `onboarding_complete`, `paywall_view{source}`, `trial_start`, `purchase{product,price}`, `restore`, `cancel_intent`, `gate_blocked{gate}`, `crosspromo_tap{target}`. Apps add domain events on top. Never rename these.
+Standard events, so the portfolio dashboard works with zero per-app wiring: `app_open`, `screen_view{screen}`, `sign_up{method}`, `login{method}`, `onboarding_complete`, `paywall_view{source}`, `trial_start`, `purchase{product,price}`, `restore`, `cancel_intent`, `gate_blocked{gate}`, `crosspromo_tap{target}`, and the growth-rail set `share_create{type}`, `share_open{source}`, `share_save{type}`, `referral_redeem`, `reward_grant{days}`, `invite_view` (these make viral coefficient a portfolio metric). Apps add domain events on top. Never rename these.
 
 ## Conventions (inherited from Ladle)
 

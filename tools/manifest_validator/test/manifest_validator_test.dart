@@ -69,6 +69,48 @@ void main() {
     expect(validateManifest(m), contains(contains('auto_renew_subscription|non_consumable')));
   });
 
+  test('sharing block is optional and a complete one is valid', () {
+    final m = _valid();
+    m['sharing'] = {
+      'referrals': true,
+      'reward': {'type': 'entitlement_days', 'per_referral': 7, 'cap': 90},
+      'link_domain': 'go.tally.app',
+      'content': ['counter'],
+    };
+    expect(validateManifest(m), isEmpty);
+  });
+
+  test('flags an incoherent reward', () {
+    final m = _valid();
+    m['sharing'] = {
+      'reward': {'type': 'cash', 'per_referral': 0, 'cap': -1},
+    };
+    final errors = validateManifest(m);
+    expect(errors, contains(contains('entitlement_days')));
+    expect(errors, contains(contains('per_referral must be > 0')));
+    expect(errors, contains(contains('cap must be >= per_referral')));
+  });
+
+  test('flags a reward on an opted-out app', () {
+    final m = _valid();
+    m['sharing'] = {
+      'referrals': false,
+      'reward': {'type': 'entitlement_days', 'per_referral': 7, 'cap': 90},
+    };
+    expect(validateManifest(m), contains(contains('referrals is false')));
+  });
+
+  test('flags a link_domain with a scheme and bad content ids', () {
+    final m = _valid();
+    m['sharing'] = {
+      'link_domain': 'https://go.tally.app',
+      'content': ['Counter Thing'],
+    };
+    final errors = validateManifest(m);
+    expect(errors, contains(contains('bare domain')));
+    expect(errors, contains(contains('snake_case')));
+  });
+
   test('requires legal urls and firebase project', () {
     final m = _valid()
       ..remove('legal')

@@ -55,14 +55,22 @@ machine running `pub get` needs git access to it. Prefer pinning
   the reference integration). Commented patterns for server-only and
   shaped-shared collections.
 - `backend/` — one npm package: Cloud Functions in TypeScript
-  (`onAccountDeleted` purges a deleted user's Firestore data — the
+  (`onAccountDeleted` purges a deleted user's Firestore + referral data — the
   account-deletion story the privacy policy promises — plus the `ping`
-  callable pattern) and Firestore **rules unit tests** that pin the security
-  contract. `npm test` runs them under the emulator (needs Java; CI has it).
-- `firebase.json` / `.firebaserc` (project id from the manifest) /
-  `firestore.indexes.json`.
+  callable pattern), the **sharing/** growth-rail modules (share snapshots,
+  referral codes + rewards, the `shareLink` web/unfurl endpoint; client:
+  `packages/surge_share`, contract: `SHARING.md`), the **notify/** Discord
+  ops notifications (dormant until `.env` webhooks are set), pure-layer unit
+  tests (`npm run test:unit`), and Firestore **rules unit tests** that pin
+  the security contract (`shares`/`referral_codes` server-only,
+  `referrals/{uid}` owner-read). `npm test` runs everything; rules need the
+  emulator (Java; CI has it).
+- `firebase.json` (hosting rewrites `/s /i /c` → `shareLink`) /
+  `.firebaserc` (project id from the manifest) / `firestore.indexes.json` /
+  `hosting/public` (`.well-known` deep-link files with LAUNCH-TODO
+  placeholders for the team id + signing fingerprints).
 - Deploy rules BEFORE flipping `useFirebase` in bootstrap:
-  `firebase deploy --only firestore,functions`.
+  `firebase deploy --only firestore,functions,hosting`.
 
 ## Release rail (stamped with every app)
 

@@ -36,6 +36,14 @@ Directory readyApp() {
   put('fastlane/metadata/en-US/keywords.txt', 'a,b,c');
   put('fastlane/metadata/android/en-US/short_description.txt', 'Short.');
   put('firestore.rules', 'rules_version = \'2\';');
+  put('hosting/public/.well-known/apple-app-site-association',
+      '{"applinks":{"details":[{"appIDs":["ABCDE12345.com.x.x"]}]}}');
+  put('hosting/public/.well-known/assetlinks.json',
+      '[{"target":{"sha256_cert_fingerprints":["AA:BB"]}}]');
+  put('ios/Runner/Runner.entitlements',
+      '<key>com.apple.developer.associated-domains</key>'
+      '<array><string>applinks:x-prod.web.app</string></array>');
+  put('backend/src/sharing/shares.ts', '// sharing scaffold');
   return d;
 }
 
@@ -109,6 +117,29 @@ void main() {
     final rs = await runChecks(d.path, manifest());
     expect(byName(rs, 'secrets hygiene').status, CheckStatus.fail);
     expect(byName(rs, 'analytics doc').status, CheckStatus.warn);
+    d.deleteSync(recursive: true);
+  });
+
+  test('placeholder deep-link files and missing applinks block', () async {
+    final d = readyApp();
+    File('${d.path}/hosting/public/.well-known/apple-app-site-association')
+        .writeAsStringSync('{"appIDs":["TEAMID.com.x.x"]}');
+    File('${d.path}/hosting/public/.well-known/assetlinks.json')
+        .writeAsStringSync('["LAUNCH-TODO(app-links): fingerprint"]');
+    File('${d.path}/ios/Runner/Runner.entitlements')
+        .writeAsStringSync('<plist/>');
+
+    final rs = await runChecks(d.path, manifest());
+    expect(byName(rs, 'share links').status, CheckStatus.fail);
+    expect(byName(rs, 'universal links').status, CheckStatus.fail);
+    expect(byName(rs, 'sharing backend').status, CheckStatus.pass);
+
+    // Older stamp: no .well-known at all + no sharing backend only warns.
+    Directory('${d.path}/hosting').deleteSync(recursive: true);
+    Directory('${d.path}/backend').deleteSync(recursive: true);
+    final rs2 = await runChecks(d.path, manifest());
+    expect(byName(rs2, 'share links').status, CheckStatus.warn);
+    expect(byName(rs2, 'sharing backend').status, CheckStatus.warn);
     d.deleteSync(recursive: true);
   });
 

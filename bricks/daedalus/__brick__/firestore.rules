@@ -23,6 +23,38 @@ service cloud.firestore {
       }
     }
 
+    // Share snapshots (the growth rail, SHARING.md). No client access at
+    // all: reads go through the getShare callable (which counts views and
+    // hides revoked shares) and writes are server-only. Includes the items
+    // subcollection.
+    match /shares/{shareId} {
+      allow read, write: if false;
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+
+    // Referral credit state. Owner may READ (live credit badge and invite
+    // card stream straight from Firestore) but never write: creditDays /
+    // lifetimeReferrals are money-shaped and change only through the
+    // referral callables (admin SDK).
+    match /referrals/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Code -> uid lookup. Server-only: redeeming goes through the
+    // redeemReferral callable, and letting clients enumerate codes would
+    // leak uids.
+    match /referral_codes/{code} {
+      allow read, write: if false;
+    }
+
+    // Per-uid daily counters written by rate_limit.ts (admin SDK).
+    match /rate_limits/{key} {
+      allow read, write: if false;
+    }
+
     // Pattern: server-only shared data (caches, curated content). Clients
     // read, only Cloud Functions (admin SDK, bypasses rules) write.
     // match /content_cache/{id} {

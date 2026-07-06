@@ -55,6 +55,42 @@ describe("users/{uid} isolation", () => {
   });
 });
 
+describe("sharing collections (money-shaped state, SHARING.md)", () => {
+  it("shares are server-only, parent doc and items alike", async () => {
+    const db = env.authenticatedContext("alice").firestore();
+    await assertFails(getDoc(doc(db, "shares/abc123defg45")));
+    await assertFails(setDoc(doc(db, "shares/abc123defg45"), { title: "x" }));
+    await assertFails(
+      setDoc(doc(db, "shares/abc123defg45/items/000"), { idx: 0 }),
+    );
+  });
+
+  it("referrals/{uid}: owner reads, nobody writes", async () => {
+    // Seed as admin (rules-bypassing), like the server would.
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "referrals/alice"), {
+        code: "ALI-2345",
+        creditDays: 7,
+      });
+    });
+    const alice = env.authenticatedContext("alice").firestore();
+    await assertSucceeds(getDoc(doc(alice, "referrals/alice")));
+    // Money-shaped: even the owner cannot write their own credit.
+    await assertFails(
+      setDoc(doc(alice, "referrals/alice"), { creditDays: 9999 }),
+    );
+    const bob = env.authenticatedContext("bob").firestore();
+    await assertFails(getDoc(doc(bob, "referrals/alice")));
+  });
+
+  it("referral_codes and rate_limits are locked to everyone", async () => {
+    const db = env.authenticatedContext("alice").firestore();
+    await assertFails(getDoc(doc(db, "referral_codes/ALI2345")));
+    await assertFails(setDoc(doc(db, "referral_codes/MINE"), { uid: "alice" }));
+    await assertFails(setDoc(doc(db, "rate_limits/alice_x_2026-01-01"), { count: 0 }));
+  });
+});
+
 describe("deny by default", () => {
   it("denies unmatched root collections even when authenticated", async () => {
     const db = env.authenticatedContext("alice").firestore();

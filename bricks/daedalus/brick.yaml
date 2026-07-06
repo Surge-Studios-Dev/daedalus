@@ -64,6 +64,10 @@ vars:
     type: string
     description: Path to the surge_rating System package (see surge_ui_path).
     default: ../Daedalus/packages/surge_rating
+  surge_share_path:
+    type: string
+    description: Path to the surge_share System package (see surge_ui_path).
+    default: ../Daedalus/packages/surge_share
   tabs:
     type: array
     description: Filled by pre_gen from navigation.tabs.

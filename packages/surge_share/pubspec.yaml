@@ -1,0 +1,19 @@
+name: surge_share
+description: The growth rail (Tier 3 System) — self-hosted share links, referral/credit client, and the branded-card capture harness, extracted from Ladle's sharing sprint. Runs entirely on mocks; the app wires the Firebase callable seam.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:surge_ui/surge_ui.dart';
 
 import '../rating/rating.dart';
+import '../share/invite_card.dart';
 import '../telemetry/analytics_consent.dart';
 import 'appearance_controller.dart';
 
@@ -77,6 +78,12 @@ class SettingsScreen extends ConsumerWidget {
                 chevron: true,
               ),
             ],
+          ),
+          // The growth rail's always-visible surface (SHARING.md): every
+          // app ships the invite loop by default.
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: InviteCard(),
           ),
           SurgeGroupSection(
             header: 'Legal',

@@ -17,6 +17,13 @@ abstract final class Ev {
   static const cancelIntent = 'cancel_intent';
   static const gateBlocked = 'gate_blocked';
   static const crosspromoTap = 'crosspromo_tap';
+  // Growth rail (SHARING.md) - makes viral coefficient a portfolio metric.
+  static const shareCreate = 'share_create';
+  static const shareOpen = 'share_open';
+  static const shareSave = 'share_save';
+  static const referralRedeem = 'referral_redeem';
+  static const rewardGrant = 'reward_grant';
+  static const inviteView = 'invite_view';
 }
 
 /// Analytics sink. The default [DebugAnalytics] prints in debug and no-ops in
