@@ -69,6 +69,10 @@ vars:
     type: string
     description: Path to the surge_rating System package (see surge_ui_path).
     default: ../Daedalus/packages/surge_rating
+  surge_crud_path:
+    type: string
+    description: Path to the surge_crud System package (see surge_ui_path).
+    default: ../Daedalus/packages/surge_crud
   surge_share_path:
     type: string
     description: Path to the surge_share System package (see surge_ui_path).

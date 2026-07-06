@@ -38,6 +38,11 @@ dependencies:
       url: {{{surge_git_url}}}
       ref: {{{surge_git_ref}}}
       path: packages/surge_rating
+  surge_crud:
+    git:
+      url: {{{surge_git_url}}}
+      ref: {{{surge_git_ref}}}
+      path: packages/surge_crud
   surge_share:
     git:
       url: {{{surge_git_url}}}
@@ -53,6 +58,8 @@ dependencies:
     path: {{{surge_onboarding_path}}}
   surge_rating:
     path: {{{surge_rating_path}}}
+  surge_crud:
+    path: {{{surge_crud_path}}}
   surge_share:
     path: {{{surge_share_path}}}
 {{/use_git_deps}}
@@ -77,14 +84,14 @@ dependencies:
   shared_preferences: ^2.3.2
 
   # SEAM: uncomment as you wire each further integration (see bootstrap.dart
-  # and the SEAM: markers). For per-user data, add surge_crud (same source as
-  # surge_ui above) and follow foundation/lib/features/notes - the reference
-  # CrudRepository integration; firestore.rules already isolates
-  # users/{uid}/... for it. If the free tier is metered (INTAKE pass 3), add
-  # surge_meter the same way and charge via consumeAllowance the moment the
-  # metered work succeeds. If content is shared INTO the app (share sheet),
-  # add surge_import_queue + the platform templates in
-  # templates/share_extension/.
+  # and the SEAM: markers). The pattern screens run surge_crud in-memory; for
+  # per-user cloud data, add cloud_firestore below and bind
+  # FirestoreCrudRepository at users/{uid}/<tab> in bootstrap -
+  # firestore.rules already isolates that path. If the free tier is metered
+  # (INTAKE pass 3), add surge_meter (same source as surge_ui above) and
+  # charge via consumeAllowance the moment the metered work succeeds. If
+  # content is shared INTO the app (share sheet), add surge_import_queue +
+  # the platform templates in templates/share_extension/.
   # cloud_firestore: ^5.4.4{{#remote_config}}
   # firebase_remote_config: ^5.1.3{{/remote_config}}
 
@@ -94,6 +101,12 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.14.1
   flutter_native_splash: ^2.4.1
+  # Screen-board harness: every screen -> light/dark PNGs + an HTML contact
+  # sheet, headlessly (test/goldens/screen_board.dart). The agent's eyes.
+  golden_board:
+    git:
+      url: https://github.com/Esagem/golden_board.git
+      ref: v0.1.0
 
 flutter:
   uses-material-design: true

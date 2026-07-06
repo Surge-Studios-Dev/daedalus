@@ -1,0 +1,40 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+*.iml
+.idea/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# iOS / macOS
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/ephemeral/
+**/macos/Pods/
+**/macos/Flutter/ephemeral/
+**/*.xcworkspace/xcuserdata/
+
+# Android
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+
+# Backend
+backend/node_modules/
+backend/lib/
+backend/*.log
+
+# Screen board output (regenerate with:
+# flutter test --update-goldens test/goldens/screen_board.dart)
+test/goldens/screens/
+test/goldens/contact_sheet.html
+test/goldens/failures/
+
+# Secrets - never commit
+*.env
+.env*
+!*.env.example
+!.env.example
+**/GoogleService-Info.plist
+**/google-services.json
