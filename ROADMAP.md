@@ -255,6 +255,53 @@ Remaining (deliberately):
 Analytics sink + portfolio dashboard; Remote Config + app_gated trial
 enforcement (D5); cross-promo (D6); sunset playbook.
 
+### Phase 6 — Hands-off rail · backlog (queued 2026-07-06)
+
+The theme: every checklist forge.sh prints becomes an API call; the human
+shrinks to INTAKE answers, design refs, and approvals. Ordered by
+manual-minutes-killed per app.
+
+1. **Provisioning rail goes live** (extends Phase 3.5 / Phase 4). App
+   Store Connect via the official API (bundle ids, certs/profiles,
+   TestFlight, versions, metadata) + `fastlane produce` for the app
+   record; the ASC subscriptions API creates groups, products, prices,
+   intro offers, and the group-level localization (the "Missing
+   Metadata" trap — automate it away). RevenueCat REST API v2 for apps /
+   entitlements / products / offerings (project creation may stay
+   dashboard-only; verify). Play Developer API for everything except app
+   creation, which is console-only — batch-create empty shells ahead so
+   the pipeline never blocks. Bake in the Ladle scar tissue: gcloud
+   run-invoker binding for v2 callables, Blaze link via Cloud Billing
+   API, auth providers via Identity Platform config API.
+2. **Release rail: tag → signed build → TestFlight / Play internal.**
+   One shared `fastlane match` certs repo + ASC API key as org secrets;
+   stamped CI lanes for beta/release. Also what lets an agent ship: it
+   can tag and watch CI, not click Xcode dialogs.
+3. **Screenshot + metadata factory.** The screen-board contact sheet
+   already renders every screen seeded, both themes, headless — pipe
+   through a device-frame compositor with per-locale captions from the
+   `store` block, upload via deliver/ASC API. Privacy nutrition labels
+   ship via fastlane's upload_app_privacy_details from legal_gen's JSON
+   instead of a human checklist.
+4. **Automated paywall verification.** Generate a StoreKit Testing
+   config from the manifest products + an XCUITest driving purchase /
+   entitlement unlock / restore on the simulator in CI. The manual
+   sandbox purchase becomes optional paranoia.
+5. **The agent layer.** CLAUDE.md + MILESTONES.md generators (promised
+   by DAEDALUS.md, not yet built), a `.daedalus/state.yaml` pipeline
+   state file so any fresh session resumes mid-pipeline, stamped
+   `.claude/` hooks enforcing the merge bar (analyze + test + format
+   before commit), and skills for /intake, /stamp, /m0, /ship. Marks the
+   explicit human gates (INTAKE, design refs, spec approval, submit).
+6. **Fleet propagation.** `fleet.yaml` registry of stamped apps + a
+   script/scheduled agent that bumps surge_* refs across app repos, runs
+   each suite, opens PRs. Plus per-app ops provisioning by API: PostHog
+   project, Discord webhook, DNS for share-link subdomains.
+
+Stays human, by design: Play Console app creation (~5 min, batchable),
+Apple review itself, the one-time studio setup (DUNS, bank/tax, ASC API
+key, match repo, billing account, RevenueCat org), and taste.
+
 ## 5. Sequencing rationale
 
 Phases 0–3 are done: the factory is protected, the front door exists, every
