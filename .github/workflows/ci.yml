@@ -63,11 +63,16 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+      # The stamp proof now installs + unit-tests the backend fresh (the
+      # brick never ships node_modules); pin the backend's engines version.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: install mason
         run: |
           dart pub global activate mason_cli
           echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
-      - name: stamp + prove (validate -> mason -> spec -> analyze -> test)
+      - name: stamp + prove (validate -> mason -> spec -> backend -> merge bar)
         working-directory: Daedalus
         run: ./scripts/new_app.sh surge.manifest.example.yaml "$GITHUB_WORKSPACE/stamp_smoke"
       - name: screen board renders headlessly

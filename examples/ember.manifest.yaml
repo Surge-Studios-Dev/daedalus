@@ -1,0 +1,80 @@
+# Ember - a shared home-screen widget where your friend group keeps a daily
+# streak alive by all answering the same prompt (photo, poll, or challenge).
+# Produced by /new-app INTAKE, 2026-07-06.
+schema: 1
+
+identity:
+  slug: ember
+  name: Ember
+  tagline: Keep the fire going, together
+  bundle_id_ios: com.surgestudios.ember
+  package_android: com.surgestudios.ember
+
+studio:
+  name: Surge Studios
+  support_email: support@surgestudios.dev
+  marketing_site: https://surgestudios.dev
+
+brand:
+  theme_pack: soft_depth
+  palette:
+    accent: "#FFA85C"
+    accent_soft: "#C96B2E"
+    panel: "#181210"
+  logo_mode: wordmark
+  fonts:
+    display: Manrope
+    text: Manrope
+
+navigation:
+  tabs:
+    - { id: today, label: Today, icon: flame, type: feature }
+    - { id: groups, label: Groups, icon: users, type: feature }
+    - { id: you, label: You, icon: user, type: builtin }
+  primary_action: { id: answer, label: Answer, icon: zap }
+
+auth:
+  providers: [email, apple, google]
+  guest_mode: false
+
+monetization:
+  entitlement: pro
+  model: one_time
+  trial: { type: none }
+  products:
+    - { id: pro_lifetime, type: non_consumable, reference_price: 9.99, default: true }
+  gates: [unlimited_groups, premium_packs, streak_restore]
+
+features:
+  remote_config: true
+  notifications: true
+  cross_promo: true
+
+sharing:
+  referrals: true
+  reward: { type: entitlement_days, per_referral: 7, cap: 90 }
+  content: [day_recap]
+
+legal:
+  privacy_url: https://surgestudios.dev/ember/privacy
+  terms_url: https://surgestudios.dev/ember/terms
+  content_summary: daily photo responses, poll votes, and group reactions
+  data_practices:
+    collects_email: true
+    analytics: true
+    crash_reporting: true
+    tracking: false
+
+store:
+  category: Social Networking
+  age_rating: "12+"
+  keywords: [friends, widget, streak, daily prompt, group, photo]
+  short_description: Keep the fire going, together.
+  full_description: |
+    One prompt a day for your whole crew - a photo, a poll, or a
+    challenge. Everyone answers, the group streak grows, and your
+    friends' day shows up right on your home screen.
+
+integrations:
+  firebase_project: ember-prod
+  revenuecat_api_key: ${REVENUECAT_KEY}

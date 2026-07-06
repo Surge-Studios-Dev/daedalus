@@ -5,10 +5,18 @@
 #
 # Validates the manifest, generates the spec skeleton, stamps the brick into
 # a SIBLING of this checkout (the surge_* path deps assume that layout),
-# and proves the stamp with analyze + test. The INTAKE conversation that
+# and proves the stamp with the app's own merge bar (analyze + format +
+# test) plus the backend build + unit tests. The INTAKE conversation that
 # produces the manifest (and drafts spec §6/§8) is the /new-app skill's job;
 # this script is the deterministic tail of it.
 set -euo pipefail
+
+# dart-activated CLIs (mason) live in ~/.pub-cache/bin, which the invoking
+# shell often doesn't have on PATH - Ember's first stamp died halfway on
+# "mason: command not found". Shim it and fail early with the fix.
+export PATH="$HOME/.pub-cache/bin:$PATH"
+command -v mason >/dev/null 2>&1 ||
+  { echo "mason not found - run: dart pub global activate mason_cli" >&2; exit 1; }
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MANIFEST_ARG="${1:?usage: new_app.sh <surge.manifest.yaml> [output_dir]}"
@@ -25,11 +33,38 @@ if [ -e "$OUT" ] && [ -n "$(ls -A "$OUT" 2>/dev/null)" ]; then
   exit 1
 fi
 
-echo "== 1/5 validate manifest"
+# A failed stamp must not strand a partial output dir (the rerun then dies
+# on the exists-check above). Remove OUT on failure, but only if this run
+# created it.
+FRESH_OUT=0
+[ -e "$OUT" ] || FRESH_OUT=1
+cleanup() {
+  status=$?
+  if [ "$status" -ne 0 ] && [ "$FRESH_OUT" -eq 1 ] && [ -e "$OUT" ]; then
+    echo "stamp failed (exit $status) - removing partial output: $OUT" >&2
+    rm -rf "$OUT"
+  fi
+}
+trap cleanup EXIT
+
+# Mason mustache-renders EVERYTHING under __brick__, so build detritus
+# there is dangerous, not just slow: a locally npm-installed
+# backend/node_modules got its minified JS rendered as templates and
+# corrupted (Ember's yargs died mid-file). The stamp installs backend
+# deps fresh instead - these dirs must never ship in the brick.
+for junk in "$ROOT/bricks/daedalus/__brick__/backend/node_modules" \
+            "$ROOT/bricks/daedalus/__brick__/backend/lib"; do
+  if [ -e "$junk" ]; then
+    echo "   removing brick build detritus: ${junk#"$ROOT"/}" >&2
+    rm -rf "$junk"
+  fi
+done
+
+echo "== 1/6 validate manifest"
 (cd "$ROOT/tools/manifest_validator" && dart pub get >/dev/null &&
   dart run bin/validate.dart "$MANIFEST")
 
-echo "== 2/5 stamp $SLUG -> $OUT"
+echo "== 2/6 stamp $SLUG -> $OUT"
 mkdir -p "$OUT"
 cp "$MANIFEST" "$OUT/surge.manifest.yaml"
 # Mason prompts for every declared var when run non-interactively, so feed a
@@ -66,18 +101,36 @@ EOF
   mason make daedalus -o "$OUT" -c "$CONFIG" --on-conflict overwrite)
 rm -f "$CONFIG"
 
-echo "== 3/5 spec skeleton"
+echo "== 3/6 spec skeleton"
 (cd "$ROOT/tools/spec_gen" && dart pub get >/dev/null &&
   dart run bin/spec_gen.dart "$OUT/surge.manifest.yaml" "$OUT/design/spec.md")
 echo "   -> $OUT/design/spec.md (write §6 screens + §8 edge cases before M3)"
 
-echo "== 4/5 prove the stamp"
-(cd "$OUT" && flutter analyze && flutter test)
+echo "== 4/6 backend deps + unit tests"
+# node_modules is never shipped in the brick (see the detritus guard) -
+# install fresh, compile, and run the pure unit suite. Rules tests need
+# the Firestore emulator and stay out of the stamp proof.
+(cd "$OUT/backend" && npm install --no-audit --no-fund >/dev/null &&
+  npm run build >/dev/null && npm run test:unit)
 
-echo "== 5/5 done"
+echo "== 5/6 prove the stamp (the app's own merge bar)"
+# Self-heal formatter drift first: the foundation mirror was formatted
+# under the SDK that built it, and the stamping machine's SDK may disagree
+# (11 files drifted on Ember, and formatting exposed 5 auto-fixable
+# lints). The stamp must pass the same bar the app's commit hook enforces,
+# or the very first feature commit gets blocked by factory debt.
+(cd "$OUT" &&
+  dart format lib test >/dev/null &&
+  dart fix --apply >/dev/null &&
+  dart format lib test >/dev/null &&
+  flutter analyze &&
+  dart format --output=none --set-exit-if-changed lib test &&
+  flutter test)
+
+echo "== 6/6 done"
 cat <<EOF
 
-$SLUG is stamped, analyzed, and green at:
+$SLUG is stamped, analyzed, formatted, and green (app + backend) at:
   $OUT
 
 Next:

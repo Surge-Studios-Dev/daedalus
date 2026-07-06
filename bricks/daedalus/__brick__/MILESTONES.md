@@ -21,7 +21,12 @@ numbers before any UI consumes it (AI-RAIL.md).
 - [ ] `npm run corpus` gates green (≥90% pass, p50 under the gate)
 - [ ] No-AI apps: replace this milestone with the riskiest external
       dependency (device API, data source) proven the same way — a harness
-      and a number, not a demo
+      and a number, not a demo. Worked example: Ember's moat was widget
+      freshness, proven as a pure policy engine behind a transport seam
+      (`backend/src/freshness/engine.ts`) gated on a 115-scenario corpus
+      (deterministic generator, hostile + invalid junk included) — the
+      corpus items are simulated scenarios instead of URLs, and the first
+      full run caught a real coalescer bug the unit tests missed
 
 ## M1 · Design direction locked
 

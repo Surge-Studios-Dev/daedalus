@@ -67,6 +67,20 @@ every prompt/model change after re-ran it. `corpus/README.md` has the
 operating rules (serial types for rate-limited sources, disk-cached
 fetches, filtered runs never gate).
 
+**No-AI apps use the same harness, different items.** The corpus doesn't
+care that the pipeline is a model call — `run_item.mjs` is the seam.
+Ember's moat was widget freshness (no AI surface): the "pipeline" was a
+pure policy engine behind a transport seam (push coalescing, scheduled
+fallback ceiling, per-device OS hostility modeled with a seeded PRNG),
+and the corpus was 115 *simulated scenarios* from a committed
+deterministic generator — realistic archetypes plus junk that must fail
+both ways (invalid inputs rejected; beyond-spec hostility failing the
+bar). The gate paid for itself on the first full run: it caught a
+coalescer bug (bursts spanning >1 coalesce window lost their trailing
+pushes) that hand-written unit tests were too small to see. The doctrine
+holds: a harness and a number, not a demo — items can be URLs, scenarios,
+device traces, whatever the moat consumes.
+
 ## Architecture
 
 | Piece | Home | Contents |
