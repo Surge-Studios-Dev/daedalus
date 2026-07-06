@@ -27,6 +27,13 @@ SLUG=$(grep -E '^[[:space:]]*slug:' "$MANIFEST" | head -1 |
   sed 's/.*slug:[[:space:]]*//' | tr -d '"' | tr -d "'" | tr -d '[:space:]')
 [ -n "$SLUG" ] || { echo "could not read identity.slug from the manifest" >&2; exit 1; }
 
+# Org for the platform scaffold (step 4): the manifest bundle id minus its
+# last segment (com.surgestudios.ember -> com.surgestudios).
+BUNDLE=$(grep -E '^[[:space:]]*bundle_id_ios:' "$MANIFEST" | head -1 |
+  sed 's/.*bundle_id_ios:[[:space:]]*//' | tr -d '"' | tr -d "'" | tr -d '[:space:]')
+ORG="${BUNDLE%.*}"
+[ -n "$ORG" ] && [ "$ORG" != "$BUNDLE" ] || ORG="com.example"
+
 OUT="${2:-$ROOT/../$SLUG}"
 if [ -e "$OUT" ] && [ -n "$(ls -A "$OUT" 2>/dev/null)" ]; then
   echo "output dir exists and is not empty: $OUT" >&2
@@ -60,11 +67,11 @@ for junk in "$ROOT/bricks/daedalus/__brick__/backend/node_modules" \
   fi
 done
 
-echo "== 1/6 validate manifest"
+echo "== 1/7 validate manifest"
 (cd "$ROOT/tools/manifest_validator" && dart pub get >/dev/null &&
   dart run bin/validate.dart "$MANIFEST")
 
-echo "== 2/6 stamp $SLUG -> $OUT"
+echo "== 2/7 stamp $SLUG -> $OUT"
 mkdir -p "$OUT"
 cp "$MANIFEST" "$OUT/surge.manifest.yaml"
 # Mason prompts for every declared var when run non-interactively, so feed a
@@ -101,19 +108,34 @@ EOF
   mason make daedalus -o "$OUT" -c "$CONFIG" --on-conflict overwrite)
 rm -f "$CONFIG"
 
-echo "== 3/6 spec skeleton"
+echo "== 3/7 spec skeleton"
 (cd "$ROOT/tools/spec_gen" && dart pub get >/dev/null &&
   dart run bin/spec_gen.dart "$OUT/surge.manifest.yaml" "$OUT/design/spec.md")
 echo "   -> $OUT/design/spec.md (write §6 screens + §8 edge cases before M3)"
 
-echo "== 4/6 backend deps + unit tests"
+echo "== 4/7 scaffold platform folders"
+# A lean stamp ships lib/ only, but the handover promise is a RUNNABLE app
+# (M1 reviews the design on the running app; the next-steps below say
+# 'flutter run'). Scaffold ios/android here with the manifest org; forge's
+# own step 0 is idempotent and skips when they exist. flutter create drops
+# boilerplate the stamp doesn't want: widget_test.dart references a
+# counter MyApp that doesn't exist (it broke Ember's merge bar) and
+# README.md is generic noise.
+(cd "$OUT" &&
+  flutter create --org "$ORG" --platforms=ios,android . >/dev/null &&
+  rm -f test/widget_test.dart)
+if grep -q "A new Flutter project" "$OUT/README.md" 2>/dev/null; then
+  rm -f "$OUT/README.md"
+fi
+
+echo "== 5/7 backend deps + unit tests"
 # node_modules is never shipped in the brick (see the detritus guard) -
 # install fresh, compile, and run the pure unit suite. Rules tests need
 # the Firestore emulator and stay out of the stamp proof.
 (cd "$OUT/backend" && npm install --no-audit --no-fund >/dev/null &&
   npm run build >/dev/null && npm run test:unit)
 
-echo "== 5/6 prove the stamp (the app's own merge bar)"
+echo "== 6/7 prove the stamp (the app's own merge bar)"
 # Self-heal formatter drift first: the foundation mirror was formatted
 # under the SDK that built it, and the stamping machine's SDK may disagree
 # (11 files drifted on Ember, and formatting exposed 5 auto-fixable
@@ -127,10 +149,10 @@ echo "== 5/6 prove the stamp (the app's own merge bar)"
   dart format --output=none --set-exit-if-changed lib test &&
   flutter test)
 
-echo "== 6/6 done"
+echo "== 7/7 done"
 cat <<EOF
 
-$SLUG is stamped, analyzed, formatted, and green (app + backend) at:
+$SLUG is stamped, runnable, and green (app + backend) at:
   $OUT
 
 Next:
