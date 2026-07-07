@@ -34,12 +34,27 @@ written reason on the screen's spec block.
    filters/dates are chip rows; sheets have grabbers. Nothing full-bleed
    docks to the screen edge except the atmosphere itself.
 
+## Rule 8 (added after Ember's coral relapse)
+
+**Chrome is neutral; color belongs to the protagonist - and the
+protagonist MOVES.** Warm accents on warm/cream grounds recreate the
+banned tomato-coral-on-warm-paper family no matter which hex you picked.
+Crisp = white/near-white ground, ink chrome (buttons, bars, links),
+hairlines, and the app's ONE thematic color reserved for its living
+element (Ember: the flame), which carries a signature animation. Static
+theming cannot express a fire theme; motion is part of identity, not
+polish.
+
 ## Mechanical checks (the pass fails a screen on any of these)
 
 - Screen title or hero number not in the display face.
 - More than one radial glow per screen, or glow alpha > 0.35.
 - A hero screen on flat `bgBase` with no atmosphere.
 - Any accent-filled region larger than a button that isn't the paywall CTA.
+- A warm accent (red-orange-amber) on a warm/cream ground - the banned
+  family, however derived.
+- A "living element" (flame, moon, pulse) rendered with zero motion in
+  the running app.
 - Bottom half of a non-list screen >70% empty at 393×852 with fixtures.
 - An empty state without a lit protagonist.
 
