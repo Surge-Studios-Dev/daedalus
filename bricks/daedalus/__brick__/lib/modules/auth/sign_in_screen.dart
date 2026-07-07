@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:surge_ui/surge_ui.dart';
 
 import 'auth_controller.dart';
+import 'auth_errors.dart';
 
 /// AUTH-01 · Sign in. The provider set is generated from `auth.providers` in the
 /// manifest. Sign in with Apple is force-included whenever any social provider
@@ -29,8 +30,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Future<void> _run(Future<void> Function() action) async {
     setState(() => _busy = true);
-    await action();
-    if (mounted) setState(() => _busy = false);
+    try {
+      await action();
+    } catch (e) {
+      // Real auth throws (the mock never does); every failure is a toast,
+      // never a crash - an uncaught native NSException (e.g. GIDSignIn
+      // without its OAuth config) aborts the whole app.
+      if (mounted) {
+        showSurgeToast(
+          context,
+          message: authErrorMessage(e),
+          kind: SurgeToastKind.error,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   @override
