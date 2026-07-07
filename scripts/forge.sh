@@ -81,6 +81,16 @@ fi
 
 # ---------- 2. Firebase ----------
 step "2. Firebase (flutterfire configure)"
+# Lessons from Ember's provisioning:
+# - stale flutterfire_cli chokes on Xcode 16 synchronized-group targets
+#   ("'UnsupportedError' not found in iOS") - activate latest first.
+# - firebase_init / MCP flows OVERWRITE the stamped firestore.rules with
+#   open defaults; `git checkout firestore.rules firestore.indexes.json`
+#   before any `firebase deploy --only firestore`.
+# - firebase's npm predeploy spawn breaks under node 25 ("reading
+#   'stdin'"); build backend directly and deploy with the hook stripped
+#   until firebase-tools fixes it.
+soft "update flutterfire_cli" dart pub global activate flutterfire_cli
 if command -v flutterfire >/dev/null; then
   soft "configure firebase project $FB_PROJECT" \
     flutterfire configure \

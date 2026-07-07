@@ -114,6 +114,9 @@ has 5+ edge cases in Section 8. Then - and only then - stamp.
 ## Pass 6 · Ops → `integrations`, `studio`, `features`
 
 29. **Firebase project id.** `<slug>-prod` unless there's a reason not to.
+    Project ids are GLOBAL across all of Google Cloud - `ember-prod` was
+    already taken by a stranger. Fall back to `<studio>-<slug>-prod` and
+    update the manifest before provisioning.
 30. **Support email.** `support@<domain>` - must exist before store
     submission.
 31. **Notifications in v1?** If yes, spec §7 gets written (types, triggers,
