@@ -76,8 +76,7 @@ class _SurgeIndeterminateBarState extends State<SurgeIndeterminateBar>
           builder: (context, _) => LayoutBuilder(
             builder: (context, constraints) {
               final w = constraints.maxWidth;
-              final x =
-                  -0.4 * w +
+              final x = -0.4 * w +
                   1.4 * w * Curves.easeInOut.transform(_controller.value);
               return Stack(
                 children: [
@@ -111,7 +110,12 @@ class _SurgeIndeterminateBarState extends State<SurgeIndeterminateBar>
 /// whenToUse: Content placeholders while data loads, instead of a spinner on lists/cards.
 /// tags: skeleton, shimmer, placeholder, loading
 class SurgeSkeleton extends StatefulWidget {
-  const SurgeSkeleton({super.key, this.width, this.height = 16, this.radius = 8});
+  const SurgeSkeleton({
+    super.key,
+    this.width,
+    this.height = 16,
+    this.radius = 8,
+  });
 
   final double? width;
   final double height;

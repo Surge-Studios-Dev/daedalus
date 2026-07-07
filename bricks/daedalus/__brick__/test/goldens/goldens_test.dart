@@ -38,17 +38,20 @@ void main() {
     // color regressions, just not glyph-level ones.
     final fontsDir = Directory('assets/fonts');
     if (fontsDir.existsSync()) {
-      final loader = FontLoader(appFontFamily);
-      var any = false;
+      // Family inferred from filename prefix (Ember round 1 lesson).
+      final byFamily = <String, FontLoader>{};
       for (final f in fontsDir.listSync().whereType<File>().where(
             (f) => f.path.endsWith('.ttf') || f.path.endsWith('.otf'),
           )) {
-        loader.addFont(
-          Future.value(f.readAsBytesSync().buffer.asByteData()),
-        );
-        any = true;
+        final n = f.uri.pathSegments.last.split('-').first;
+        final family = n[0].toUpperCase() + n.substring(1);
+        byFamily
+            .putIfAbsent(family, () => FontLoader(family))
+            .addFont(Future.value(f.readAsBytesSync().buffer.asByteData()));
       }
-      if (any) await loader.load();
+      for (final l in byFamily.values) {
+        await l.load();
+      }
     }
     final flutterRoot = Platform.environment['FLUTTER_ROOT'];
     if (flutterRoot != null) {

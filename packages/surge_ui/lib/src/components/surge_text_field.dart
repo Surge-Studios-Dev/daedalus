@@ -86,17 +86,16 @@ class _SurgeTextFieldState extends State<SurgeTextField> {
     final borderColor = widget.error
         ? t.dangerBase
         : widget.warning
-        ? t.warningBase
-        : focused
-        ? t.accentBase
-        : Colors.transparent;
+            ? t.warningBase
+            : focused
+                ? t.accentBase
+                : Colors.transparent;
 
     return AnimatedContainer(
       duration: t.motionFast,
       curve: t.curveStandard,
-      constraints: widget.multiline
-          ? null
-          : const BoxConstraints(minHeight: 52),
+      constraints:
+          widget.multiline ? null : const BoxConstraints(minHeight: 52),
       decoration: BoxDecoration(
         color: focused ? t.bgBase : t.bgInset,
         borderRadius: BorderRadius.circular(t.radiusMd),

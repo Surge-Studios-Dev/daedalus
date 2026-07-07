@@ -31,29 +31,34 @@ class SurgeToast extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final isNeutral = kind == SurgeToastKind.neutral;
-    final (IconData icon, Color bgColor, Color borderColor, Color fgColor,
-        Color iconColor) = switch (kind) {
+    final (
+      IconData icon,
+      Color bgColor,
+      Color borderColor,
+      Color fgColor,
+      Color iconColor
+    ) = switch (kind) {
       SurgeToastKind.success => (
-        Icons.check,
-        t.accentBase,
-        Colors.transparent,
-        t.accentOn,
-        t.accentOn,
-      ),
+          Icons.check,
+          t.accentBase,
+          Colors.transparent,
+          t.accentOn,
+          t.accentOn,
+        ),
       SurgeToastKind.error => (
-        Icons.error_outline,
-        t.dangerBase,
-        Colors.transparent,
-        Colors.white,
-        Colors.white,
-      ),
+          Icons.error_outline,
+          t.dangerBase,
+          Colors.transparent,
+          Colors.white,
+          Colors.white,
+        ),
       SurgeToastKind.neutral => (
-        Icons.info_outline,
-        t.accentTint,
-        t.accentBase,
-        t.inkPrimary,
-        t.accentBase,
-      ),
+          Icons.info_outline,
+          t.accentTint,
+          t.accentBase,
+          t.inkPrimary,
+          t.accentBase,
+        ),
     };
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 16, 12),
@@ -97,9 +102,12 @@ class SurgeToast extends StatelessWidget {
             GestureDetector(
               onTap: onAction,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: isNeutral ? t.accentBase : fgColor.withValues(alpha: 0.16),
+                  color: isNeutral
+                      ? t.accentBase
+                      : fgColor.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(SurgeRadii.pill),
                 ),
                 child: Text(

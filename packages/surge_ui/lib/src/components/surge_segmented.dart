@@ -23,9 +23,9 @@ class SurgeSegmented extends StatelessWidget {
     this.labels,
     this.expand = true,
   }) : assert(
-         labels == null || labels.length == options.length,
-         'labels must line up 1:1 with options',
-       );
+          labels == null || labels.length == options.length,
+          'labels must line up 1:1 with options',
+        );
 
   /// The stored values compared against [value] and emitted by [onChanged].
   final List<String> options;

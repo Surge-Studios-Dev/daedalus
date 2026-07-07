@@ -64,6 +64,6 @@ extension SurgeTextX on TextStyle {
   /// Tabular figures — use on every numeral that can change (quantities,
   /// timers, counters, prices) so digits do not jitter as they update.
   TextStyle get tnum => copyWith(
-    fontFeatures: [...?fontFeatures, const FontFeature.tabularFigures()],
-  );
+        fontFeatures: [...?fontFeatures, const FontFeature.tabularFigures()],
+      );
 }

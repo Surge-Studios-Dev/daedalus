@@ -17,9 +17,7 @@ ThemeData buildSurgeTheme(
   SurgeTokens? tokens,
   String? fontFamily,
 }) {
-  final t =
-      tokens ??
-      (pack ?? SurgeThemePacks.canvas).tokens(brightness);
+  final t = tokens ?? (pack ?? SurgeThemePacks.canvas).tokens(brightness);
 
   return ThemeData(
     useMaterial3: true,

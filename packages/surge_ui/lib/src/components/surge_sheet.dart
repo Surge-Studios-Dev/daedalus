@@ -42,8 +42,7 @@ class SurgeSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    final screenHeight =
-        MediaQuery.sizeOf(context).height -
+    final screenHeight = MediaQuery.sizeOf(context).height -
         MediaQuery.viewInsetsOf(context).bottom;
     final height = switch (detent) {
       SurgeSheetDetent.tall => screenHeight * 0.92,

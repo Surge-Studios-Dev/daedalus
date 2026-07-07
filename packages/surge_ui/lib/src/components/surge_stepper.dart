@@ -82,8 +82,7 @@ class SurgeStepper extends StatelessWidget {
       );
     }
 
-    final label =
-        format?.call(value) ??
+    final label = format?.call(value) ??
         (value == value.roundToDouble()
             ? value.toInt().toString()
             : value.toString());

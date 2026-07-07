@@ -23,8 +23,8 @@ class SurgePressable extends StatefulWidget {
     this.onPressed,
     this.onLongPress,
     this.enabled = true,
-  }) : scaleTo = 1.0,
-       opacityTo = 0.6;
+  })  : scaleTo = 1.0,
+        opacityTo = 0.6;
 
   final Widget child;
   final VoidCallback? onPressed;

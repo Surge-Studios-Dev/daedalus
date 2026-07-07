@@ -83,8 +83,8 @@ class SurgeListRow extends StatelessWidget {
     final titleColor = danger
         ? t.dangerBase
         : accentTitle
-        ? t.accentBase
-        : t.inkPrimary;
+            ? t.accentBase
+            : t.inkPrimary;
 
     return SurgePressable.row(
       onPressed: onPressed,

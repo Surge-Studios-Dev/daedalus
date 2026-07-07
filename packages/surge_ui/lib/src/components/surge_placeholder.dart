@@ -55,7 +55,11 @@ class _StripePainter extends CustomPainter {
       ..strokeWidth = 6;
     const gap = 14.0;
     for (var x = -size.height; x < size.width; x += gap) {
-      canvas.drawLine(Offset(x, size.height), Offset(x + size.height, 0), paint);
+      canvas.drawLine(
+        Offset(x, size.height),
+        Offset(x + size.height, 0),
+        paint,
+      );
     }
   }
 

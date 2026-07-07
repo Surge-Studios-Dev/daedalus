@@ -70,12 +70,21 @@ void main() => screenBoard(
   // brand font file (assets/fonts, added at M1) and MaterialIcons from the
   // Flutter SDK so type and icons on the board are real.
   fonts: [
+    // Family inferred from filename prefix: manrope-400.ttf -> Manrope,
+    // fraunces-600.ttf -> Fraunces (one file registered under the wrong
+    // family silently breaks the OTHER family - Ember round 1 lesson).
     if (Directory('assets/fonts').existsSync())
       for (final f in Directory('assets/fonts')
           .listSync()
           .whereType<File>()
           .where((f) => f.path.endsWith('.ttf') || f.path.endsWith('.otf')))
-        BoardFont.asset(family: appFontFamily, path: f.path),
+        BoardFont.asset(
+          family: (() {
+            final n = f.uri.pathSegments.last.split('-').first;
+            return n[0].toUpperCase() + n.substring(1);
+          })(),
+          path: f.path,
+        ),
     if (Platform.environment['FLUTTER_ROOT'] case final root?)
       BoardFont.asset(
         family: 'MaterialIcons',

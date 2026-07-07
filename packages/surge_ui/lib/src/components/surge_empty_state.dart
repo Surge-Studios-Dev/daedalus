@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../tokens/surge_text.dart';
 import '../tokens/surge_tokens.dart';
 import 'surge_button.dart';
+import 'surge_glow_orb.dart';
 
 /// Catalog:
 /// name: SurgeEmptyState
@@ -50,16 +51,10 @@ class SurgeEmptyState extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 96,
-                height: 96,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: t.accentTint,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 40, color: t.accentBase),
-              ),
+              // First-run is a promise, not an apology (DESIGN.md rule
+              // 6): the empty state's mark is a lit protagonist.
+              const SizedBox(height: 8),
+              SurgeGlowOrb(icon: icon, size: 104),
               const SizedBox(height: 20),
               Text(
                 title,

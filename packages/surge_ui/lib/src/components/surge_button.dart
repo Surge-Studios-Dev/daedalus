@@ -91,9 +91,9 @@ class SurgeButton extends StatelessWidget {
 
     final (Color bg, Color fg) = switch (_variant) {
       _ when disabled && _variant == _Variant.primary => (
-        t.bgInset,
-        t.inkDisabled,
-      ),
+          t.bgInset,
+          t.inkDisabled,
+        ),
       _Variant.primary => (t.accentBase, t.accentOn),
       _Variant.secondary || _Variant.small => (t.accentTint, t.accentBase),
       _Variant.destructive => (t.dangerTint, t.dangerBase),
@@ -115,14 +115,14 @@ class SurgeButton extends StatelessWidget {
       _Variant.ghost => 12,
       _ => 20,
     };
-    final textStyle = (_variant == _Variant.small ? SurgeText.subhead : SurgeText.headline)
-        .copyWith(color: fg, fontWeight: FontWeight.w600);
+    final textStyle =
+        (_variant == _Variant.small ? SurgeText.subhead : SurgeText.headline)
+            .copyWith(color: fg, fontWeight: FontWeight.w600);
     final iconSize = _variant == _Variant.small ? 18.0 : 20.0;
 
     // Tint-filled variants dim when disabled; the primary/ghost variants
     // already recolor above, so a disabled one never looks active.
-    final dimmed =
-        disabled &&
+    final dimmed = disabled &&
         (_variant == _Variant.secondary ||
             _variant == _Variant.destructive ||
             _variant == _Variant.small);
@@ -214,10 +214,10 @@ class SurgeIconButton extends StatelessWidget {
     final color = scrim
         ? Colors.white
         : danger
-        ? t.dangerBase
-        : accent
-        ? t.accentBase
-        : t.inkPrimary;
+            ? t.dangerBase
+            : accent
+                ? t.accentBase
+                : t.inkPrimary;
     return Semantics(
       button: true,
       label: semanticLabel,

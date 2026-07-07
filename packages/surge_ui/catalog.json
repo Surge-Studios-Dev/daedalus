@@ -143,6 +143,24 @@
       "file": "lib/src/components/surge_chip.dart"
     },
     {
+      "name": "SurgeStatTile",
+      "category": "data",
+      "summary": "A glass panel with a small caps label and a display-sized value; SurgeStatRow lays several out 2-up or 3-up.",
+      "whenToUse": "Facts people care about (streaks, counts, totals) as dense tile grids instead of body-text lines (DESIGN.md rules 3-4, the moon-details pattern).",
+      "tags": [
+        "stat",
+        "tile",
+        "metric",
+        "number",
+        "grid",
+        "dashboard",
+        "density"
+      ],
+      "since": "0.3.0",
+      "import": "package:surge_ui/surge_ui.dart",
+      "file": "lib/src/components/surge_stat_tile.dart"
+    },
+    {
       "name": "SurgeBanner",
       "category": "feedback",
       "summary": "An inline message on a tinted surface, with optional icon, action, and dismiss.",
@@ -181,6 +199,24 @@
       "since": "0.2.0",
       "import": "package:surge_ui/surge_ui.dart",
       "file": "lib/src/components/surge_empty_state.dart"
+    },
+    {
+      "name": "SurgeGlowOrb",
+      "category": "feedback",
+      "summary": "A protagonist treatment - a circular tinted stage with a soft radial glow behind an emoji, icon, or short text.",
+      "whenToUse": "The screen's ONE focal element (DESIGN.md rule 2): streak flames, empty-state marks, hero icons. Never more than one glowing protagonist per screen.",
+      "tags": [
+        "hero",
+        "glow",
+        "orb",
+        "protagonist",
+        "focal",
+        "halo",
+        "empty"
+      ],
+      "since": "0.3.0",
+      "import": "package:surge_ui/surge_ui.dart",
+      "file": "lib/src/components/surge_glow_orb.dart"
     },
     {
       "name": "SurgeIndeterminateBar",
@@ -292,6 +328,23 @@
       "since": "0.1.0",
       "import": "package:surge_ui/surge_ui.dart",
       "file": "lib/src/components/surge_text_field.dart"
+    },
+    {
+      "name": "SurgeAtmosphere",
+      "category": "layout",
+      "summary": "A token-derived background wash - vertical surface gradient plus at most one radial accent glow anchored to the screen's protagonist.",
+      "whenToUse": "Behind hero screens and detail screens (DESIGN.md rule 1 - never a dead flat fill). Wrap the Scaffold body; keep Scaffold backgroundColor transparent or default.",
+      "tags": [
+        "background",
+        "gradient",
+        "glow",
+        "atmosphere",
+        "hero",
+        "wash"
+      ],
+      "since": "0.3.0",
+      "import": "package:surge_ui/surge_ui.dart",
+      "file": "lib/src/components/surge_atmosphere.dart"
     },
     {
       "name": "SurgePlaceholder",

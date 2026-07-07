@@ -283,12 +283,13 @@ class SurgeTokens extends ThemeExtension<SurgeTokens> {
   }
 
   static Duration _lerpDuration(Duration a, Duration b, double t) => Duration(
-    microseconds: lerpDouble(
-      a.inMicroseconds.toDouble(),
-      b.inMicroseconds.toDouble(),
-      t,
-    )!.round(),
-  );
+        microseconds: lerpDouble(
+          a.inMicroseconds.toDouble(),
+          b.inMicroseconds.toDouble(),
+          t,
+        )!
+            .round(),
+      );
 }
 
 /// Fully-round pill radius — shape, not personality, so it stays constant.

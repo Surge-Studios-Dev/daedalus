@@ -84,9 +84,24 @@ class _SurgeMagicCtaState extends State<SurgeMagicCta>
                       alignment: Alignment.center,
                       children: [
                         Icon(widget.icon, size: 18, color: t.accentBase),
-                        _Twinkle(opacity: _twinkle(0.00), dx: -10, dy: -8, color: t.accentBase),
-                        _Twinkle(opacity: _twinkle(0.33), dx: 11, dy: -6, color: t.accentBase),
-                        _Twinkle(opacity: _twinkle(0.66), dx: -7, dy: 10, color: t.accentBase),
+                        _Twinkle(
+                          opacity: _twinkle(0.00),
+                          dx: -10,
+                          dy: -8,
+                          color: t.accentBase,
+                        ),
+                        _Twinkle(
+                          opacity: _twinkle(0.33),
+                          dx: 11,
+                          dy: -6,
+                          color: t.accentBase,
+                        ),
+                        _Twinkle(
+                          opacity: _twinkle(0.66),
+                          dx: -7,
+                          dy: 10,
+                          color: t.accentBase,
+                        ),
                       ],
                     ),
                   ),
