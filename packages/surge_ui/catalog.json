@@ -310,6 +310,23 @@
       "file": "lib/src/components/surge_placeholder.dart"
     },
     {
+      "name": "SurgeFloatingNavBar",
+      "category": "navigation",
+      "summary": "A detached pill-shaped bottom tab bar that floats above content on a lifted panel.",
+      "whenToUse": "The app shell's bottom navigation in personality packs that float their chrome (soft_depth). Pair with Scaffold(extendBody: true) so content scrolls beneath it.",
+      "tags": [
+        "navigation",
+        "tabs",
+        "bottom bar",
+        "floating",
+        "pill",
+        "shell"
+      ],
+      "since": "0.3.0",
+      "import": "package:surge_ui/surge_ui.dart",
+      "file": "lib/src/components/surge_floating_nav_bar.dart"
+    },
+    {
       "name": "SurgeSheet",
       "category": "overlays",
       "summary": "A bottom-sheet shell with a grabber, optional title + Done, scrollable body, and fixed foot.",

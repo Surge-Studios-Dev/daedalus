@@ -37,61 +37,74 @@ class SurgeEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 96,
-            height: 96,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: t.accentTint,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 40, color: t.accentBase),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: SurgeText.title2.copyWith(color: t.inkPrimary),
-          ),
-          if (sub != null) ...[
-            const SizedBox(height: 8),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 280),
-              child: Text(
-                sub!,
+    // Self-centering on BOTH axes: a bare Column sizes to its widest
+    // child and sits wherever the parent puts it, so every consumer had
+    // to remember Center() - the ones that didn't shipped off-center
+    // screens (recurred on Ladle, then Ember's Today empty state). The
+    // component owns its centering now; the scroll view keeps it safe at
+    // small heights / large text scales.
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 96,
+                height: 96,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: t.accentTint,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 40, color: t.accentBase),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                title,
                 textAlign: TextAlign.center,
-                style: SurgeText.subhead.copyWith(color: t.inkSecondary),
+                style: SurgeText.title2.copyWith(color: t.inkPrimary),
               ),
-            ),
-          ],
-          if (primaryLabel != null || ghostLabel != null || extra != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (primaryLabel != null)
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(minWidth: 200),
-                      child: SurgeButton.primary(
-                        primaryLabel!,
-                        onPressed: onPrimary,
-                      ),
-                    ),
-                  if (ghostLabel != null) ...[
-                    const SizedBox(height: 6),
-                    SurgeButton.ghost(ghostLabel!, onPressed: onGhost),
-                  ],
-                  if (extra != null) ...[const SizedBox(height: 12), extra!],
-                ],
-              ),
-            ),
-        ],
+              if (sub != null) ...[
+                const SizedBox(height: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 280),
+                  child: Text(
+                    sub!,
+                    textAlign: TextAlign.center,
+                    style: SurgeText.subhead.copyWith(color: t.inkSecondary),
+                  ),
+                ),
+              ],
+              if (primaryLabel != null || ghostLabel != null || extra != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (primaryLabel != null)
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(minWidth: 200),
+                          child: SurgeButton.primary(
+                            primaryLabel!,
+                            onPressed: onPrimary,
+                          ),
+                        ),
+                      if (ghostLabel != null) ...[
+                        const SizedBox(height: 6),
+                        SurgeButton.ghost(ghostLabel!, onPressed: onGhost),
+                      ],
+                      if (extra != null) ...[
+                        const SizedBox(height: 12),
+                        extra!,
+                      ],
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

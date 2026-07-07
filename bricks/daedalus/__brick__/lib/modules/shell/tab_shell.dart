@@ -18,12 +18,13 @@ class TabShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final t = context.tokens;
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) {
+      // Content scrolls beneath the floating bar (soft_depth chrome).
+      extendBody: true,
+      bottomNavigationBar: SurgeFloatingNavBar(
+        currentIndex: navigationShell.currentIndex,
+        onSelected: (index) {
           if (index != navigationShell.currentIndex) {
             ref.read(analyticsProvider).screen(navTabs[index].id);
           }
@@ -32,11 +33,9 @@ class TabShell extends ConsumerWidget {
             initialLocation: index == navigationShell.currentIndex,
           );
         },
-        backgroundColor: t.bgBase,
-        indicatorColor: t.accentTint,
-        destinations: [
+        items: [
           for (final tab in navTabs)
-            NavigationDestination(icon: Icon(tab.icon), label: tab.label),
+            SurgeNavItem(icon: tab.icon, label: tab.label),
         ],
       ),
     );

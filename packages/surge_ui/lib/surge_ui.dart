@@ -41,6 +41,7 @@ export 'src/components/surge_stepper.dart';
 export 'src/components/surge_banner.dart';
 export 'src/components/surge_progress.dart';
 export 'src/components/surge_empty_state.dart';
+export 'src/components/surge_floating_nav_bar.dart';
 export 'src/components/surge_loading_label.dart';
 export 'src/components/surge_placeholder.dart';
 export 'src/components/surge_magic_cta.dart';
