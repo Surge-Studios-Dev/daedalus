@@ -9,6 +9,12 @@ You are running the Daedalus pipeline's front door. The human brings an
 idea; you leave them with a stamped, analyzed, green app and an approved
 spec. Stay conversational in the interview, deterministic in the tail.
 
+This skill is the executable arm of **`RUNBOOK.md` phases 0–3** — read
+it first. It carries the phase exit gates, the named pushback triggers
+(challenge once, record overrides, never silently skip), and the
+context router. When this skill and the runbook disagree, the runbook
+wins.
+
 ## 1. INTAKE (conversational — do not turn it into a form)
 
 Work through `INTAKE.md`'s six passes in order. Rules that matter:
