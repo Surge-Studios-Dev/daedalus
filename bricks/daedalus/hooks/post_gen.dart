@@ -435,7 +435,11 @@ $overrides
 }
 
 /// Maps manifest (lucide-style) icon names to Material icons the base ships
-/// with. Unknown names fall back to a neutral glyph — pick a closer one by hand.
+/// with. Unknown names FAIL the stamp: the old silent circle_outlined
+/// fallback shipped a meaningless hollow ring on Ember's Today tab
+/// (manifest said `flame`, the map didn't know it, nobody noticed until
+/// the user called the toolbar wack, 2026-07-08). An icon the factory
+/// can't resolve is a manifest error, not a shrug.
 String _icon(String? name) {
   const map = {
     'home': 'home',
@@ -444,6 +448,7 @@ String _icon(String? name) {
     'book': 'menu_book',
     'book-open': 'menu_book',
     'calendar': 'calendar_today',
+    'today': 'today',
     'user': 'person',
     'users': 'group',
     'plus': 'add',
@@ -463,8 +468,47 @@ String _icon(String? name) {
     'folder': 'folder',
     'file': 'description',
     'message': 'chat_bubble_outline',
+    'flame': 'local_fire_department',
+    'zap': 'bolt',
+    'sun': 'wb_sunny',
+    'moon': 'nightlight_round',
+    'droplet': 'water_drop',
+    'leaf': 'eco',
+    'trophy': 'emoji_events',
+    'target': 'track_changes',
+    'gift': 'card_giftcard',
+    'music': 'music_note',
+    'dumbbell': 'fitness_center',
+    'wallet': 'account_balance_wallet',
+    'pie-chart': 'pie_chart',
+    'compass': 'explore',
+    'bookmark': 'bookmark',
+    'flag': 'flag',
+    'globe': 'public',
+    'mail': 'mail',
+    'lock': 'lock',
+    'image': 'photo',
+    'mic': 'mic',
+    'pencil': 'edit',
+    'share': 'share',
+    'link': 'link',
+    'shield': 'shield',
+    'cloud': 'cloud',
+    'coffee': 'local_cafe',
+    'utensils': 'restaurant',
+    'car': 'directions_car',
+    'plane': 'flight',
+    'bike': 'directions_bike',
   };
-  return 'Icons.${map[name] ?? 'circle_outlined'}';
+  final icon = map[name];
+  if (icon == null) {
+    throw ArgumentError(
+      "Unknown manifest icon '$name'. Add a mapping in _icon() "
+      '(bricks/daedalus/hooks/post_gen.dart) or pick one of: '
+      '${map.keys.join(', ')}.',
+    );
+  }
+  return 'Icons.$icon';
 }
 
 String _pascal(String s) => s

@@ -157,7 +157,7 @@ The `gate()` helper and entitlement check are the same in both cases. Only the t
 
 **brand** - `theme_pack` selects the design personality from surge_ui's `SurgeThemePacks` (default `canvas`, the neutral blank canvas; `soft_depth` is the first shipped personality). The pack carries the whole look — neutrals, shape, elevation, motion; `palette` then tunes the accent within it (any token you omit inherits the pack). INTAKE pass 5 requires 2-3 reference apps before this gets set; never default a shipping app to `canvas`. `fonts` must be bundled assets; packs recommend a pairing (soft_depth: Manrope) and forge notes a mismatch. The site reads this block to theme the marketing page so app and page match.
 
-**navigation** - `tabs` builds the go_router shell. `type: builtin` is reserved for the settings/"You" tab rendered by `modules/settings`; `type: feature` generates a wired stub under `features/<id>`. `icon` values are `lucide_icons` names. `primary_action` is optional.
+**navigation** - `tabs` builds the go_router shell. `type: builtin` is reserved for the settings/"You" tab rendered by `modules/settings`; `type: feature` generates a wired stub under `features/<id>`. `icon` values are `lucide_icons` names. `primary_action` is optional; its icon must be the app's own motif (Ember: `flame`), never a generic energy glyph like `zap` - the center button is the most-seen icon in the app and a generic one reads as random chrome.
 
 **auth** - `providers` from `email | apple | google`. Apple is force-included whenever a social provider is present, to satisfy Guideline 4.8. `guest_mode` toggles the try-before-signup path.
 

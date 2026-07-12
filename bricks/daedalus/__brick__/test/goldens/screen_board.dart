@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:golden_board/golden_board.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:surge_ui/surge_ui.dart';
 import 'package:{{slug}}/app/nav_config.dart';
 import 'package:{{slug}}/app/theme.dart';
 import 'package:{{slug}}/dev/fixtures.dart';
@@ -35,6 +36,29 @@ void main() => screenBoard(
           builder: (context) => featureBuilders[tab.id]!(context),
         ),
       ),
+    // The shell chrome itself - the glass nav pill over the first tab.
+    // Chrome must be proofed like any screen: Ember's bar drifted
+    // (labeled tabs, an unmapped icon, an oversized action bud) because
+    // nothing rendered it (2026-07-08). If the app adds a centerAction
+    // in TabShell, mirror it here.
+    ScreenSpec(
+      id: 'shell',
+      label: 'Shell · glass nav',
+      build: () => Builder(
+        builder: (context) => Scaffold(
+          extendBody: true,
+          body: featureBuilders[navTabs.first.id]!(context),
+          bottomNavigationBar: SurgeFloatingNavBar(
+            currentIndex: 0,
+            onSelected: (_) {},
+            items: [
+              for (final tab in navTabs)
+                SurgeNavItem(icon: tab.icon, label: tab.label),
+            ],
+          ),
+        ),
+      ),
+    ),
     const ScreenSpec(id: 'sign_in', label: 'Sign in', build: SignInScreen.new),
     const ScreenSpec(
       id: 'settings',

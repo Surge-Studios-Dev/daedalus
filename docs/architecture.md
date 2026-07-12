@@ -110,6 +110,26 @@ sequenceDiagram
 service provider and assert the whole app follows — sign-in state, account
 email, gate behavior. See `foundation/test/foundation_test.dart`.
 
+**Streams must be auth-reactive (Ember lesson, 2026-07-08).** A uid-scoped
+`watchAll()` reads the uid ONCE, when the stream is created — and the app
+root's keep-alive providers (widget bridge, push topics, queue drain) touch
+the data chain while the sign-in screen is still up. If a `StreamProvider`
+over a repo doesn't also watch the uid/auth provider, the pre-auth
+`Stream.value(const [])` is cached for the app's lifetime: **writes succeed
+against Firestore while the UI shows an empty list forever.** On Ember this
+presented as "creating a group does nothing" — the group was in Firestore
+the whole time. The foundation's notes seam already shows the canonical
+shape — `repoProvider.overrideWith((ref) { final uid =
+ref.watch(userUidProvider); … })` — so the binding itself rebuilds on auth.
+Ember's deviation was `overrideWithValue(Repo(() => currentUid))`: a lazy
+uid *getter* looks reactive but the provider graph can't see it. Bind repos
+with `overrideWith` + `ref.watch` of the uid, and have every
+`StreamProvider` wrapping a uid-scoped `watchAll()` also watch the uid
+provider (defense in depth). It never reproduces in a dev
+loop where you're already signed in before the first frame — only on a
+fresh sign-in session, which is exactly what every real user's first
+session is.
+
 ## Package dependency graph
 
 ```mermaid

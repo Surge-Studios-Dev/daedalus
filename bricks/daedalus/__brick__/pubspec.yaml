@@ -73,6 +73,9 @@ dependencies:
   firebase_crashlytics: ^4.1.4
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.3
+  # OAuth buttons render Google's canonical multi-color G inline
+  # (modules/auth/oauth_buttons.dart) - provider-branded, never themed.
+  flutter_svg: ^2.0.10
   # Purchases backend. The app depends on modules/paywall/PurchaseService; this
   # powers the RevenueCatPurchaseService binding, selected in bootstrap once the
   # RevenueCat app/entitlement/products exist and useRevenueCat is flipped on.

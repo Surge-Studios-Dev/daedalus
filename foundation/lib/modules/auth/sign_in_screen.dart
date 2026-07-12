@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:surge_ui/surge_ui.dart';
 
 import 'auth_controller.dart';
+import 'oauth_buttons.dart';
 
 /// AUTH-01 · Sign in. Email + social + guest. Sign in with Apple is always
 /// offered whenever any social provider is enabled (Guideline 4.8).
@@ -81,18 +82,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   const SizedBox(height: SurgeSpace.md),
                   _OrDivider(),
                   const SizedBox(height: SurgeSpace.md),
-                  SurgeButton.secondary(
-                    'Continue with Apple',
-                    full: true,
-                    icon: Icons.apple,
-                    onPressed: () => _run(auth.signInWithApple),
+                  // Provider-branded, never themed (see oauth_buttons.dart):
+                  // Apple/Google fix how these buttons look.
+                  OAuthButton.apple(
+                    onPressed:
+                        _busy ? null : () => _run(auth.signInWithApple),
                   ),
                   const SizedBox(height: SurgeSpace.sm),
-                  SurgeButton.secondary(
-                    'Continue with Google',
-                    full: true,
-                    icon: Icons.g_mobiledata,
-                    onPressed: () => _run(auth.signInWithGoogle),
+                  OAuthButton.google(
+                    onPressed:
+                        _busy ? null : () => _run(auth.signInWithGoogle),
                   ),
                   const SizedBox(height: SurgeSpace.lg),
                   SurgeButton.ghost(

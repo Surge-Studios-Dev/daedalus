@@ -116,6 +116,21 @@ Standard events, so the portfolio dashboard works with zero per-app wiring: `app
 - Components live in `modules/ui/components`; screens compose components and never define one-off styling.
 - Copy: sentence case; button verb = toast verb = menu verb; no dark-pattern or manipulative language; **no em dashes in user-facing copy.**
 - Every screen widget carries its id in a doc comment.
+- **Every awaited mutation in UI catches and surfaces failure** (toast or
+  inline notice), and the success toast fires only after the await returns.
+  A bare `await repo.upsert(...)` in a sheet dies silently in release when
+  rules/network deny it - the user sees nothing and reports "the feature
+  doesn't work" (Ember lesson, 2026-07-08). The same button also
+  **busy-guards**: disabled + loading while the await is in flight, or a
+  double-tap races two writes (Ember created the same group twice, 500ms
+  apart, in prod).
+- **"Offline" means a network error, nothing else.** Classify before
+  claiming: SocketException/TimeoutException and Firebase codes
+  network-request-failed/unavailable/retry-limit-exceeded are offline;
+  everything else (permission-denied, unauthorized, config) surfaces as an
+  error AND goes to the error reporter. A catch-all offline toast told a
+  user on cellular they were offline while a missing IAM grant denied
+  every upload (Ember lesson, 2026-07-08).
 - Anything touching more than one file: present a plan before writing code. New packages must be justified against the stack above.
 
 ## Compliance baked in (the mandatory-boring set)

@@ -343,10 +343,36 @@ step "6. Deploy rules + functions (BEFORE flipping useFirebase)"
 if have firebase; then
   run "deploy Firestore rules + indexes" \
     firebase deploy --only firestore --project "$FB_PROJECT"
+  if [ -f storage.rules ]; then
+    run "deploy Storage rules" \
+      firebase deploy --only storage --project "$FB_PROJECT"
+  fi
   run "deploy Functions (needs billing + backend/npm install)" \
     firebase deploy --only functions --project "$FB_PROJECT"
 else
   note "firebase-tools missing - deploy rules before the app's first live write"
+fi
+
+# Cross-service rules (storage.rules calling firestore.get/exists) evaluate
+# through the Firebase Rules service agent, which needs an explicit Firestore
+# grant. The CLI only prompts for it interactively; a headless deploy skips
+# it and EVERY Storage rule evaluation then errors -> deny. On Ember this
+# surfaced as "You're offline" on cellular (2026-07-08) - the least
+# diagnosable symptom a missing IAM grant could pick.
+if [ -f storage.rules ] && grep -Eq 'firestore\.(get|exists)' storage.rules; then
+  if have gcloud; then
+    FB_PROJECT_NUMBER=$(gcloud projects describe "$FB_PROJECT" --format='value(projectNumber)' 2>/dev/null || echo "")
+    if [ -n "$FB_PROJECT_NUMBER" ]; then
+      run "grant cross-service rules access (storage.rules -> Firestore)" \
+        gcloud projects add-iam-policy-binding "$FB_PROJECT" \
+          --member "serviceAccount:service-${FB_PROJECT_NUMBER}@firebase-rules.iam.gserviceaccount.com" \
+          --role roles/firebaserules.firestoreServiceAgent --condition=None
+    else
+      note "could not resolve project number - grant roles/firebaserules.firestoreServiceAgent to service-<projectNumber>@firebase-rules.iam.gserviceaccount.com manually"
+    fi
+  else
+    note "storage.rules uses firestore.get: grant roles/firebaserules.firestoreServiceAgent to the firebase-rules service agent or every Storage rules evaluation fails closed"
+  fi
 fi
 
 # ---------- summary ----------

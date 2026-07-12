@@ -5,6 +5,7 @@ import 'package:surge_ui/surge_ui.dart';
 
 import 'auth_controller.dart';
 import 'auth_errors.dart';
+{{#auth_apple}}import 'oauth_buttons.dart';{{/auth_apple}}
 
 /// AUTH-01 · Sign in. The provider set is generated from `auth.providers` in the
 /// manifest. Sign in with Apple is force-included whenever any social provider
@@ -97,18 +98,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   const SizedBox(height: SurgeSpace.md),
                   _OrDivider(),
                   const SizedBox(height: SurgeSpace.md),
-                  SurgeButton.secondary(
-                    'Continue with Apple',
-                    full: true,
-                    icon: Icons.apple,
-                    onPressed: () => _run(auth.signInWithApple),
+                  // Provider-branded, never themed (see oauth_buttons.dart):
+                  // Apple/Google fix how these buttons look.
+                  OAuthButton.apple(
+                    onPressed:
+                        _busy ? null : () => _run(auth.signInWithApple),
                   ),{{/auth_apple}}{{#auth_google}}
                   const SizedBox(height: SurgeSpace.sm),
-                  SurgeButton.secondary(
-                    'Continue with Google',
-                    full: true,
-                    icon: Icons.g_mobiledata,
-                    onPressed: () => _run(auth.signInWithGoogle),
+                  OAuthButton.google(
+                    onPressed:
+                        _busy ? null : () => _run(auth.signInWithGoogle),
                   ),{{/auth_google}}
                   const SizedBox(height: SurgeSpace.lg),
                   SurgeButton.ghost(

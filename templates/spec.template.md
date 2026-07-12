@@ -125,7 +125,11 @@ the format headers ready to fill. Every screen in 3.2 gets a block here. -->
 <!-- generated if features.notifications. Table: ID / type / trigger / default
 timing / copy / deep link. Factory rules: max 1 reminder-class per day, quiet
 hours, transactional exempt, every push deep-links, no guilt or streak
-language. Delete this section if notifications are off in v1. -->
+language. "Per day" means per USER, not per entity: when a reminder fans
+out per group/list/project, same-class sends must collapse into one banner
+(apns-collapse-id + android collapseKey) - Ember's 4-group user got 4
+identical morning pushes (2026-07-08). Delete this section if notifications
+are off in v1. -->
 
 ## 8. Edge-case master list (QA checklist)
 

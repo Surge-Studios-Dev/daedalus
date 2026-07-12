@@ -46,6 +46,10 @@ has 5+ edge cases in Section 8. Then - and only then - stamp.
    returns to*, not a feature that could live behind a button.
 7. **Primary action.** Is there a center-button action reachable from every
    tab (Ladle's Add)? If yes: id, label, icon. If no, delete the field.
+   The icon must be the app's own motif (Ember: flame), never a generic
+   energy default - Ember shipped `zap` here and the user reported "a
+   random lightning bolt on the toolbar." If the action is add, `plus` is
+   the motif; otherwise reach for the identity icon already on a tab.
 8. **Screens per tab.** Rough list per feature tab - just names, the spec
    skeleton assigns IDs. If a tab has >8 screens, it's probably two tabs or
    too big for v1.
