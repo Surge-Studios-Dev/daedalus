@@ -31,7 +31,7 @@ git worktree add ../<slug>-wt-<tab> -b feat/<tab>
 Each agent's prompt is the same shape:
 
 > Work in this worktree only. Read CLAUDE.md, `.daedalus/state.yaml`,
-> `design/spec.md` §6 for <TAB-IDs> and §8 for this tab. Reshape
+> `design/spec.md` §6 for `<TAB-IDs>` and §8 for this tab. Reshape
 > `lib/features/<tab>/` into those screens. Rules of engagement: do NOT
 > touch `lib/modules/`, `lib/core/`, `lib/models/`, `lib/dev/fixtures.dart`,
 > or another feature's directory — if you need a change there, STOP and
