@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:surge_ui/surge_ui.dart';
 
 import '../modules/settings/appearance_controller.dart';
 import 'router.dart';
+import 'theme.dart';
 
-/// The app root. Builds light/dark themes from surge_ui and drives them off the
-/// appearance setting; navigation comes from [routerProvider].
+/// The app root. Themes come from lib/app/theme.dart (the one theme source,
+/// shared with the proofing harnesses) and drive off the appearance setting;
+/// navigation comes from [routerProvider].
 ///
-/// SEAM: pass the per-app `pack:` (brand.theme_pack -> SurgeThemePacks.byId),
-/// `tokens:` (pack + palette accent override), and `fontFamily:` into
-/// buildSurgeTheme from the manifest brand block. The foundation renders the
-/// bare canvas pack on purpose.
+/// SEAM: the stamped copy of theme.dart carries the manifest brand block
+/// (pack, palette, fonts). The foundation renders the bare canvas pack on
+/// purpose.
 class SurgeApp extends ConsumerWidget {
   const SurgeApp({super.key});
 
@@ -23,8 +23,8 @@ class SurgeApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Surge Foundation',
       debugShowCheckedModeBanner: false,
-      theme: buildSurgeTheme(Brightness.light),
-      darkTheme: buildSurgeTheme(Brightness.dark),
+      theme: appTheme(Brightness.light),
+      darkTheme: appTheme(Brightness.dark),
       themeMode: mode,
       routerConfig: router,
     );

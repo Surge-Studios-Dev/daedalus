@@ -32,6 +32,7 @@ const divergent = {
   'app/app.dart': '{{',
   'app/bootstrap.dart': '{{',
   'app/router.dart': 'nav_config.dart',
+  'app/theme.dart': '{{',
   'modules/auth/sign_in_screen.dart': '{{',
   'modules/paywall/paywall_screen.dart': '{{',
   'modules/shell/tab_shell.dart': 'nav_config.dart',

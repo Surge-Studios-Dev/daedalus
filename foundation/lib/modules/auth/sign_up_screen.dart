@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:surge_ui/surge_ui.dart';
 
 import 'auth_controller.dart';
+import 'auth_errors.dart';
 
 /// AUTH-02 · Create account.
 class SignUpScreen extends ConsumerStatefulWidget {
@@ -70,8 +71,24 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     loading: _busy,
                     onPressed: () async {
                       setState(() => _busy = true);
-                      await auth.signUpWithEmail(_email.text, _password.text);
-                      if (mounted) setState(() => _busy = false);
+                      try {
+                        await auth.signUpWithEmail(
+                          _email.text,
+                          _password.text,
+                        );
+                      } catch (e) {
+                        // Real auth throws (the mock never does) - toast,
+                        // never crash.
+                        if (context.mounted) {
+                          showSurgeToast(
+                            context,
+                            message: authErrorMessage(e),
+                            kind: SurgeToastKind.error,
+                          );
+                        }
+                      } finally {
+                        if (mounted) setState(() => _busy = false);
+                      }
                     },
                   ),
                   const SizedBox(height: SurgeSpace.sm),

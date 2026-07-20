@@ -80,9 +80,15 @@ class OAuthButton extends StatelessWidget {
               children: [
                 leading,
                 const SizedBox(width: 10),
-                Text(
-                  label,
-                  style: SurgeText.headline.copyWith(color: foregroundColor),
+                // Flexible so wide fonts (test fallback glyphs, AX text
+                // scale) shrink the label instead of overflowing the row.
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: SurgeText.headline.copyWith(color: foregroundColor),
+                  ),
                 ),
               ],
             ),
