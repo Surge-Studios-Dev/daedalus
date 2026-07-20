@@ -2,7 +2,9 @@
 # last file it updates. Keeps a fresh agent session productive in one read:
 # where the app is in the pipeline, which milestone is active, and which
 # gates have passed. Humans read it too; keep notes short and factual.
-stage: stamped # stamped -> m0 -> building -> hardening -> shipped
+stage: stamped # stamped -> m0 -> building -> hardening -> shipped -> live
+# (flip to live at the first post-ship session; from then on every change
+# runs the tiered Phase C loop - see the Daedalus RUNBOOK)
 milestone: M0
 last_session: ""
 

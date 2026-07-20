@@ -36,6 +36,8 @@ flowchart TD
 
     fleshed --> stamp
     ship --> live(["🚀 Live"])
+    live --> change["Phase C · CHANGE<br/>C1 patch · C2 slice · C3 manifest<br/>(tiered — no full-pipeline rerun)"]
+    change --> live
     live -.-> operate["Operate layer"]
 
     classDef todo stroke-dasharray: 5 5,stroke:#c9528b
@@ -59,6 +61,18 @@ flowchart TD
 | Go live | deploy backend → flip seams | ~1 h | [Backend](backend.md) |
 | Gate | `tools/ship_check` — red/green, exit 1 on blockers | seconds | [Release](release.md) |
 | Ship | `bundle exec fastlane ios beta` etc. | minutes + review time | [Release](release.md) |
+
+## After launch: the CHANGE loop (Phase C)
+
+The pipeline above ships v1; it does not rerun for every live change — a
+4-hour bug fix doesn't need a PRD, and it doesn't get to skip the spec
+either. Post-ship work is tiered by what it touches: **C1 patch** (code
+only — merge bar and a `state.yaml` log line), **C2 slice** (a screen or
+behavior — spec §6/§8 delta approved by the human, built with tests, board
+re-captured), **C3 manifest** (a `surge.manifest.yaml` field — rerun the
+owning INTAKE pass, re-validate, regen derived artifacts, then C2 for the
+UI). Tiers, pushback triggers, and exit gates live in
+[RUNBOOK.md](../RUNBOOK.md) Phase C.
 
 ## What the stamp hands you on day 0
 

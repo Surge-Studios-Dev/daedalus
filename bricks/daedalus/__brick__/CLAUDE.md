@@ -122,3 +122,16 @@ flutter run
 Replace every feature stub with real functionality (stub-only fails Apple 4.3).
 Account deletion, restore purchases, Sign in with Apple, and Privacy + Terms all
 ship working from the template; keep them working. Run `scripts/forge.sh` first.
+
+## Live changes (post-ship)
+Once `state.yaml` reads `stage: live`, state the tier before touching code and
+log it in `state.yaml`:
+- **C1 Patch** — code only, no spec-visible behavior change: merge bar, one log
+  line; deviation footnote if behavior moved anyway.
+- **C2 Slice** — a screen/behavior within manifest scope: draft the §6/§8 delta
+  (new IDs registered in §3.2), human approves the delta, build with tests,
+  re-capture the board.
+- **C3 Manifest** — anything in `surge.manifest.yaml`: rerun the owning INTAKE
+  pass, re-validate, regen derived artifacts, then C2 for the UI part.
+
+The full loop (triggers, exit gates) is the Daedalus RUNBOOK's Phase C.

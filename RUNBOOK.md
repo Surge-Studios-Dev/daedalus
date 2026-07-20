@@ -34,6 +34,7 @@ Phase 2  SPEC             manifest -> approved spec §6 (screens) + §8 (edge ca
 Phase 3  STAMP & PROVE    scripts/new_app.sh -> green, board-reviewed app
 Phase 4  BUILD            the stamped app's MILESTONES.md ladder (M0–M6)
 Phase 5  SHIP             M7: forge.sh -> ship_check -> submitted
+Phase C  CHANGE           live app -> tiered change loop
 ```
 
 Phases 0–3 run in the Daedalus repo and this runbook is authoritative.
@@ -44,7 +45,8 @@ the milestone ladder, it just tells you when you've left it behind.
 **Human gates** (hard stops — never proceed on your own): INTAKE
 answers themselves · design references · the assembled manifest · the
 §6/§8 spec draft · the phase 3 screen-board review · a design-direction
-tournament pick · store submission. Everything else runs without asking.
+tournament pick · store submission · a post-ship C2/C3 spec delta.
+Everything else runs without asking.
 
 **Executable arms.** Three skills run pieces of this pipeline;
 the runbook is what sequences them:
@@ -70,6 +72,7 @@ reads: this file, then the row for the current phase, nothing else.
 | 3 STAMP | `scripts/new_app.sh` output · stamped `README` | `DAEDALUS.md` (brick internals, only when a stamp fails) |
 | 4 BUILD | stamped app's `.daedalus/state.yaml` then `MILESTONES.md` | `AI-RAIL.md` (M0 with an AI surface) · `docs/parallel-build.md` (M3 fan-out) · `docs/testing.md` · `examples/ladle/feature-slice/` (exemplar) |
 | 5 SHIP | `tools/ship_check` output · `scripts/forge.sh` checklist | store_gen / legal_gen docs |
+| C CHANGE | stamped app's `.daedalus/state.yaml` · the touched spec §6/§8 blocks | `INTAKE.md` (C3 only: the pass that owns the field) |
 
 `ROADMAP.md` and `SHARING.md` are factory-development docs — never
 required to run the pipeline.
@@ -329,10 +332,48 @@ Daedalus in the first place.
 
 ---
 
+## Phase C · CHANGE (live apps)
+
+**Entry:** the app is shipped and a change request arrives. The first
+post-ship session flips `.daedalus/state.yaml` to `stage: live`; every
+later session starts here. The full pipeline exists to ship v1 — a
+4-hour bug fix does not need a PRD, and it doesn't get to skip the spec
+either. The move: **name the tier at session start, log it in
+`state.yaml`** (one line: date, tier, what changed), then run the
+tier's process. The tier is keyed to what the change *touches*, not
+how big it feels.
+
+| Tier | Touches | Process |
+|------|---------|---------|
+| **C1 Patch** | Code only; no spec-visible behavior change (bug fix, copy tweak, refactor) | Merge bar. If observed behavior changes anyway: deviation footnote. One `state.yaml` log line. No human gate. |
+| **C2 Slice** | A screen or behavior, within existing manifest scope | Draft the **delta only** — new/edited §6 blocks and §8 cases with new stable IDs registered in §3.2 → human approves the delta, not the whole spec (human gate) → build with tests → re-capture the screen board → `/sim-drive` if chrome/navigation touched. |
+| **C3 Manifest** | Anything in `surge.manifest.yaml` (tabs, gates, pricing, legal, brand) | Rerun only the INTAKE pass that owns the field → re-validate → regen derived artifacts (spec skeleton delta; legal_gen/store_gen if legal/store fields moved) → then C2 for the UI part. |
+
+### Pushback triggers
+
+| ID | Fires when | The challenge |
+|----|-----------|---------------|
+| PC-TIER | A "patch" edits the manifest or adds a screen | "That's a C3/C2, not a patch. Name the INTAKE pass / spec delta first." |
+| PC-SCOPE | The change contradicts the positioning rule or spec §10 | "This is on the do-not-design list. Overturn §10 explicitly (dated) or park it." |
+
+### Exit gate (per tier)
+
+- [ ] **C1:** merge bar green · one `state.yaml` log line (tier + what
+      changed) · deviation footnote if observed behavior moved
+- [ ] **C2:** delta approved by the human · new §8 cases are tests ·
+      screen board re-captured in both modes · `/sim-drive` run if
+      chrome/navigation touched · `state.yaml` log line
+- [ ] **C3:** manifest re-validates · derived artifacts regenerated ·
+      then the C2 gate for the UI part
+
+---
+
 ## Resuming mid-pipeline
 
 A fresh session determines its phase in this order:
 
+0. `state.yaml` reads `stage: live` → Phase C; the change request sets
+   the tier.
 1. Stamped app exists with `.daedalus/state.yaml` → phase 4/5; the
    state file says exactly where. This runbook is context, not law.
 2. Approved spec §6/§8 exists but no stamp → phase 3.
