@@ -296,7 +296,14 @@ manual-minutes-killed per app.
 6. **Fleet propagation.** `fleet.yaml` registry of stamped apps + a
    script/scheduled agent that bumps surge_* refs across app repos, runs
    each suite, opens PRs. Plus per-app ops provisioning by API: PostHog
-   project, Discord webhook, DNS for share-link subdomains.
+   project, Discord webhook, DNS for share-link subdomains. Doc updates
+   use the stamped marker contract (in every brick CLAUDE.md since
+   2026-07-20): factory-owned sections are fenced
+   `<!-- DAEDALUS:BEGIN/END <id> -->` and upserted marker-to-marker,
+   never string-munged; the app-owned `## App notes` tail is never
+   touched; hooks are whole-file factory-owned (replace outright);
+   `MILESTONES.md` is NOT blindly upsertable — apps check its boxes, so
+   the fleet tool must preserve `[x]` state when updating criteria text.
 
 Stays human, by design: Play Console app creation (~5 min, batchable),
 Apple review itself, the one-time studio setup (DUNS, bank/tax, ASC API

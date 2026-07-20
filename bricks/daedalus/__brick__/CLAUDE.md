@@ -1,10 +1,18 @@
+<!-- Factory-owned sections are fenced with DAEDALUS:BEGIN/END markers so
+fleet updates can upsert them in place after this app adds its own notes
+(ROADMAP phase 6). Edit factory sections in the Daedalus brick, not here;
+app-specific material belongs in "App notes" at the bottom. -->
+
+<!-- DAEDALUS:BEGIN header -->
 # CLAUDE.md · {{name}}
 
 Stamped from the Surge app factory (Daedalus). Universal infrastructure lives in
 `lib/modules/` and is considered done; your job is `lib/features/`. Config comes
 from `surge.manifest.yaml` — regenerate rather than hand-editing generated
 wiring.
+<!-- DAEDALUS:END header -->
 
+<!-- DAEDALUS:BEGIN source-of-truth -->
 ## Source of truth (in priority order)
 1. `design/spec.md` — the product spec. Every screen has an ID (see its §3.2
    inventory); if a screen is not listed there, it does not exist. Spec §8 edge
@@ -17,7 +25,9 @@ wiring.
    Assumptions (one line: assumption, basis, what would overturn it). Batch
    asks; more than 3 open questions in one session means stop and re-read
    the spec.
+<!-- DAEDALUS:END source-of-truth -->
 
+<!-- DAEDALUS:BEGIN session-rules -->
 ## Session working rules
 - **Read `.daedalus/state.yaml` and `MILESTONES.md` first**, before any other
   file. Work only the active milestone, one milestone (or one M3 screen group)
@@ -32,7 +42,9 @@ wiring.
   (`feat(COU-01): counters home`).
 - Human gates — STOP and ask rather than proceeding: spec §6/§8 approval,
   design direction changes, anything touching money or store submission.
+<!-- DAEDALUS:END session-rules -->
 
+<!-- DAEDALUS:BEGIN eyes -->
 ## Eyes (never build UI blind)
 - **Screen board**: `flutter test --update-goldens test/goldens/screen_board.dart`
   renders every screen to light/dark PNGs + `test/goldens/contact_sheet.html`,
@@ -46,7 +58,9 @@ wiring.
 - Optional deeper loop: a Flutter MCP toolkit (hot reload + widget snapshots
   against the running app) can be wired in `.mcp.json`; the screen board is
   the dependency-free baseline every stamp has.
+<!-- DAEDALUS:END eyes -->
 
+<!-- DAEDALUS:BEGIN stack -->
 ## Stack (decided; do not relitigate)
 Flutter stable, Dart 3.x. **Riverpod** (`flutter_riverpod`, no codegen yet).
 **go_router**. UI from the shared **surge_ui** package (tokens + components).
@@ -56,7 +70,9 @@ entitlement: **{{entitlement}}**.
 Firebase and RevenueCat ship as clearly-marked **`SEAM:`** mocks so the app runs
 today. Wire them by replacing the seam bodies and uncommenting the deps in
 `pubspec.yaml` — the state shapes stay the same, so nothing downstream changes.
+<!-- DAEDALUS:END stack -->
 
+<!-- DAEDALUS:BEGIN layout -->
 ## Layout
 - `lib/app/` bootstrap, router, app root, generated `nav_config.dart`.
 - `lib/modules/` universal, do not fork per feature: auth, onboarding, paywall
@@ -72,14 +88,18 @@ today. Wire them by replacing the seam bodies and uncommenting the deps in
 - Design personality: theme pack `{{theme_pack}}` + the manifest palette.
   Never restyle ad hoc — change the pack/palette, or propose a new pack in
   surge_ui.
+<!-- DAEDALUS:END layout -->
 
+<!-- DAEDALUS:BEGIN parallel -->
 ## Parallel build (M3 only)
 After M2 locks core logic, feature tabs are independent. To parallelize:
 one agent per screen group in its own git worktree, each obeying this file
 and the merge bar, plus one integrator session that merges, re-runs the full
 suite, and re-captures the screen board. The fan-out playbook lives in the
 Daedalus repo at `docs/parallel-build.md`.
+<!-- DAEDALUS:END parallel -->
 
+<!-- DAEDALUS:BEGIN rules -->
 ## Rules
 - Gate paid value with `ref.gate(context, 'gateId', onSuccess)`. Never check the
   entitlement ad hoc.
@@ -104,7 +124,9 @@ Daedalus repo at `docs/parallel-build.md`.
 - Mark every launch placeholder with a grep-able `LAUNCH-TODO:` comment that
   names its checklist item, and make the checklist point back at the code.
   Retire the tag the moment the item ships.
+<!-- DAEDALUS:END rules -->
 
+<!-- DAEDALUS:BEGIN debugging -->
 ## Debugging (evidence before theory)
 - Screenshot the user's actual screen before theorizing (`adb shell screencap`
   on Android; simulator screenshot on iOS). One real capture ends a
@@ -117,7 +139,9 @@ Daedalus repo at `docs/parallel-build.md`.
 - Immutable published artifacts (cached images, message link previews) keep
   showing old bugs after the fix — say "reshare/refresh to see it" or the fix
   looks broken.
+<!-- DAEDALUS:END debugging -->
 
+<!-- DAEDALUS:BEGIN commands -->
 ## Commands
 ```
 flutter pub get
@@ -125,12 +149,16 @@ flutter analyze      # must be clean
 flutter test
 flutter run
 ```
+<!-- DAEDALUS:END commands -->
 
+<!-- DAEDALUS:BEGIN submission -->
 ## Before submission (non-negotiable)
 Replace every feature stub with real functionality (stub-only fails Apple 4.3).
 Account deletion, restore purchases, Sign in with Apple, and Privacy + Terms all
 ship working from the template; keep them working. Run `scripts/forge.sh` first.
+<!-- DAEDALUS:END submission -->
 
+<!-- DAEDALUS:BEGIN live-changes -->
 ## Live changes (post-ship)
 Once `state.yaml` reads `stage: live`, state the tier before touching code and
 log it in `state.yaml`:
@@ -143,3 +171,9 @@ log it in `state.yaml`:
   pass, re-validate, regen derived artifacts, then C2 for the UI part.
 
 The full loop (triggers, exit gates) is the Daedalus RUNBOOK's Phase C.
+<!-- DAEDALUS:END live-changes -->
+
+## App notes
+
+Owned by this app — fleet updates never touch anything below this line. Add
+app-specific working notes, gotchas, and decisions here.
