@@ -60,6 +60,7 @@ flowchart TB
 | [Compliance & Web](compliance-and-web.md) | Legal generation, the LLC umbrella model, site registration |
 | [Release](release.md) | Store metadata, Fastlane lanes, the ship_check gate |
 | [Future systems](future.md) | Phase 4/5 stubs, the debt register, the parking lot |
+| [Spec-kit lessons](spec-kit-lessons.md) | Rationale record for the seven mechanisms imported from github/spec-kit (implemented 2026-07-20) |
 
 ## Ground rules that hold everywhere
 

@@ -104,7 +104,10 @@ export default withMermaid(
         },
         {
           text: "What's next",
-          items: [{ text: 'Future systems', link: '/future' }],
+          items: [
+            { text: 'Future systems', link: '/future' },
+            { text: 'Proposal: spec-kit lessons', link: '/spec-kit-lessons' },
+          ],
         },
       ],
       outline: { level: [2, 3], label: 'On this page' },

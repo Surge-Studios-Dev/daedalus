@@ -251,6 +251,30 @@ Remaining (deliberately):
 - Deferred deep linking does not exist by design (the invitee re-taps the
   link); revisit only if funnel data demands it.
 
+### Phase 5b — spec-kit hardening · ✅ done 2026-07-20
+Seven mechanisms imported from a github/spec-kit review
+([docs/spec-kit-lessons.md](docs/spec-kit-lessons.md) is the rationale
+record; the rest was deliberately not imported):
+- **Phase C CHANGE loop** (RUNBOOK): live-app changes tiered C1 patch /
+  C2 slice / C3 manifest, with pushback triggers and per-tier gates —
+  defined before the first live change needs it.
+- **§12 Assumptions + §11 write-back** (template + spec_gen + INTAKE
+  defaults box): one home per decision case — asked-and-answered →
+  §11 Resolved, unasked guess → §12, implementation reversal →
+  deviation footnote. An answer that lives only in chat doesn't exist.
+- **`spec_gen:spec_lint`**: unit tests for the spec's English (format
+  headers, §8 density per tab, vague-adjective-without-number, TODOs,
+  raw hex, the manifest's new `brand.banned_vocabulary`) run before the
+  human review, with written waivers.
+- **`tools/spec_coverage`**: §6 IDs ↔ code ↔ goldens ↔ §8 tests,
+  mechanically; wired into M6, `state.yaml` gates, and ship_check.
+  Replaces the self-reported §8 sweep.
+- **Brick marker contract**: `<!-- DAEDALUS:BEGIN/END -->` fences in the
+  stamped CLAUDE.md so phase 6 fleet propagation upserts, never
+  string-munges.
+- **Doc drift guard**: `Verified against code` footers + changelogs on
+  the six core docs; doctor.sh warns past 90 days.
+
 ### Phase 5 — Operate layer · after first launch
 Analytics sink + portfolio dashboard; Remote Config + app_gated trial
 enforcement (D5); cross-promo (D6); sunset playbook.
