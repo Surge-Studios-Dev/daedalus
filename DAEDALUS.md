@@ -151,3 +151,13 @@ Manual (the script prints this checklist): create App Store Connect and Play Con
 ## Out of scope (wire the seam, do not build it here)
 
 Push campaigns, A/B infrastructure beyond Remote Config flags, ad-network SDKs beyond cross-promo, and any server-side analytics warehouse. The base provides the hooks; the build-out happens elsewhere.
+
+---
+
+## Changelog
+
+Meaning changes only, newest first, one line each.
+
+- 2026-07-20 — changelog + verification footer added (doc drift guard, spec-kit lesson 7).
+
+*Verified against code: 2026-07-20*

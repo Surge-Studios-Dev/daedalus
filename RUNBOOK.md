@@ -354,7 +354,9 @@ always on, never negotiable.
 easy, what it made hard, cycle time in calendar days vs. the 1-week
 target. Factory gaps become ROADMAP items; app learnings become
 promotion candidates. This closes the loop that turned Ladle into
-Daedalus in the first place.
+Daedalus in the first place. Bump the *Verified against code* footer
+(+ a changelog line for meaning changes) on every core doc the retro
+touched — `scripts/doctor.sh` warns when one goes stale.
 
 ---
 
@@ -410,3 +412,13 @@ A fresh session determines its phase in this order:
 4. Otherwise → phase 0, and the conversation starts with the idea.
 
 Never redo a passed gate; never trust an unchecked one.
+
+---
+
+## Changelog
+
+Meaning changes only, newest first, one line each.
+
+- 2026-07-20 — Phase C (tiered live-change loop) · assumptions protocol + spec §12 · spec_lint and answer write-back in phase 2 · spec_coverage in the C2/M6 gates.
+
+*Verified against code: 2026-07-20*

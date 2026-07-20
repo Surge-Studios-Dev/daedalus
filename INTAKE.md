@@ -162,3 +162,13 @@ If it touches product intent (pass 1), money, or legal: ask, don't default.
 - [ ] Name/slug checked: App Store search, domain, `slug://` collision
 - [ ] Legal fields set (governing law, support email, content summary,
       disclaimers) - the generated policies are drafts for lawyer review
+
+---
+
+## Changelog
+
+Meaning changes only, newest first, one line each.
+
+- 2026-07-20 — "Defaults (propose, don't ask)" box consolidates the scattered defaults; unasked guesses logged as `# ASSUME:` comments that migrate to spec §12.
+
+*Verified against code: 2026-07-20*

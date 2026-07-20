@@ -76,6 +76,34 @@ else
   warn "gcloud not found - provisioning + emulator ADC checks unavailable"
 fi
 
+# --- doc drift guard (WARN only - doctor FAILs only on environment traps) --
+# Core docs carry a "*Verified against code: YYYY-MM-DD*" footer, bumped by
+# the phase 5 retro ritual (RUNBOOK). Stale footers mean the doc may be
+# describing a tree that no longer exists.
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+today_s=$(date +%s)
+for doc in RUNBOOK.md INTAKE.md DAEDALUS.md FRAMEWORK.md AI-RAIL.md surge.manifest.schema.md; do
+  path="$repo_root/$doc"
+  if [ ! -f "$path" ]; then
+    warn "$doc missing - core doc set changed? update doctor.sh's list"
+    continue
+  fi
+  stamp=$(grep -o 'Verified against code: [0-9][0-9-]\{9\}' "$path" | tail -1 | grep -o '[0-9][0-9-]\{9\}$')
+  if [ -z "$stamp" ]; then
+    warn "$doc has no 'Verified against code' footer (doc drift guard)"
+    continue
+  fi
+  # GNU date first, BSD date second; if neither parses, skip the age math.
+  stamp_s=$(date -d "$stamp" +%s 2>/dev/null || date -j -f '%Y-%m-%d' "$stamp" +%s 2>/dev/null || echo '')
+  if [ -z "$stamp_s" ]; then
+    pass "$doc verified $stamp (age check unavailable on this date(1))"
+  elif [ $(((today_s - stamp_s) / 86400)) -gt 90 ]; then
+    warn "$doc last verified $stamp (>90 days) - re-read it against the tree and bump the footer"
+  else
+    pass "$doc verified $stamp"
+  fi
+done
+
 # --- reminders that save real hours (not checkable) ------------------------
 cat <<'EOF'
 ----

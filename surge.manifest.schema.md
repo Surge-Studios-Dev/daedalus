@@ -181,3 +181,13 @@ The `gate()` helper and entitlement check are the same in both cases. Only the t
 ## Secrets policy
 
 The manifest is committed to the repo, so it holds **references, not values**. Anything sensitive (RevenueCat keys, signing material, service-account JSON) is a `${VAR}` reference resolved from CI or a local `.env` that is gitignored. `forge.sh` validates that every `${VAR}` resolves before a build, and fails loudly if one is missing rather than shipping a broken paywall.
+
+---
+
+## Changelog
+
+Meaning changes only, newest first, one line each.
+
+- 2026-07-20 — `brand.banned_vocabulary` added; spec_lint checks spec copy against it.
+
+*Verified against code: 2026-07-20*

@@ -287,12 +287,15 @@ manual-minutes-killed per app.
    config from the manifest products + an XCUITest driving purchase /
    entitlement unlock / restore on the simulator in CI. The manual
    sandbox purchase becomes optional paranoia.
-5. **The agent layer.** CLAUDE.md + MILESTONES.md generators (promised
-   by DAEDALUS.md, not yet built), a `.daedalus/state.yaml` pipeline
-   state file so any fresh session resumes mid-pipeline, stamped
-   `.claude/` hooks enforcing the merge bar (analyze + test + format
-   before commit), and skills for /intake, /stamp, /m0, /ship. Marks the
-   explicit human gates (INTAKE, design refs, spec approval, submit).
+5. **The agent layer.** ✅ Built (entry corrected 2026-07-20 — it
+   predated the build): the brick stamps templated `CLAUDE.md` +
+   `MILESTONES.md`, `.daedalus/state.yaml` resumes any fresh session
+   mid-pipeline (RUNBOOK "Resuming mid-pipeline"), committed `.claude/`
+   hooks enforce the merge bar, and the factory carries the `/new-app`
+   (INTAKE → manifest → spec → stamp), `/design-pass`, and `/sim-drive`
+   skills, sequenced by `RUNBOOK.md` with the human gates marked. The
+   /m0 and /ship skill ideas were folded into MILESTONES/RUNBOOK phases
+   instead of becoming separate commands.
 6. **Fleet propagation.** `fleet.yaml` registry of stamped apps + a
    script/scheduled agent that bumps surge_* refs across app repos, runs
    each suite, opens PRs. Plus per-app ops provisioning by API: PostHog

@@ -102,3 +102,13 @@ device traces, whatever the moat consumes.
 4. Pass the M0 gate. Only then do screens consume the callable.
 5. Before launch: seed the cache; re-run the corpus on every
    quality-affecting change and bump `PIPELINE_VERSION` with it.
+
+---
+
+## Changelog
+
+Meaning changes only, newest first, one line each.
+
+- 2026-07-20 — changelog + verification footer added (doc drift guard, spec-kit lesson 7).
+
+*Verified against code: 2026-07-20*

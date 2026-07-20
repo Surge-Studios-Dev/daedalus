@@ -118,3 +118,13 @@ the app.
 
 Neutral namespace, no per-app prefixes: `Surge*` types, `surge_*` files and
 packages. (Ladle's `L`/`Ladle` prefixes are dropped on the way in.)
+
+---
+
+## Changelog
+
+Meaning changes only, newest first, one line each.
+
+- 2026-07-20 — changelog + verification footer added (doc drift guard, spec-kit lesson 7).
+
+*Verified against code: 2026-07-20*
