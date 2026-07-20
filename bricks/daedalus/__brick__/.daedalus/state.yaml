@@ -14,6 +14,7 @@ gates:
   core_tests: pending # lib/core pure-Dart logic test-locked before UI consumes it
   goldens: pending # test/goldens seeded + green in both modes
   paywall: pending # purchase + restore verified (mock now, StoreKit later)
+  coverage: pending # spec_coverage green (§6 IDs in code+board, §8 tested or waived)
   ship_check: pending # tools/ship_check green
 
 # Session log - newest first, one line each: date, what shipped, what's next.

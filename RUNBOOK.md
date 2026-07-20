@@ -387,8 +387,10 @@ how big it feels.
 - [ ] **C1:** merge bar green · one `state.yaml` log line (tier + what
       changed) · deviation footnote if observed behavior moved
 - [ ] **C2:** delta approved by the human · new §8 cases are tests ·
-      screen board re-captured in both modes · `/sim-drive` run if
-      chrome/navigation touched · `state.yaml` log line
+      `spec_coverage --ids=<touched IDs>` green (scoped; the full sweep
+      stays an M6/ship_check concern) · screen board re-captured in both
+      modes · `/sim-drive` run if chrome/navigation touched · `state.yaml`
+      log line
 - [ ] **C3:** manifest re-validates · derived artifacts regenerated ·
       then the C2 gate for the UI part
 

@@ -7,6 +7,8 @@ library;
 
 import 'dart:io';
 
+import 'package:spec_coverage/spec_coverage.dart' as cov;
+
 enum CheckStatus { pass, warn, fail }
 
 class CheckResult {
@@ -262,6 +264,27 @@ Future<List<CheckResult>> runChecks(
             'backend/src/sharing missing (older stamp) - the referral loop '
             'has no server side'),
   );
+
+  // -- 11c. Spec coverage: §6 built + boarded, §8 tested or waived. ----------
+  // The definition of done includes it, no overrides, same as the rest of
+  // ship_check - self-reported sweeps don't count.
+  if (!at('design/spec.md').existsSync()) {
+    results.add(const CheckResult('spec coverage', CheckStatus.warn,
+        'no design/spec.md (older stamp) - spec_coverage cannot run; the '
+        '§8 sweep is unverified'));
+  } else {
+    final coverage = cov.runCoverage(appDir);
+    final covFails = coverage.checks
+        .where((c) => c.status == cov.CheckStatus.fail)
+        .toList();
+    results.add(
+      covFails.isEmpty
+          ? CheckResult('spec coverage', CheckStatus.pass, coverage.summary)
+          : CheckResult('spec coverage', CheckStatus.fail,
+              '${coverage.summary} - '
+              '${covFails.map((c) => '${c.name}: ${c.detail}').join(' | ')}'),
+    );
+  }
 
   // -- 12. Tests (optional; the slow one). ------------------------------------
   if (runTests) {

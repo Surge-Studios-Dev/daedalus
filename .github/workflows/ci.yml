@@ -118,6 +118,12 @@ jobs:
           dart pub get
           dart analyze
           dart test
+      - name: spec_coverage
+        working-directory: tools/spec_coverage
+        run: |
+          dart pub get
+          dart analyze
+          dart test
       - name: ship_check
         working-directory: tools/ship_check
         run: |

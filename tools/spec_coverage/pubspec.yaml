@@ -1,0 +1,15 @@
+name: spec_coverage
+description: The merge bar for spec truth - mechanically maps spec §6/§8 to code and tests (every P0 screen built + on the board, every §8 line a named test or a written waiver, no orphan IDs). Replaces M6's self-reported sweep; self-reports don't count.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  spec_gen:
+    path: ../spec_gen
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^5.0.0

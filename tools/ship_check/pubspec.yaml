@@ -7,6 +7,8 @@ environment:
   sdk: ">=3.5.0 <4.0.0"
 
 dependencies:
+  spec_coverage:
+    path: ../spec_coverage
   yaml: ^3.1.2
 
 dev_dependencies:

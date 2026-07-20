@@ -80,8 +80,10 @@ the milestone to fan out across parallel agents (see Daedalus
 
 ## M6 · Hardening
 
-- [ ] Full spec §8 sweep: every edge case is a named test or has a written
-      reason it is not
+- [ ] `spec_coverage` green (Daedalus `tools/spec_coverage`, pointed at this
+      app) — replaces the by-hand §8 sweep: every P0 §6 ID built + on the
+      board, every §8 line a named test or ending `- waived: reason` in the
+      spec, not chat. `.daedalus/state.yaml` gates.coverage -> passed
 - [ ] A11y pass: labels on interactive elements, contrast spot-check on
       real screens, text scale 1.3 doesn't break layouts
 - [ ] Bug sweep with fresh eyes (or a review agent); findings triaged and
