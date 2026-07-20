@@ -155,5 +155,23 @@ process. -->
 
 ## 11. Open questions
 
+### Open
+
 <!-- Only questions that block a P0 decision. Everything else in this document
 is decided once the status line says "final". -->
+
+### Resolved
+
+<!-- When the human answers anything - in spec review or mid-build - make both
+edits in the same commit: update the affected block AND move the question here
+with date and answer. An answer that lives only in chat doesn't exist.
+Format: - 2026-07-19 - Q: ... -> A: ... -> updated: §6 LIB-02 -->
+
+## 12. Assumptions
+
+<!-- Decisions made without asking. One line each:
+- **A1 (date, phase):** assumption - basis - overturned by: <what would change it>
+Overturning one: strike it here and add a deviation footnote at the affected
+spot. The triad, one home per case: asked-and-answered -> §11 Resolved ·
+never-asked-guessed -> here · overturned-by-implementation -> deviation
+footnote. -->

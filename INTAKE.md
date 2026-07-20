@@ -21,6 +21,27 @@ has 5+ edge cases in Section 8. Then - and only then - stamp.
 
 ---
 
+## Defaults (propose, don't ask)
+
+Known-good defaults, consolidated so the interview never spends a question
+on them. Propose each one in passing; the human can veto. Any default taken
+without an explicit yes - and any other guess made without asking - is
+recorded as a `# ASSUME:` comment next to the manifest field, and migrates
+to spec §12 Assumptions once the skeleton exists. Guessing is fine;
+unlogged guessing is how specs and apps drift apart.
+
+| Field | Default |
+|---|---|
+| Firebase project id | `<slug>-prod` (ids are global; fall back `<studio>-<slug>-prod`) |
+| Support email | `support@<domain>` |
+| Entitlement id | `pro` |
+| Notifications | off in v1 (fast follow; needs server logic) |
+| Remote Config | only if the trial is `app_gated` |
+| Cross-promo slot | on |
+| Tracking | off (ATT prompt + store-label consequences) |
+
+If it touches product intent (pass 1), money, or legal: ask, don't default.
+
 ## Pass 1 · The idea (no manifest fields yet - this is the hard part)
 
 1. **One-liner.** What is it, for whom, and what's the hook? If this takes

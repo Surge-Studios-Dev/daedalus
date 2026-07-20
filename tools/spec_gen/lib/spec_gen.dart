@@ -400,8 +400,29 @@ String generateSpec(Map manifest, {required String date}) {
   b.writeln();
   b.writeln('## 11. Open questions');
   b.writeln();
+  b.writeln('### Open');
+  b.writeln();
   b.writeln('${_todo('only questions that block a P0 decision')} - '
       'everything else in this document is decided once Status says final.');
+  b.writeln();
+  b.writeln('### Resolved');
+  b.writeln();
+  b.writeln('When the human answers anything - in spec review or mid-build - '
+      'make both edits in the same commit: update the affected block AND '
+      'move the question here with date and answer (`- date - Q: ... -> '
+      'A: ... -> updated: §6 XXX-01`). An answer that lives only in chat '
+      "doesn't exist.");
+  b.writeln();
+  b.writeln('## 12. Assumptions');
+  b.writeln();
+  b.writeln('Decisions made without asking. One line each:');
+  b.writeln();
+  b.writeln('`- **A1 (date, phase):** assumption - basis - overturned by: '
+      '<what would change it>`');
+  b.writeln();
+  b.writeln('Overturning one: strike it here and add a deviation footnote '
+      'at the affected spot. Asked-and-answered goes to §11 Resolved, not '
+      'here; implementation reversals are deviation footnotes.');
 
   return b.toString();
 }

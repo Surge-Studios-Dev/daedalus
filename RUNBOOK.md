@@ -23,6 +23,13 @@ as a comment during phases 0–2, in `.daedalus/state.yaml`'s log after
 stamping — with one line: what was skipped and why. Silent skips are the
 only forbidden move.
 
+**Assumptions protocol.** The middle case between "ask" and "decided":
+the reasonable guess. If a call touches product intent, money, or legal,
+ask; otherwise take the obvious default and **log it** — as a `# ASSUME:`
+comment next to the manifest field during phases 0–1, migrated into spec
+§12 Assumptions in phase 2, written straight into §12 after that.
+Guessing is fine; unlogged guessing is how specs and apps drift apart.
+
 ---
 
 ## The pipeline at a glance
@@ -209,10 +216,18 @@ yourself** from the INTAKE answers:
 - **§8** — 5+ edge cases per feature tab, written as testable
   sentences (they become M2/M6 tests verbatim)
 
+Then migrate every `# ASSUME:` manifest comment into spec §12
+Assumptions as numbered A-lines — the spec is where guesses live once
+it exists.
+
 Present the complete draft for approval. **STOP until approved.**
 Drafting-for-review is the speedup; skipping review is how specs go
 wrong. Apply requested changes and re-present; do not advance on
-"looks fine I guess" — get an explicit yes.
+"looks fine I guess" — get an explicit yes. **Write every answer back:**
+when the human answers anything during review, make both edits in the
+same commit — update the affected block, move the question to §11
+Resolved with date and answer. An answer that lives only in chat
+doesn't exist.
 
 ### Pushback triggers
 
@@ -226,6 +241,8 @@ wrong. Apply requested changes and re-present; do not advance on
 
 - [ ] Spec §1–5 and §10 written; §6 block per P0 screen (stable IDs);
       §8 with 5+ edge cases per feature tab
+- [ ] `# ASSUME:` manifest comments migrated to §12; review answers
+      written back into the blocks + §11 Resolved
 - [ ] Human explicitly approved the §6/§8 draft (human gate)
 - [ ] Approved draft saved where phase 3 can merge it after stamping
 

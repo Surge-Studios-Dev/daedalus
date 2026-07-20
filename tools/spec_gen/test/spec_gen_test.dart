@@ -77,6 +77,10 @@ void main() {
     expect(spec, contains('Not in v1 (`features.notifications: false`)'));
     // Edge-case prompts per feature tab.
     expect(spec, contains('- **Counters:** **TODO**'));
+    // §11 write-back structure + §12 assumptions log.
+    expect(spec, contains('### Resolved'));
+    expect(spec, contains('## 12. Assumptions'));
+    expect(spec, contains('Decisions made without asking.'));
     // No unrendered placeholders, no torn-off closures.
     expect(spec, isNot(contains('{{')));
     expect(spec, isNot(contains('Closure')));

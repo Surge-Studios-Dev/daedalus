@@ -12,7 +12,11 @@ wiring.
    intent.
 2. `surge.manifest.yaml` — config (tabs, gates, monetization, brand). Wins on
    wiring; regenerate rather than hand-editing generated files.
-3. Still ambiguous → ask, don't invent.
+3. Still ambiguous → if it touches product intent (spec §1), money, or
+   legal: ask. Otherwise take the obvious default and log it in spec §12
+   Assumptions (one line: assumption, basis, what would overturn it). Batch
+   asks; more than 3 open questions in one session means stop and re-read
+   the spec.
 
 ## Session working rules
 - **Read `.daedalus/state.yaml` and `MILESTONES.md` first**, before any other
@@ -93,6 +97,10 @@ Daedalus repo at `docs/parallel-build.md`.
   calling it done, its §8 edge cases must be tests. When implementation changes
   a spec decision, add a numbered deviation footnote at the affected spot —
   never rewrite history.
+- When the human answers a question — in review or mid-build — make both edits
+  in the same commit: update the affected spec block AND log it under §11
+  Resolved (date, Q → A, what was updated). An answer that lives only in chat
+  doesn't exist.
 - Mark every launch placeholder with a grep-able `LAUNCH-TODO:` comment that
   names its checklist item, and make the checklist point back at the code.
   Retire the tag the moment the item ships.
