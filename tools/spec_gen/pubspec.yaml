@@ -1,5 +1,5 @@
 name: spec_gen
-description: Scaffolds a product-spec skeleton (design/spec.md) from a surge.manifest.yaml, so humans write product intent, not document structure. Section layout mirrors templates/spec.template.md (test-enforced).
+description: Scaffolds a product-spec skeleton (design/spec.md) from a surge.manifest.yaml, so humans write product intent, not document structure. Section layout mirrors templates/spec.template.md (test-enforced). Also ships spec_lint (unit tests for the spec's English) and the shared spec parser used by tools/spec_coverage.
 version: 0.1.0
 publish_to: none
 

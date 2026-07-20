@@ -39,6 +39,9 @@ brand:
   fonts:
     display: Fraunces
     text: Inter
+  banned_vocabulary:                # optional; words that betray the product's
+    - crush your goals              # values (Ladle banned diet-culture language).
+    - cheat day                     # spec_lint flags them anywhere in spec copy.
 
 navigation:
   tabs:                             # order = bar order; 2 to 5 tabs

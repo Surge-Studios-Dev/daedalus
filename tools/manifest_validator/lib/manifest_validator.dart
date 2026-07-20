@@ -71,6 +71,15 @@ List<String> validateManifest(Map manifest) {
         'brand.theme_pack must be one of ${packs.join('|')} (got "$pack")',
       );
     }
+    // spec_lint greps spec copy for these; a non-list or empty entry would
+    // fail silently there, so the shape dies here instead.
+    final vocab = brand['banned_vocabulary'];
+    if (vocab != null &&
+        (vocab is! List || vocab.any((w) => '$w'.trim().isEmpty))) {
+      errors.add(
+        'brand.banned_vocabulary must be a list of non-empty strings',
+      );
+    }
   }
 
   // auth

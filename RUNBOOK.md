@@ -220,6 +220,14 @@ Then migrate every `# ASSUME:` manifest comment into spec §12
 Assumptions as numbered A-lines — the spec is where guesses live once
 it exists.
 
+**Lint before the human sees it:** `dart run spec_gen:spec_lint
+design/spec.md --manifest=<manifest>` (from `tools/spec_gen`) → fix →
+re-lint until clean. It interrogates the *text* — missing §6
+states, vague adjectives with no number attached, thin §8 tabs,
+leftover TODOs, raw hex, banned vocabulary — so the human's review
+time goes to product intent, not proofreading. Waive a finding only
+with `<!-- lint-waive: reason -->` on the line above it.
+
 Present the complete draft for approval. **STOP until approved.**
 Drafting-for-review is the speedup; skipping review is how specs go
 wrong. Apply requested changes and re-present; do not advance on
@@ -233,7 +241,7 @@ doesn't exist.
 
 | ID | Fires when | The challenge |
 |----|-----------|---------------|
-| P2-RUBBER | Human approves instantly without reading (<1 min on a multi-screen spec) | "This draft is my guess at your product. The two blocks I'm least sure about are ___ and ___ — read at least those." |
+| P2-RUBBER | Human approves instantly without reading (<1 min on a multi-screen spec) | "This draft is my guess at your product. Here's the spec_lint output (clean or waived); the two blocks I'm least sure about are ___ and ___ — read at least those." |
 | P2-EDGE | A feature tab can't produce 5 edge cases | "If it has no edge cases it isn't a feature — fold it into another tab or cut it." |
 | P2-CREEP | Draft review adds new screens/features beyond the manifest | "That's a manifest change. Back to INTAKE for that field, or park it as P1." |
 
@@ -243,6 +251,7 @@ doesn't exist.
       §8 with 5+ edge cases per feature tab
 - [ ] `# ASSUME:` manifest comments migrated to §12; review answers
       written back into the blocks + §11 Resolved
+- [ ] `spec_lint` clean (waivers recorded in the spec, not chat)
 - [ ] Human explicitly approved the §6/§8 draft (human gate)
 - [ ] Approved draft saved where phase 3 can merge it after stamping
 

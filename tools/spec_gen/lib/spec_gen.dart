@@ -281,9 +281,13 @@ String generateSpec(Map manifest, {required String date}) {
       'never "four"); no em dashes in user-facing copy; empty states invite '
       'action, never apologize.');
   b.writeln();
-  b.writeln('- **Banned vocabulary:** ${_todo('the words that would betray '
-      'this product\'s values (Ladle banned diet-culture language '
-      'app-wide)')}');
+  final bannedVocab = ((brand['banned_vocabulary'] as List?) ?? const [])
+      .map((e) => '$e')
+      .where((w) => w.trim().isNotEmpty)
+      .toList(growable: false);
+  b.writeln('- **Banned vocabulary:** '
+      '${bannedVocab.isEmpty ? _todo('the words that would betray this '
+          'product\'s values (Ladle banned diet-culture language app-wide)') : bannedVocab.join(', ')}');
   b.writeln('- **Voice notes:** ${_todo('2-3 lines max')}');
   b.writeln();
 

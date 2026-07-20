@@ -61,6 +61,20 @@ void main() {
     expect(validateManifest(m), isEmpty);
   });
 
+  test('brand.banned_vocabulary must be a list of non-empty strings', () {
+    final m = _valid();
+    m['brand'] = {
+      'banned_vocabulary': ['streak-shame', 'guilt trip'],
+    };
+    expect(validateManifest(m), isEmpty);
+    m['brand'] = {'banned_vocabulary': 'streak-shame'}; // not a list
+    expect(validateManifest(m), contains(contains('banned_vocabulary')));
+    m['brand'] = {
+      'banned_vocabulary': ['ok', '  '],
+    };
+    expect(validateManifest(m), contains(contains('banned_vocabulary')));
+  });
+
   test('flags trial/model inconsistency', () {
     final m = _valid();
     (m['monetization'] as Map)['model'] = 'one_time';

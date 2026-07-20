@@ -29,6 +29,9 @@ brand:
   fonts:
     display: Inter
     text: Inter
+  banned_vocabulary: # words that would betray the product's values (spec_lint checks spec copy)
+    - streak-shame
+    - guilt trip
 
 navigation:
   tabs:
