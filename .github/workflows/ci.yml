@@ -33,6 +33,12 @@ jobs:
           channel: stable
       - run: flutter pub get
         working-directory: ${{ matrix.pkg }}
+      # surge_ui hosts the gallery app in a nested folder; analyze sweeps it,
+      # so the gallery's deps must resolve here too (its own matrix leg runs
+      # the gallery tests).
+      - run: flutter pub get
+        working-directory: packages/surge_ui/gallery
+        if: matrix.pkg == 'packages/surge_ui'
       - run: flutter analyze
         working-directory: ${{ matrix.pkg }}
       - run: flutter test

@@ -365,8 +365,8 @@
     {
       "name": "SurgeFloatingNavBar",
       "category": "navigation",
-      "summary": "A detached pill-shaped bottom tab bar that floats above content on a lifted panel.",
-      "whenToUse": "The app shell's bottom navigation in personality packs that float their chrome (soft_depth). Pair with Scaffold(extendBody: true) so content scrolls beneath it.",
+      "summary": "Ladle's floating tab pill - crisp opaque bar, labeled icon tabs, and a raised center action ringed in the surface color.",
+      "whenToUse": "The app shell's bottom navigation. Pair with Scaffold(extendBody: true) so content scrolls beneath the pill. The geometry mirrors Ladle's shipped bar (the studio reference) - do not restyle per app.",
       "tags": [
         "navigation",
         "tabs",
